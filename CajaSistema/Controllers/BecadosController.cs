@@ -21,8 +21,6 @@ namespace CajaSistema.Controllers
             _appdbContext = context;
         }
 
-
-
         [HttpGet]
         public IActionResult Index()
         {
@@ -39,6 +37,16 @@ namespace CajaSistema.Controllers
             var listaAlumnos = _appdbContext.becadosListaALumnosBusqueda.FromSqlRaw("CajaWeb.sp_busquedaAlumnos @cadenabuscar", parametro).ToList();
             return Json(listaAlumnos);
         }
+
+
+        public JsonResult BusquedaAlumnosIdPersona(string cadena)
+        {
+
+            var parametro = new SqlParameter("@cadenabuscar", cadena);
+            var listaAlumnos = _appdbContext.becadosListaALumnosBusqueda.FromSqlRaw("CajaWeb.sp_busquedaAlumnosIdPersona @cadenabuscar", parametro).ToList();
+            return Json(listaAlumnos);
+        }   
+
         //[HttpPost]
         //public JsonResult MostrarAlumnoSeleccionado(string idPersona)
         //{
@@ -63,6 +71,72 @@ namespace CajaSistema.Controllers
                 _appdbContext.SaveChanges();
                 id = _becadoAlumnoBecado.idBecado;
                 return Json(id);
+            }
+            catch (Exception e)
+            {
+                return Json(e.Message);
+            }
+
+
+        }
+
+
+        [HttpPost]
+        public JsonResult EliminarBecado(string idBecado)
+        {
+            _becadoAlumnoBecado = new BecadosAlumnoBecado { idBecado=int.Parse(idBecado) };
+            
+
+            try
+            {
+                _appdbContext.becadosAlumnoBecados.Attach(_becadoAlumnoBecado);
+                _appdbContext.becadosAlumnoBecados.Remove(_becadoAlumnoBecado);
+                _appdbContext.SaveChanges();
+                return Json("ok");
+            }
+            catch (Exception e)
+            {
+                return Json(e.Message);
+            }
+
+
+        }
+
+        [HttpPost]
+        public JsonResult ActivarBecado(string idBecado)
+        {
+            _becadoAlumnoBecado = new BecadosAlumnoBecado();
+            _becadoAlumnoBecado = _appdbContext.becadosAlumnoBecados.SingleOrDefault(x => x.idBecado == int.Parse(idBecado));
+            _becadoAlumnoBecado.estado = true;
+            _becadoAlumnoBecado.usuarioRegistro = idUsuarioActivo;
+
+            try
+            {
+                _appdbContext.becadosAlumnoBecados.Update(_becadoAlumnoBecado);
+                _appdbContext.SaveChanges();
+                return Json("ok");
+            }
+            catch (Exception e)
+            {
+                return Json(e.Message);
+            }
+
+
+        }
+
+        [HttpPost]
+        public JsonResult DesactivarBecado(string idBecado)
+        {
+            _becadoAlumnoBecado = new BecadosAlumnoBecado();
+            _becadoAlumnoBecado = _appdbContext.becadosAlumnoBecados.SingleOrDefault(x => x.idBecado == int.Parse(idBecado));
+            _becadoAlumnoBecado.estado = false;
+            _becadoAlumnoBecado.usuarioRegistro = idUsuarioActivo;
+
+            try
+            {
+                _appdbContext.becadosAlumnoBecados.Update(_becadoAlumnoBecado);
+                _appdbContext.SaveChanges();
+                return Json("ok");
             }
             catch (Exception e)
             {
