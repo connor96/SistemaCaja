@@ -5,6 +5,6 @@ namespace CajaSistema.Models
     public class AuxiliarString
     {
         [Required]
-        public string cadenaString { get; set; }
+        public string? cadenaString { get; set; }
     }
 }

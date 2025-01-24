@@ -2,7 +2,7 @@
 
 namespace CajaSistema.Models
 {
-    public class UserIdentity:IdentityUser
+    public class UserIdentity : IdentityUser
     {
         public string aPaterno { get; set; }
         public string aMaterno { get; set; }
@@ -11,6 +11,6 @@ namespace CajaSistema.Models
         public string celular { get; set; }
         public string idPersona { get; set; }
         public string dni { get; set; }
-       
+
     }
 }

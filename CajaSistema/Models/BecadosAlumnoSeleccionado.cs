@@ -2,7 +2,7 @@
 {
     public class BecadosAlumnoSeleccionado
     {
-        public string idPersona { get; set; }
-        public string nombresApellidos { get; set; }
+        public string? idPersona { get; set; }
+        public string? nombresApellidos { get; set; }
     }
 }

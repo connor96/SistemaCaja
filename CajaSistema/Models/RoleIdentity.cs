@@ -2,7 +2,7 @@
 
 namespace CajaSistema.Models
 {
-    public class RoleIdentity:IdentityRole
+    public class RoleIdentity : IdentityRole
     {
         public string observacion { get; set; }
     }

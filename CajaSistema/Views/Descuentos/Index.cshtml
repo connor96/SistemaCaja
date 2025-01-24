@@ -1,7 +1,242 @@
-﻿
+﻿@model AuxiliarString;
 @{
+    var _listaDescuentos = ViewBag.listaDescuentos as IEnumerable<dynamic>;
+    var _listaDescuento = ViewBag.listaDescuento as IEnumerable<DescuentoListaDescuentos>;
+    int contador = 1;
     ViewData["Title"] = "Descuentos";
 }
 
 
+<div class="row container">
 
+
+    <!-- Button trigger modal -->
+
+    <div class="row" style="padding-top:2em;padding-bottom:2em">
+        <div class="col-8">
+            <h4>Lista de Alumnos con Descuento</h4>
+        </div>
+
+
+        <div class="col-4 d-flex justify-content-end">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Agregar alumno con Descuento
+            </button>
+        </div>
+
+    </div>
+
+    <div id="listaAlumnosDescuento" class="listaAlumnosDescuento">
+
+        <table class="table table-hover" id="tablaAlumnos">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Codigo Alumno</th>
+                    <th scope="col">Apellidos y Nombres</th>
+                    <th scope="col">Descuento</th>
+                    <th scope="col">Monto</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Editar</th>
+                    <th scope="col">Eliminar</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpo_tabla">
+
+                @if (_listaDescuentos.Count() < 1)
+                {
+
+                    <h5>No se encontraron alumnos becados</h5>
+
+                }
+                else
+                {
+                    @foreach (var item in _listaDescuentos)
+                    {
+                        <tr class="item-tr-@contador">
+                            <td scope="row">@contador</td>
+                            <td id="label-@contador">@item.idPersona</td>
+                            <td id="label-@contador">@item.ApellidoPaterno @item.ApellidoMaterno @item.Nombres1 @item.Nombres2</td>
+                            <td id="label-@contador">@item.DesDescuento</td>
+                            <td id="label-@contador">@item.monto</td>
+                            <td id="label-@contador">
+
+                                @if (item.estado == 1)
+                                {
+                                    <p style="color:blue"> Activo</p>
+                                }
+                                else
+                                {
+                                    <p style="color:red"> Inactivo</p>
+                                }
+
+                            </td>
+                            @if (item.estado == 1)
+                            {
+                                <td> <a class="btn btn-outline-secondary" onclick="retirarDescuento('@item.idDescuento','@item.idPersona')">Desactivar</a> </td>
+                            }
+                            else
+                            {
+                                <td> <a class="btn btn-outline-secondary" onclick="activarDescuento('@item.idDescuento','@item.idPersona')">Activar</a> </td>
+                            }
+
+                            <td> <a class="btn btn-outline-danger" onclick="eliminarDescuento('@item.idDescuento','@item.idPersona')">Eliminar</a> </td>
+                        </tr>
+                        contador++;
+                    }
+                }
+
+
+            </tbody>
+        </table>
+
+    </div>
+
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form asp-controller="Descuentos" asp-action="BusquedaAlumnos" method="POST">
+
+                        <div class="container row mb-3">
+
+                            <div class="col-12">
+                                <select class="form-select" aria-label="Default select example" id="descuentoSeleccionado" onchange="_activarAlumno();">
+                                    <option selected>Seleccione un descuento</option>
+                                    @foreach (var item in _listaDescuento)
+                                    {
+                                        <option value="@item.IdDescuento">@item.DesDescuento</option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="container row mb-3">
+                            <div class="col-10">
+                                <input asp-for="cadenaString" type="text" class="form-control" style="width:100%" id="cadena" placeholder="Busqueda de alumno por DNI, codigo, o Apellidos y Nombres"  disabled/>
+                            </div>
+                            <div class="col-2">
+                                <a class="btn btn-outline-secondary" onclick="buscarAlumno()">Buscar</a>
+                            </div>
+                        </div>
+
+                    </form>
+
+                    <br />
+
+                    <div class="row">
+
+                        <table class="table table-hover" id="tabla_alumnos" style="opacity:0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">IdAlumno</th>
+                                    <th scope="col">Nombres</th>
+                                    <th scope="col">Asignar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @* <tr>
+                                    <th scope="row">1</th>
+                                    <td>13254156</td>
+                                    <td>Otto</td>
+                                    <td><a class="btn btn-outline-secondary" onclick="agregarBecado('id','@contador')">Editar</a> </td>
+                                </tr> *@
+
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div>
+
+<script>
+    function buscarAlumno(){
+        var textoIngresado =document.getElementById("cadena");
+
+        var table=document.getElementById("tabla_alumnos");
+
+
+        table.querySelector("tbody").innerHTML="";
+
+         $.ajax({
+                url:'@Url.Action("BusquedaAlumnos", "Becados")',
+                data:{cadena:textoIngresado.value},
+                type : 'POST',
+                dataType : 'json',
+                success : function(json) {
+                    //console.log(json);
+                    var count=0;
+
+                    json.forEach((element) => {
+                        count++;
+                        $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td><a class="btn btn-outline-secondary" onclick="agregarDescuentoAlumno('+element.idPersona+')">Agregar</a> </tr>');
+
+                    });
+
+                    table.style.opacity='1';
+                },
+                error : function(xhr, status) {
+                alert('Disculpe, existió un problema');
+            }});
+
+
+    }
+
+    function _activarAlumno(){
+        $('#cadena').removeAttr("disabled");
+        console.log('Soy un texto');
+        //var inputCadena =document.getElementById("cadena");
+    }
+
+
+    function agregarDescuentoAlumno(idPersona){
+            var idDescuento=document.getElementById('descuentoSeleccionado').value;
+
+            console.log(idDescuento);
+            
+            $.ajax({
+                    url:'@Url.Action("RegistrarAlumnoDescuento", "Descuentos")',
+                    data:{idPersona:idPersona,idDescuento:idDescuento},
+                    type : 'POST',
+                    dataType : 'json',
+                    success : function(result) {
+                        console.log(result);
+                        Swal.fire({
+                                title: "Se ha guardado exitosamente!",
+                                text: "El codigo de guardado es "+result,
+                                icon: "success"
+
+                            }).then((result)=>{
+                                location.reload();
+                            });
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                }});
+
+
+    }
+
+
+</script>

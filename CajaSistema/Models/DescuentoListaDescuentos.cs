@@ -5,10 +5,12 @@ namespace CajaSistema.Models
     public class DescuentoListaDescuentos
     {
         [Column("IdDescuento")]
-        public int IdDescuento { get; set; }
+        public byte? IdDescuento { get; set; }
+
         [Column("DesDescuento")]
-        public string DesDescuento { get; set; }
+        public string? DesDescuento { get; set; }
+
         [Column("Estado")]
-        public int Estado { get; set; }
+        public byte? Estado { get; set; }
     }
 }

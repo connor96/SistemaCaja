@@ -7,14 +7,14 @@ namespace CajaSistema.Models
         [Column("idDescuento")]
         public int idDescuento { get; set; }
         [Column("idPersona")]
-        public string idPersona { get; set; }
+        public string? idPersona { get; set; }
         [Column("idDescuentoConcepto")]
-        public int idDescuentoConcepto { get; set; }
+        public byte? idDescuentoConcepto { get; set; }
         [Column("monto")]
-        public double monto { get; set; }
+        public decimal? monto { get; set; }
         [Column("estado")]
-        public string estado { get; set; }
+        public int? estado { get; set; }
         [Column("usuarioRegistro")]
-        public string usuarioRegistro { get; set; }
+        public string? usuarioRegistro { get; set; }
     }
 }

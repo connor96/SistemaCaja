@@ -2,7 +2,6 @@ using CajaSistema.Data;
 using CajaSistema.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -89,7 +88,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Becados}/{action=Index}/{id?}")
+    pattern: "{controller=Descuentos}/{action=Index}/{id?}")
     .WithStaticAssets();
 
 app.MapRazorPages()

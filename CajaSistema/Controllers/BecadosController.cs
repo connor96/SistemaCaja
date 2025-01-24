@@ -3,8 +3,6 @@ using CajaSistema.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Reflection.Metadata;
 
 namespace CajaSistema.Controllers
 {
@@ -14,18 +12,20 @@ namespace CajaSistema.Controllers
         public string idUsuarioActivo = "0000000001";
 
         public BecadosAlumnoBecado _becadoAlumnoBecado;
-        
+
         private readonly ApplicationDbContext _appdbContext;
         public BecadosController(ApplicationDbContext context)
         {
             _appdbContext = context;
         }
 
+
+
         [HttpGet]
         public IActionResult Index()
         {
             var listaAlumnosBecados = _appdbContext.becadosListaAlumnos.FromSqlRaw("EXEC CajaWeb.sp_listarAlumnosBecados").ToList();
-            ViewBag.listaAlumnos= listaAlumnosBecados;
+            ViewBag.listaAlumnos = listaAlumnosBecados;
             return View();
         }
 
@@ -37,16 +37,6 @@ namespace CajaSistema.Controllers
             var listaAlumnos = _appdbContext.becadosListaALumnosBusqueda.FromSqlRaw("CajaWeb.sp_busquedaAlumnos @cadenabuscar", parametro).ToList();
             return Json(listaAlumnos);
         }
-
-
-        public JsonResult BusquedaAlumnosIdPersona(string cadena)
-        {
-
-            var parametro = new SqlParameter("@cadenabuscar", cadena);
-            var listaAlumnos = _appdbContext.becadosListaALumnosBusqueda.FromSqlRaw("CajaWeb.sp_busquedaAlumnosIdPersona @cadenabuscar", parametro).ToList();
-            return Json(listaAlumnos);
-        }   
-
         //[HttpPost]
         //public JsonResult MostrarAlumnoSeleccionado(string idPersona)
         //{
@@ -60,7 +50,7 @@ namespace CajaSistema.Controllers
         public JsonResult RegistrarBecado(string idPersona)
         {
             _becadoAlumnoBecado = new BecadosAlumnoBecado();
-            _becadoAlumnoBecado.idPersona= idPersona;
+            _becadoAlumnoBecado.idPersona = idPersona;
             _becadoAlumnoBecado.estado = true;
             _becadoAlumnoBecado.usuarioRegistro = idUsuarioActivo;
             _becadoAlumnoBecado.fechaRegistro = DateTime.Now;

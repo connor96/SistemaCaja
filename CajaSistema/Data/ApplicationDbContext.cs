@@ -2,29 +2,29 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 
 namespace CajaSistema.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<UserIdentity,RoleIdentity,string>
+    public class ApplicationDbContext : IdentityDbContext<UserIdentity, RoleIdentity, string>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
-        {   
+        {
         }
 
         //Becados
         public DbSet<BecadosAlumnoBusqueda> becadosListaALumnosBusqueda { get; set; }
         public DbSet<BecadosListaBecados> becadosListaAlumnos { get; set; }
-        public DbSet<BecadosAlumnoBecado> becadosAlumnoBecados {  get; set; }
+        public DbSet<BecadosAlumnoBecado> becadosAlumnoBecados { get; set; }
 
         //Descuento
         public DbSet<DescuentoListaDescuentos> descuentoListaDescuentos { get; set; }
-        public DbSet<DescuentoDescuento> descuentoDescuento {  get; set; }
+        public DbSet<DescuentoDescuento> descuentoDescuento { get; set; }
+      
 
         //Persona
-        public DbSet<PersonaPersona> personaPersona {  get; set; }
-        
+        public DbSet<PersonaPersona> personaPersona { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -49,7 +49,7 @@ namespace CajaSistema.Data
 
             });
 
-            builder.Entity<BecadosAlumnoBecado>().ToTable(name:"tb_Becados",schema:"Intranet", t => t.ExcludeFromMigrations());
+            builder.Entity<BecadosAlumnoBecado>().ToTable(name: "tb_Becados", schema: "Intranet", t => t.ExcludeFromMigrations());
 
             builder.Entity<BecadosAlumnoBusqueda>().HasNoKey();
             builder.Entity<BecadosAlumnoBusqueda>().ToTable(nameof(BecadosAlumnoBusqueda), t => t.ExcludeFromMigrations());
@@ -61,8 +61,9 @@ namespace CajaSistema.Data
             builder.Entity<DescuentoListaDescuentos>(act =>
             {
                 act.HasKey(col => col.IdDescuento);
+                act.Property(col => col.IdDescuento).HasColumnType("TINYINT").HasConversion<byte>();
                 act.Property(col => col.DesDescuento);
-                act.Property(col => col.Estado);
+                act.Property(col => col.Estado).HasColumnType("TINYINT").HasConversion<byte>();
             });
             builder.Entity<DescuentoListaDescuentos>().ToTable(name: "Descuento", schema: "Instituciones", t => t.ExcludeFromMigrations());
 
@@ -70,8 +71,8 @@ namespace CajaSistema.Data
             {
                 act.HasKey(col => col.idDescuento);
                 act.Property(col => col.idPersona);
-                act.Property(col => col.idDescuentoConcepto);
-                act.Property(col => col.monto);
+                act.Property(col => col.idDescuentoConcepto).HasColumnType("TINYINT").HasConversion<byte>();
+                act.Property(col => col.monto).HasColumnType("decimal").HasConversion<double>();
                 act.Property(col => col.estado);
                 act.Property(col => col.usuarioRegistro);
             });
@@ -79,8 +80,23 @@ namespace CajaSistema.Data
 
 
             //Persona
-            builder.Entity<PersonaPersona>().HasNoKey();
-            builder.Entity<PersonaPersona>().ToView(name: "v_Persona", schema: "dbo");
+            builder.Entity<PersonaPersona>(
+                act =>
+                {
+                    act.HasNoKey();
+                    act.Property(col => col.IdPersona);
+                    act.Property(col => col.ApellidoPaterno);
+                    act.Property(col => col.ApellidoMaterno);
+                    act.Property(col => col.Nombres1);
+                    act.Property(col => col.Nombres2);
+                    act.Property(col => col.Name);
+                    act.Property(col => col.DNI);
+                    act.Property(col => col.FNacimiento);
+                    act.Property(col => col.Email);
+                    act.Property(col => col.Telefono);
+
+                });
+            builder.Entity<PersonaPersona>().ToView(name: "v_Persona");
 
         }
     }
