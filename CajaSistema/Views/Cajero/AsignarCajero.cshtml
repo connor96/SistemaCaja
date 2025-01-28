@@ -1,0 +1,117 @@
+﻿@model IEnumerable<dynamic>
+@{
+    ViewData["Title"] = "AsignarCajero";
+    IEnumerable<PeriodoIntranet> _listaPeriodo = ViewBag.periodo;
+}
+
+<h1>AsignarCajero</h1>
+<br />
+<div class="row container">
+    
+    <div class="col-4">
+        <select class="form-select" aria-label="Default select example" id="sede">
+            <option selected>Seleccione la sede</option>
+            @foreach (var item in Model)
+            {
+                <option value="@item.IdSede">@item.Sede</option>
+            }
+
+        </select>
+    </div>
+    <div class="col-4">
+        <select class="form-select" aria-label="Default select example" id="periodo">
+            <option selected>Seleccione el periodo</option>
+            @foreach (var item in _listaPeriodo)
+            {
+                <option value="@item.periodoTexto">@item.periodoDescripcion</option>
+            }
+           
+        </select>
+    </div>
+
+    <div class="col-2">
+
+    </div>
+    <div class="col-2">
+        <a onclick="_listarCajeros()" class="btn btl-secondary">Listar</a>
+
+    </div>
+   @*  <div class="col-2">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Agregar Cajero
+        </button>
+    </div> *@
+
+    <div class="row">
+        <div class="col-4">
+            <select class="form-select" aria-label="Default select example" id="cajerosLista">
+                <option selected>Seleccione el periodo</option>
+                @foreach (var item in _listaPeriodo)
+                {
+                    <option value="@item.periodoTexto">@item.periodoDescripcion</option>
+                }
+
+            </select>
+            <br />
+            <a class="btn btn-outline-secondary" onclick="agregarCajero()" disabled>Agregar Cajero Seleccionado</a>
+           
+
+        </div>
+        <div class="col-8">
+            <div class="col-12 mb-3">
+
+                <table class="table table-striped table-hover" id="tabla_cajeros" style="opacity:0">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Sede</th>
+                            <th scope="col">Codigo</th>
+                            <th scope="col">Apellidos y Nombres</th>
+                            <th scope="col">Desactivar</th>
+                            <th scope="col">Eiminar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    function _listarCajeros(){
+        var sede=document.getElementById("sede").value;
+        var periodo=document.getElementById("periodo").value;
+        
+        //Busqueda de tabla
+
+        //Cargar elementos al combo
+
+
+          $('#cajerosLista').prepend($('<option />', {
+              text: 'I: Líder ' + ($lider_list.length + 1),
+              value: $lider_list.length + 1,
+            }));
+
+
+    }
+
+    function agregarCajero(){
+        var sede=document.getElementById("sede").value;
+        var periodo=document.getElementById("periodo").value;
+        var usuarioCajero=document.getElementById("cajerosLista").value;
+
+        var objeto={
+            idSede:sede,
+            periodo:periodo,
+            usuarioCajero:usuarioCajero
+        };
+
+    }
+
+</script>

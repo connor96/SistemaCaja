@@ -95,5 +95,63 @@ namespace CajaSistema.Controllers
             }
         }
 
+        [HttpPost]
+        public JsonResult RetirarAlumnoDescuento(string idDescuento)
+        {
+            _descuendoClase = new DescuentoDescuento();
+            try
+            {
+                if(idDescuento is null) { idDescuento = "0"; }
+
+                _descuendoClase = _appdbContext.descuentoDescuento.Find(int.Parse(idDescuento));
+
+                if (_descuendoClase.idDescuento == 0)
+                {
+                    return Json("Error");
+                }
+                else
+                {
+                    _descuendoClase.estado = 0;
+                    _appdbContext.descuentoDescuento.Update(_descuendoClase);
+                    _appdbContext.SaveChanges();
+                    return Json("ok");
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Json(e.Message);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult ActivarAlumnoDescuento(string idDescuento)
+        {
+            _descuendoClase = new DescuentoDescuento();
+            try
+            {
+                if (idDescuento is null) { idDescuento = "0"; }
+
+                _descuendoClase = _appdbContext.descuentoDescuento.Find(int.Parse(idDescuento));
+
+                if (_descuendoClase.idDescuento == 0)
+                {
+                    return Json("Error");
+                }
+                else
+                {
+                    _descuendoClase.estado = 1;
+                    _appdbContext.descuentoDescuento.Update(_descuendoClase);
+                    _appdbContext.SaveChanges();
+                    return Json("ok");
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Json(e.Message);
+            }
+        }
+
     }
 }

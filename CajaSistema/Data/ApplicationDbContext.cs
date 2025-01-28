@@ -25,6 +25,16 @@ namespace CajaSistema.Data
         //Persona
         public DbSet<PersonaPersona> personaPersona { get; set; }
 
+        //Cajero
+        public DbSet<CajeroCajeroActivo> cajeroCajeroActivos { get; set; }
+
+        //Sede
+        public DbSet<InstitucionSede> institucionSedes { get; set; }
+
+        //Periodo Matricula
+        public DbSet<PeriodoIntranet> periodoIntranets { get; set; }
+        public DbSet<CajeroAsignacionCajero> cajeroAsignacionCajeros { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -97,6 +107,55 @@ namespace CajaSistema.Data
 
                 });
             builder.Entity<PersonaPersona>().ToView(name: "v_Persona");
+
+            //Cajero
+            builder.Entity<CajeroCajeroActivo>(
+                act =>
+                {
+                    act.HasKey(col=>col.idCajeroActivo);
+                    act.Property(col => col.usuarioCajero);
+                    act.Property(col => col.usuarioRegistro);
+                    act.Property(col => col.fechaRegistro);
+                }
+            );
+            builder.Entity<CajeroCajeroActivo>().ToTable(name: "tb_CajerosActivo", schema: "CajaWeb", t => t.ExcludeFromMigrations());
+
+            //Sede
+            builder.Entity<InstitucionSede>(
+                act =>
+                {
+                    act.HasKey(col => col.IdSede);
+                    act.Property(col => col.IdSede).HasColumnType("TINYINT").HasConversion<byte>();
+                    act.Property(col => col.Sede);
+                    act.Property(col => col.Estado).HasColumnType("TINYINT").HasConversion<byte>(); ;
+                }
+            );
+            builder.Entity<InstitucionSede>().ToTable(name: "Sede", schema: "Instituciones", t => t.ExcludeFromMigrations());
+
+            //Periodo matricula
+            builder.Entity<PeriodoIntranet>(
+                act =>
+                {
+                    act.HasKey(col => col.idPeriodoMatricula);
+                    act.Property(col => col.periodoDescripcion);
+                    act.Property(col => col.periodoTexto);
+                    act.Property(col => col.estado);
+                }
+                );
+            builder.Entity<PeriodoIntranet>().ToTable(name: "tb_PeriodoMatricula", schema: "Intranet", t => t.ExcludeFromMigrations());
+
+            builder.Entity<CajeroAsignacionCajero>(
+                act =>
+                {
+                    act.HasKey(col => col.idCajeroAsignacion);
+                    act.Property(col=>col.idSede);
+                    act.Property(col => col.periodo);
+                    act.Property(col => col.usuarioCajero);
+                    act.Property(col => col.estado);
+                    act.Property(col => col.fechaRegistro);
+                    act.Property(col => col.usuarioRegistro);
+                });
+            builder.Entity<CajeroAsignacionCajero>().ToTable(name: "tb_AsignacionCajero", schema: "CajaWeb", t => t.ExcludeFromMigrations());
 
         }
     }

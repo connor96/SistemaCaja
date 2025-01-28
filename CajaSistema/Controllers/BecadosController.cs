@@ -33,10 +33,29 @@ namespace CajaSistema.Controllers
         public JsonResult BusquedaAlumnos(string cadena)
         {
 
+            if(cadena is null)
+            {
+                cadena = "";
+            }
             var parametro = new SqlParameter("@cadenabuscar", cadena);
             var listaAlumnos = _appdbContext.becadosListaALumnosBusqueda.FromSqlRaw("CajaWeb.sp_busquedaAlumnos @cadenabuscar", parametro).ToList();
             return Json(listaAlumnos);
         }
+
+
+        [HttpPost]
+        public JsonResult BusquedaAlumnosIdPersona(string cadena)
+        {
+
+            if (cadena is null)
+            {
+                cadena = "";
+            }
+            var parametro = new SqlParameter("@idPersona", cadena);
+            var listaAlumnos = _appdbContext.becadosListaALumnosBusqueda.FromSqlRaw("CajaWeb.sp_busquedaAlumnosIdPersona @idPersona", parametro).ToList();
+            return Json(listaAlumnos);
+        }
+
         //[HttpPost]
         //public JsonResult MostrarAlumnoSeleccionado(string idPersona)
         //{

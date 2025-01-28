@@ -73,14 +73,14 @@
                             </td>
                             @if (item.estado == 1)
                             {
-                                <td> <a class="btn btn-outline-secondary" onclick="retirarDescuento('@item.idDescuento','@item.idPersona')">Desactivar</a> </td>
+                                <td> <a class="btn btn-outline-secondary" onclick="retirarDescuento('@item.idDescuento')">Desactivar</a> </td>
                             }
                             else
                             {
-                                <td> <a class="btn btn-outline-secondary" onclick="activarDescuento('@item.idDescuento','@item.idPersona')">Activar</a> </td>
+                                <td> <a class="btn btn-outline-secondary" onclick="activarDescuento('@item.idDescuento')">Activar</a> </td>
                             }
 
-                            <td> <a class="btn btn-outline-danger" onclick="eliminarDescuento('@item.idDescuento','@item.idPersona')">Eliminar</a> </td>
+                            <td> <a class="btn btn-outline-danger" onclick="eliminarDescuento('@item.idDescuento')">Eliminar</a> </td>
                         </tr>
                         contador++;
                     }
@@ -157,10 +157,10 @@
 
 
                 </div>
-                <div class="modal-footer">
+               @*  <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
+                </div> *@
             </div>
         </div>
     </div>
@@ -237,6 +237,94 @@
 
 
     }
+
+    function eliminarDescuento(idBecado){
+
+        $.ajax({
+            url:'@Url.Action("EliminarAlumnoDescuento", "Descuentos")',
+            data:{idDescuento:idBecado},
+            type : 'POST',
+            dataType : 'json',
+            success : function(result) {
+
+                if(result='ok'){
+                        Swal.fire({
+                        title: "Exito!",
+                        text: "Se ha eliminado correctamente el alumno ",
+                        icon: "success"
+
+                    }).then((result)=>{
+                        location.reload();
+                    });
+                }else{
+                    alert('Disculpe, existió un problema');
+                }
+
+            },
+            error : function(xhr, status) {
+            alert('Disculpe, existió un problema');
+        }});
+
+    }
+
+    function retirarDescuento(idDescuento){
+
+        $.ajax({
+            url:'@Url.Action("RetirarAlumnoDescuento", "Descuentos")',
+            data:{idDescuento:idDescuento},
+            type : 'POST',
+            dataType : 'json',
+            success : function(result) {
+
+                if(result='ok'){
+                        Swal.fire({
+                        title: "Exito!",
+                        text: "Se ha retirado correctamente el descuento al alumno ",
+                        icon: "success"
+
+                    }).then((result)=>{
+                        location.reload();
+                    });
+                }else{
+                    alert('Disculpe, existió un problema');
+                }
+
+            },
+            error : function(xhr, status) {
+            alert('Disculpe, existió un problema');
+        }});
+
+    }
+
+    function activarDescuento(idDescuento){
+
+        $.ajax({
+            url:'@Url.Action("ActivarAlumnoDescuento", "Descuentos")',
+            data:{idDescuento:idDescuento},
+            type : 'POST',
+            dataType : 'json',
+            success : function(result) {
+
+                if(result='ok'){
+                        Swal.fire({
+                        title: "Exito!",
+                        text: "Se ha activado correctamente el descuento al alumno",
+                        icon: "success"
+
+                    }).then((result)=>{
+                        location.reload();
+                    });
+                }else{
+                    alert('Disculpe, existió un problema');
+                }
+
+            },
+            error : function(xhr, status) {
+            alert('Disculpe, existió un problema');
+        }});
+
+    }
+
 
 
 </script>

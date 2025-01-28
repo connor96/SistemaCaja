@@ -1,0 +1,245 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    IEnumerable<dynamic> _listaCajerosActivos = ViewBag.listaCajerosActivos;
+    int contador = 1;
+}
+
+
+
+<div class="row container">
+
+
+    <!-- Button trigger modal -->
+
+    <div class="row" style="padding-top:2em;padding-bottom:2em">
+        <div class="col-8">
+            <h4>Lista de Cajeros Activos</h4>
+        </div>
+
+
+        <div class="col-4 d-flex justify-content-end">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Agregar Cajero
+            </button>
+        </div>
+
+    </div>
+
+    <div id="listaAlumnos" class="listaAlumnos">
+
+        <table class="table table-hover" id="tablaAlumnos">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Codigo Persona</th>
+                    <th scope="col">Apellidos y Nombres</th>
+                    <th scope="col">Eliminar</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpo_tabla">
+
+                @if (_listaCajerosActivos.Count() < 1)
+                {
+                    <h5>No se encontraron cajeros activos</h5>
+                }
+                else
+                {
+                    @foreach (var item in _listaCajerosActivos)
+                    {
+                        <tr class="item-tr-@contador">
+                            <td scope="row">@contador</td>
+                            <td id="label-@contador">@item.usuarioCajero</td>
+                            <td id="label-@contador">@item.ApellidoPaterno @item.ApellidoMaterno @item.Nombres1 @item.Nombres2</td>
+                            <td> <a class="btn btn-outline-danger" onclick="eliminarElemento('@item.idCajeroActivo')">Eliminar</a> </td>
+                        </tr>
+                        contador++;
+                    }
+                }
+            </tbody>
+        </table>
+
+    </div>
+
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form asp-controller="Becados" asp-action="BusquedaAlumnos" method="POST">
+
+                        <div class="container row">
+                            <div class="col-10">
+                                <input  type="text" class="form-control" style="width:100%" id="cadena" placeholder="Busqueda de persona por DNI, codigo, o Apellidos y Nombres" />
+                            </div>
+                            <div class="col-2">
+                                <a class="btn btn-outline-secondary" onclick="buscarAlumno()">Buscar</a>
+                            </div>
+                        </div>
+                    </form>
+
+                    <br />
+
+                    <div class="row">
+
+                        <table class="table table-hover" id="tabla_alumnos" style="opacity:0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">IdAlumno</th>
+                                    <th scope="col">Nombres</th>
+                                    <th scope="col">Asignar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @* <tr>
+                                    <th scope="row">1</th>
+                                    <td>13254156</td>
+                                    <td>Otto</td>
+                                    <td><a class="btn btn-outline-secondary" onclick="agregarBecado('id','@contador')">Editar</a> </td>
+                                </tr> *@
+
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                </div>
+                @*  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div> *@
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div>
+
+<script>
+    function buscarAlumno(){
+        var textoIngresado =document.getElementById("cadena");
+
+        var table=document.getElementById("tabla_alumnos");
+
+
+        table.querySelector("tbody").innerHTML="";
+
+         $.ajax({
+                url:'@Url.Action("BusquedaPersonaCajero", "Cajero")',
+                data:{cadena:textoIngresado.value},
+                type : 'POST',
+                dataType : 'json',
+                success : function(json) {
+                    //console.log(json);
+                    var count=0;
+
+                    json.forEach((element) => {
+                        count++;
+                        $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td><a class="btn btn-outline-secondary" onclick="agregarCajero('+element.idPersona+')">Agregar</a> </tr>');
+
+                    });
+
+                    table.style.opacity='1';
+                },
+                error : function(xhr, status) {
+                alert('Disculpe, existió un problema');
+            }});
+
+
+    }
+
+
+    function agregarCajero(idPersona){
+         $.ajax({
+                url:'@Url.Action("BusquedaAlumnos", "Becados")',
+                data:{cadena:idPersona},
+                type : 'POST',
+                dataType : 'json',
+                success : function(json) {
+
+                    json.forEach((element) => {
+
+                         Swal.fire({
+                          title: "¿Seguro que desea asignar como cajero a "+element.fullname+"?",
+                          showDenyButton: false,
+                          showCancelButton: true,
+                          confirmButtonText: "Guardar"
+                        }).then((result) => {
+                          /* Read more about isConfirmed, isDenied below */
+                          if (result.isConfirmed) {
+
+                                $.ajax({
+                                    url:'@Url.Action("AgregarCajero", "Cajero")',
+                                    data:{idPersona:idPersona},
+                                    type : 'POST',
+                                    dataType : 'json',
+                                    success : function(result) {
+                                        console.log(result);
+                                        Swal.fire({
+                                              title: "Se ha guardado exitosamente!",
+                                              text: "El codigo de guardado es "+result,
+                                              icon: "success"
+
+                                            }).then((result)=>{
+                                                location.reload();
+                                            });
+
+
+
+                                    },
+                                    error : function(xhr, status) {
+                                    alert('Disculpe, existió un problema');
+                                }});
+
+                          }
+                        });
+
+
+
+                    });
+
+
+                },
+                error : function(xhr, status) {
+                alert('Disculpe, existió un problema');
+            }});
+
+    }
+
+    function eliminarElemento(idCajero){
+         $.ajax({
+            url:'@Url.Action("EliminarCajero", "Cajero")',
+            data:{idCajero:idCajero},
+            type : 'POST',
+            dataType : 'json',
+            success : function(result) {
+
+                if(result='ok'){
+                        Swal.fire({
+                        title: "Exito!",
+                        text: "Se ha eliminado correctamente el cajero ",
+                        icon: "success"
+
+                    }).then((result)=>{
+                        location.reload();
+                    });
+                }else{
+                    alert('Disculpe, existió un problema');
+                }
+
+            },
+            error : function(xhr, status) {
+            alert('Disculpe, existió un problema');
+        }});
+    }
+
+</script>
