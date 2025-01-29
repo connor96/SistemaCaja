@@ -190,7 +190,7 @@
 
                     json.forEach((element) => {
                         count++;
-                        $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td><a class="btn btn-outline-secondary" onclick="agregarDescuentoAlumno('+element.idPersona+')">Agregar</a> </tr>');
+                        $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td><a class="btn btn-outline-secondary" onclick="agregarDescuentoAlumno(`'+element.idPersona+'`)">Agregar</a> </tr>');
 
                     });
 

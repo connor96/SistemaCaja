@@ -35,6 +35,9 @@ namespace CajaSistema.Data
         public DbSet<PeriodoIntranet> periodoIntranets { get; set; }
         public DbSet<CajeroAsignacionCajero> cajeroAsignacionCajeros { get; set; }
 
+        //Auxiliar
+        public DbSet<AuxDobleString> auxDobleStrings { get; set; }  
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -156,6 +159,9 @@ namespace CajaSistema.Data
                     act.Property(col => col.usuarioRegistro);
                 });
             builder.Entity<CajeroAsignacionCajero>().ToTable(name: "tb_AsignacionCajero", schema: "CajaWeb", t => t.ExcludeFromMigrations());
+
+
+            builder.Entity<AuxDobleString>().HasNoKey().ToTable(nameof(AuxDobleString), t => t.ExcludeFromMigrations());
 
         }
     }

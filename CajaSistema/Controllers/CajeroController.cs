@@ -12,6 +12,9 @@ namespace CajaSistema.Controllers
     {
         public string idUsuarioActivo = "0000000001";
         CajeroCajeroActivo _cajeroActivo;
+        CajeroAsignacionCajero _cajeroAsignacionCajero;
+
+
         private readonly ApplicationDbContext _appdbContext;
         public CajeroController(ApplicationDbContext context)
         {
@@ -118,33 +121,44 @@ namespace CajaSistema.Controllers
         }
 
         [HttpPost]
-        public JsonResult _listaCajeros()
+        public JsonResult _listaCajeros(string periodo, int sede)
         {
-            var _listaCajeros = (from cajero in _appdbContext.cajeroCajeroActivos.ToList()
-                                 join persona in _appdbContext.personaPersona.ToList()
-                                 on cajero.usuarioCajero equals persona.IdPersona
-                                 select new
-                                 {
-                                     cajero.idCajeroActivo,
-                                     cajero.usuarioCajero,
-                                     persona.ApellidoPaterno,
-                                     persona.ApellidoMaterno,
-                                     persona.Nombres1
-                                 }).Except();
 
-            //var _listaCajeros = (from cajero in _appdbContext.cajeroCajeroActivos.ToList()
-            //                     join persona in _appdbContext.personaPersona.ToList()
-            //                     on cajero.usuarioCajero equals persona.IdPersona
-            //                     select new
-            //                     {
-            //                         cajero.idCajeroActivo,
-            //                         cajero.usuarioCajero,
-            //                         persona.ApellidoPaterno,
-            //                         persona.ApellidoMaterno,
-            //                         persona.Nombres1
-            //                     });
+            var parameters = new[]
+            {
+                new SqlParameter("@periodo",periodo),
+                new SqlParameter("@sede",sede)
+            };
+
+            var _listaCajeros = _appdbContext.auxDobleStrings.FromSqlRaw("[CajaWeb].[sp_listaCajeros] @periodo, @sede", parameters).ToList();
+
 
             return Json(_listaCajeros);
+        }
+
+        [HttpPost]
+        public JsonResult _tablaCajeros(string periodo, int sede)
+        {
+            var _listaTabla = (from cajeroAsignado in _appdbContext.cajeroAsignacionCajeros.ToList()
+                               join persona in _appdbContext.personaPersona.ToList()
+                               on cajeroAsignado.usuarioCajero equals persona.IdPersona
+                               join isede in _appdbContext.institucionSedes.ToList()
+                               on cajeroAsignado.idSede equals isede.IdSede
+                               where cajeroAsignado.periodo==periodo && cajeroAsignado.idSede==sede
+                               select new
+                               {
+                                   cajeroAsignado.idCajeroAsignacion,
+                                   cajeroAsignado.usuarioCajero,
+                                   isede.Sede,
+                                   persona.ApellidoPaterno,
+                                   persona.ApellidoMaterno,
+                                   persona.Nombres1,
+                                   persona.Nombres2,
+                                   cajeroAsignado.estado
+                               }
+                             );
+
+            return Json(_listaTabla);
         }
 
         [HttpPost]
@@ -165,13 +179,87 @@ namespace CajaSistema.Controllers
                     id = _cajeroRegistro.idCajeroAsignacion;
                     transaction.Commit();
                     return Json(id);
-
                 }
                 catch (Exception e)
                 {
                     transaction.Rollback();
                     return Json(e.Message);
                 }
+            }
+
+        }
+
+        [HttpPost]
+        public JsonResult DesactivarCajeroAsignado(string idCajeroAsignado)
+        {
+            if(idCajeroAsignado ==null)
+            {
+                return Json("No ha seleccionado ningun valor");
+            }
+            else
+            {
+                _cajeroAsignacionCajero = new CajeroAsignacionCajero();
+                _cajeroAsignacionCajero = _appdbContext.cajeroAsignacionCajeros.SingleOrDefault(x => x.idCajeroAsignacion == int.Parse(idCajeroAsignado));
+                _cajeroAsignacionCajero.estado = false;
+                _cajeroAsignacionCajero.usuarioRegistro = idUsuarioActivo;
+                try
+                {
+                    _appdbContext.cajeroAsignacionCajeros.Update(_cajeroAsignacionCajero);
+                    _appdbContext.SaveChanges();
+                    return Json("ok");
+                }
+                catch (Exception e)
+                {
+                    return Json(e.Message);
+                }
+            }
+        }
+
+        [HttpPost]
+        public JsonResult ActivarCajeroAsignado(string idCajeroAsignado)
+        {
+            if (idCajeroAsignado == null)
+            {
+                return Json("No ha seleccionado ningun valor");
+            }
+            else
+            {
+                _cajeroAsignacionCajero = new CajeroAsignacionCajero();
+                _cajeroAsignacionCajero = _appdbContext.cajeroAsignacionCajeros.SingleOrDefault(x => x.idCajeroAsignacion == int.Parse(idCajeroAsignado));
+                _cajeroAsignacionCajero.estado = true;
+                _cajeroAsignacionCajero.usuarioRegistro = idUsuarioActivo;
+                try
+                {
+                    _appdbContext.cajeroAsignacionCajeros.Update(_cajeroAsignacionCajero);
+                    _appdbContext.SaveChanges();
+                    return Json("ok");
+                }
+                catch (Exception e)
+                {
+                    return Json(e.Message);
+                }
+
+            }
+
+        }
+
+
+        [HttpPost]
+        public JsonResult EliminarCajeroAsignado(string idCajeroAsignado)
+        {
+           
+            _cajeroAsignacionCajero = new CajeroAsignacionCajero{ idCajeroAsignacion=int.Parse(idCajeroAsignado)};
+
+            try
+            {
+                _appdbContext.cajeroAsignacionCajeros.Attach(_cajeroAsignacionCajero);
+                _appdbContext.cajeroAsignacionCajeros.Remove(_cajeroAsignacionCajero);
+                _appdbContext.SaveChanges();
+                return Json("ok");
+            }
+            catch (Exception e)
+            {
+                return Json(e.Message);
             }
 
         }
