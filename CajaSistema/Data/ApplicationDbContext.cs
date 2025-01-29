@@ -38,6 +38,11 @@ namespace CajaSistema.Data
         //Auxiliar
         public DbSet<AuxDobleString> auxDobleStrings { get; set; }  
 
+        //Bancos
+        public DbSet<BancoBancos> bancoBancos { get; set; }
+        public DbSet<BancoCanalesPago> bancoCanalesPagos { get; set; } 
+        public DbSet<BancoFormasPago> bancoFormasPagos { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -162,6 +167,45 @@ namespace CajaSistema.Data
 
 
             builder.Entity<AuxDobleString>().HasNoKey().ToTable(nameof(AuxDobleString), t => t.ExcludeFromMigrations());
+
+            //Bancos
+            builder.Entity<BancoBancos>(
+                act =>
+                {
+                    act.HasKey(col => col.idBanco);
+                    act.Property(col => col.codigoBanco);
+                    act.Property(col => col.descripcionBanco);
+                    act.Property(col => col.fechaRegistro);
+                    act.Property(col => col.usuarioRegistro);
+
+                });
+            builder.Entity<BancoBancos>().ToTable(name: "tb_BancoBancos", schema: "CajaWeb", t => t.ExcludeFromMigrations());
+
+            builder.Entity<BancoCanalesPago>(
+                act =>
+                {
+                    act.HasKey(col => col.idCanalBanco);
+                    act.Property(col => col.codigoCanal);
+                    act.Property(col => col.descripcionCanal);
+                    act.Property(col => col.fechaRegistro);
+                    act.Property(col => col.usuarioRegistro);
+
+                });
+            builder.Entity<BancoCanalesPago>().ToTable(name: "tb_BancoCanalesPago", schema: "CajaWeb", t => t.ExcludeFromMigrations());
+
+            builder.Entity<BancoFormasPago>(
+                act =>
+                {
+                    act.HasKey(col => col.idFormaPago);
+                    act.Property(col => col.codigoFormaPago);
+                    act.Property(col => col.descripcionFormaPago);
+                    act.Property(col => col.fechaRegistro);
+                    act.Property(col => col.usuarioRegistro);
+
+                });
+            builder.Entity<BancoFormasPago>().ToTable(name: "tb_BancoFormasPago", schema: "CajaWeb", t => t.ExcludeFromMigrations());
+
+
 
         }
     }
