@@ -145,250 +145,255 @@
         
 </div>
 
-
-<script>
-
-    function buscarAlumno(){
-        var textoIngresado =document.getElementById("cadena");
-
-        var table=document.getElementById("tabla_alumnos");
-
-        
-        table.querySelector("tbody").innerHTML="";
-
-         $.ajax({
-                url:'@Url.Action("BusquedaAlumnos", "Becados")',
-                data:{cadena:textoIngresado.value},
-                type : 'POST',
-                dataType : 'json',
-                success : function(json) {
-                    //console.log(json);
-                    var count=0;
-
-                    json.forEach((element) => {
-                        count++;
-                        $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td><a class="btn btn-outline-secondary" onclick="agregarBecado(`'+element.idPersona+'`)">Agregar</a> </tr>');
-
-                    });
-                    
-                    table.style.opacity='1';
-                },
-                error : function(xhr, status) {
-                alert('Disculpe, existió un problema');
-            }});
+@section Scripts{
 
 
-    }
+    <script>
 
-    function agregarBecado(idPersona){
+        function buscarAlumno(){
+            var textoIngresado =document.getElementById("cadena");
 
-            
-              $.ajax({
-                url:'@Url.Action("BusquedaAlumnos", "Becados")',
-                data:{cadena:idPersona},
-                type : 'POST',
-                dataType : 'json',
-                success : function(json) {
-
-                    json.forEach((element) => {
-
-                         Swal.fire({
-                          title: "¿Seguro que desea becar a "+element.fullname+"?",
-                          showDenyButton: false,
-                          showCancelButton: true,
-                          confirmButtonText: "Guardar"                          
-                        }).then((result) => {
-                          /* Read more about isConfirmed, isDenied below */
-                          if (result.isConfirmed) {
-                            
-                                $.ajax({
-                                    url:'@Url.Action("RegistrarBecado", "Becados")',
-                                    data:{idPersona:idPersona},
-                                    type : 'POST',
-                                    dataType : 'json',
-                                    success : function(result) {
-                                        console.log(result);
-                                        Swal.fire({
-                                              title: "Se ha guardado exitosamente!",
-                                              text: "El codigo de guardado es "+result,
-                                              icon: "success"
-                                            
-                                            }).then((result)=>{
-                                                location.reload();
-                                            });
-
-                                            
-
-                                    },
-                                    error : function(xhr, status) {
-                                    alert('Disculpe, existió un problema');
-                                }});
-
-                          } 
-                        });
-                        
-                       
-
-                    });
-
-                    
-                },
-                error : function(xhr, status) {
-                alert('Disculpe, existió un problema');
-            }});
+            var table=document.getElementById("tabla_alumnos");
 
 
-           
-    }
+            table.querySelector("tbody").innerHTML="";
 
-
-    function eliminarElemento(idBecado,idPersona){
-
-         $.ajax({
-                url:'@Url.Action("BusquedaAlumnosIdPersona", "Becados")',
-                data:{cadena:idPersona},
-                type : 'POST',
-                dataType : 'json',
-                success : function(json) {
-                    console.log(json);
-                    json.forEach((element) => {
-                        console.log(element);
-
-                         Swal.fire({
-                          title: "¿Seguro que desea retirar la beca a "+element.fullname+"?",
-                          showDenyButton: false,
-                          showCancelButton: true,
-                          confirmButtonText: "Retirar"
-                        }).then((result) => {
-                          /* Read more about isConfirmed, isDenied below */
-                          if (result.isConfirmed) {
-
-                                $.ajax({
-                                    url:'@Url.Action("EliminarBecado", "Becados")',
-                                    data:{idBecado:idBecado},
-                                    type : 'POST',
-                                    dataType : 'json',
-                                    success : function(result) {
-                                        
-                                        if(result='ok'){
-                                             Swal.fire({
-                                              title: "Exito!",
-                                              text: "Se ha eliminado correctamente el alumno ",
-                                              icon: "success"
-
-                                            }).then((result)=>{
-                                                location.reload();
-                                            });
-                                        }else{
-                                            alert('Disculpe, existió un problema');
-                                        }
-
-                                    },
-                                    error : function(xhr, status) {
-                                    alert('Disculpe, existió un problema');
-                                }});
-
-                          }
-                        });
-
-
-
-                    });
-
-
-                },
-                error : function(xhr, status) {
-                alert('Disculpe, existió un problema');
-            }});
-
-
-    }
-
-
-    function activarElemento(idBecado){
-
-
-            Swal.fire({
-            title: "¿Seguro que desea activar la beca?",
-            showDenyButton: false,
-            showCancelButton: true,
-            confirmButtonText: "Activar"
-        }).then((result) => {
-            /* Read more about isConfirmed, isDenied below */
-            if (result.isConfirmed) {
-
-                $.ajax({
-                    url:'@Url.Action("ActivarBecado", "Becados")',
-                    data:{idBecado:idBecado},
+             $.ajax({
+                    url:'@Url.Action("BusquedaAlumnos", "Becados")',
+                    data:{cadena:textoIngresado.value},
                     type : 'POST',
                     dataType : 'json',
-                    success : function(result) {
+                    success : function(json) {
+                        //console.log(json);
+                        var count=0;
 
-                        if(result='ok'){
-                                Swal.fire({
-                                title: "Exito!",
-                                text: "Se ha activado correctamente el alumno ",
-                                icon: "success"
+                        json.forEach((element) => {
+                            count++;
+                            $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td><a class="btn btn-outline-secondary" onclick="agregarBecado(`'+element.idPersona+'`)">Agregar</a> </tr>');
 
-                            }).then((result)=>{
-                                location.reload();
+                        });
+
+                        table.style.opacity='1';
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                }});
+
+
+        }
+
+        function agregarBecado(idPersona){
+
+
+                  $.ajax({
+                    url:'@Url.Action("BusquedaAlumnos", "Becados")',
+                    data:{cadena:idPersona},
+                    type : 'POST',
+                    dataType : 'json',
+                    success : function(json) {
+
+                        json.forEach((element) => {
+
+                             Swal.fire({
+                              title: "¿Seguro que desea becar a "+element.fullname+"?",
+                              showDenyButton: false,
+                              showCancelButton: true,
+                              confirmButtonText: "Guardar"
+                            }).then((result) => {
+                              /* Read more about isConfirmed, isDenied below */
+                              if (result.isConfirmed) {
+
+                                    $.ajax({
+                                        url:'@Url.Action("RegistrarBecado", "Becados")',
+                                        data:{idPersona:idPersona},
+                                        type : 'POST',
+                                        dataType : 'json',
+                                        success : function(result) {
+                                            console.log(result);
+                                            Swal.fire({
+                                                  title: "Se ha guardado exitosamente!",
+                                                  text: "El codigo de guardado es "+result,
+                                                  icon: "success"
+
+                                                }).then((result)=>{
+                                                    location.reload();
+                                                });
+
+
+
+                                        },
+                                        error : function(xhr, status) {
+                                        alert('Disculpe, existió un problema');
+                                    }});
+
+                              }
                             });
-                        }else{
-                            alert('Disculpe, existió un problema');
-                        }
+
+
+
+                        });
+
 
                     },
                     error : function(xhr, status) {
                     alert('Disculpe, existió un problema');
                 }});
 
-            }
-        });
-
-    }
 
 
-    function desactivarElemento(idBecado){
+        }
 
 
-            Swal.fire({
-            title: "¿Seguro que desea desactivar la beca?",
-            showDenyButton: false,
-            showCancelButton: true,
-            confirmButtonText: "Desactivar"
-        }).then((result) => {
-            /* Read more about isConfirmed, isDenied below */
-            if (result.isConfirmed) {
+        function eliminarElemento(idBecado,idPersona){
 
-                $.ajax({
-                    url:'@Url.Action("DesactivarBecado", "Becados")',
-                    data:{idBecado:idBecado},
+             $.ajax({
+                    url:'@Url.Action("BusquedaAlumnosIdPersona", "Becados")',
+                    data:{cadena:idPersona},
                     type : 'POST',
                     dataType : 'json',
-                    success : function(result) {
+                    success : function(json) {
+                        console.log(json);
+                        json.forEach((element) => {
+                            console.log(element);
 
-                        if(result='ok'){
-                                Swal.fire({
-                                title: "Exito!",
-                                text: "Se ha desactivado correctamente el alumno ",
-                                icon: "success"
+                             Swal.fire({
+                              title: "¿Seguro que desea retirar la beca a "+element.fullname+"?",
+                              showDenyButton: false,
+                              showCancelButton: true,
+                              confirmButtonText: "Retirar"
+                            }).then((result) => {
+                              /* Read more about isConfirmed, isDenied below */
+                              if (result.isConfirmed) {
 
-                            }).then((result)=>{
-                                location.reload();
+                                    $.ajax({
+                                        url:'@Url.Action("EliminarBecado", "Becados")',
+                                        data:{idBecado:idBecado},
+                                        type : 'POST',
+                                        dataType : 'json',
+                                        success : function(result) {
+
+                                            if(result='ok'){
+                                                 Swal.fire({
+                                                  title: "Exito!",
+                                                  text: "Se ha eliminado correctamente el alumno ",
+                                                  icon: "success"
+
+                                                }).then((result)=>{
+                                                    location.reload();
+                                                });
+                                            }else{
+                                                alert('Disculpe, existió un problema');
+                                            }
+
+                                        },
+                                        error : function(xhr, status) {
+                                        alert('Disculpe, existió un problema');
+                                    }});
+
+                              }
                             });
-                        }else{
-                            alert('Disculpe, existió un problema');
-                        }
+
+
+
+                        });
+
 
                     },
                     error : function(xhr, status) {
                     alert('Disculpe, existió un problema');
                 }});
 
-            }
-        });
 
-    }
+        }
 
 
-</script>
+        function activarElemento(idBecado){
+
+
+                Swal.fire({
+                title: "¿Seguro que desea activar la beca?",
+                showDenyButton: false,
+                showCancelButton: true,
+                confirmButtonText: "Activar"
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+
+                    $.ajax({
+                        url:'@Url.Action("ActivarBecado", "Becados")',
+                        data:{idBecado:idBecado},
+                        type : 'POST',
+                        dataType : 'json',
+                        success : function(result) {
+
+                            if(result='ok'){
+                                    Swal.fire({
+                                    title: "Exito!",
+                                    text: "Se ha activado correctamente el alumno ",
+                                    icon: "success"
+
+                                }).then((result)=>{
+                                    location.reload();
+                                });
+                            }else{
+                                alert('Disculpe, existió un problema');
+                            }
+
+                        },
+                        error : function(xhr, status) {
+                        alert('Disculpe, existió un problema');
+                    }});
+
+                }
+            });
+
+        }
+
+
+        function desactivarElemento(idBecado){
+
+
+                Swal.fire({
+                title: "¿Seguro que desea desactivar la beca?",
+                showDenyButton: false,
+                showCancelButton: true,
+                confirmButtonText: "Desactivar"
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+
+                    $.ajax({
+                        url:'@Url.Action("DesactivarBecado", "Becados")',
+                        data:{idBecado:idBecado},
+                        type : 'POST',
+                        dataType : 'json',
+                        success : function(result) {
+
+                            if(result='ok'){
+                                    Swal.fire({
+                                    title: "Exito!",
+                                    text: "Se ha desactivado correctamente el alumno ",
+                                    icon: "success"
+
+                                }).then((result)=>{
+                                    location.reload();
+                                });
+                            }else{
+                                alert('Disculpe, existió un problema');
+                            }
+
+                        },
+                        error : function(xhr, status) {
+                        alert('Disculpe, existió un problema');
+                    }});
+
+                }
+            });
+
+        }
+
+
+    </script>
+
+
+}

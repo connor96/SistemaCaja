@@ -81,210 +81,215 @@
 
 </div>
 
-<script>
+@section Scripts{
 
-    function _listarCajeros(){
-        var sede=document.getElementById("sede").value;
-        var periodo=document.getElementById("periodo").value;
-        
-        document.getElementById("cajerosLista").innerHTML='';
-        $('#cajerosLista').append('<option value=null selected=”selected”>Seleccione cajero a asignar</option>');
-        
+    <script>
 
-         var table=document.getElementById("tabla_cajeros");
-         var divAsignaciones=document.getElementById("divAsignaciones");
+        function _listarCajeros(){
+            var sede=document.getElementById("sede").value;
+            var periodo=document.getElementById("periodo").value;
+
+            document.getElementById("cajerosLista").innerHTML='';
+            $('#cajerosLista').append('<option value=null selected=”selected”>Seleccione cajero a asignar</option>');
 
 
-        table.querySelector("tbody").innerHTML="";
-
-        //Cargar elementos al combo
-
-         $.ajax({
-            url:'@Url.Action("_listaCajeros", "Cajero")',
-            data:{periodo:periodo,sede:sede},
-            type : 'POST',
-            dataType : 'json',
-            success : function(result) {
-
-                //console.log(result);
-
-                if(result.length>0){
-                       $.each(result,function(bb){
-
-                        $('#cajerosLista').append('<option value='+result[bb].cadena1+' >'+result[bb].cadena2+'</option>');
-                    });
-
-                }                
-               
-                //Busqueda de tabla
+             var table=document.getElementById("tabla_cajeros");
+             var divAsignaciones=document.getElementById("divAsignaciones");
 
 
-                $.ajax({
-                url:'@Url.Action("_tablaCajeros", "Cajero")',
+            table.querySelector("tbody").innerHTML="";
+
+            //Cargar elementos al combo
+
+             $.ajax({
+                url:'@Url.Action("_listaCajeros", "Cajero")',
                 data:{periodo:periodo,sede:sede},
                 type : 'POST',
                 dataType : 'json',
-                success : function(resultados) {
+                success : function(result) {
 
-                    console.log(resultados);
+                    //console.log(result);
 
-                    var count=0;
+                    if(result.length>0){
+                           $.each(result,function(bb){
 
-                    resultados.forEach((element) => {
-                        count++;
-                        if(element.estado){
-                             $(table).find('tbody').append('<tr> <td>' + count + '</td> <td>' + element.sede + '</td> <td> ' + element.usuarioCajero + ' </td> <td> ' + element.apellidoPaterno+' '+element.apellidoMaterno+' '+element.nombres1 + ' </td>  <td style="color:blue"> Activo </td>  <td><a class="btn btn-outline-primary" onclick="desactivarCajeroActivo('+element.idCajeroAsignacion+')">Desactivar</a> </td>  <td><a class="btn btn-outline-danger" onclick="eliminarCajeroActivo('+element.idCajeroAsignacion+')">Eliminar</a> </td> </tr>');
-                        }else{
-                             $(table).find('tbody').append('<tr> <td>' + count + '</td> <td>' + element.sede + '</td> <td> ' + element.usuarioCajero + ' </td> <td> ' + element.apellidoPaterno+' '+element.apellidoMaterno+' '+element.nombres1 + ' </td>  <td style="color:red"> Inactivo </td>  <td><a class="btn btn-outline-secondary" onclick="activarCajeroActivo('+element.idCajeroAsignacion+')">Activar</a> </td><td><a class="btn btn-outline-danger" onclick="eliminarCajeroActivo('+element.idCajeroAsignacion+')">Eliminar</a> </td> </tr>');
-                        }
-                       
+                            $('#cajerosLista').append('<option value='+result[bb].cadena1+' >'+result[bb].cadena2+'</option>');
+                        });
 
-                    });
+                    }
+
+                    //Busqueda de tabla
 
 
-                    divAsignaciones.style.opacity='1';
-                    //table.style.opacity='1';
-                   
+                    $.ajax({
+                    url:'@Url.Action("_tablaCajeros", "Cajero")',
+                    data:{periodo:periodo,sede:sede},
+                    type : 'POST',
+                    dataType : 'json',
+                    success : function(resultados) {
+
+                        console.log(resultados);
+
+                        var count=0;
+
+                        resultados.forEach((element) => {
+                            count++;
+                            if(element.estado){
+                                 $(table).find('tbody').append('<tr> <td>' + count + '</td> <td>' + element.sede + '</td> <td> ' + element.usuarioCajero + ' </td> <td> ' + element.apellidoPaterno+' '+element.apellidoMaterno+' '+element.nombres1 + ' </td>  <td style="color:blue"> Activo </td>  <td><a class="btn btn-outline-primary" onclick="desactivarCajeroActivo('+element.idCajeroAsignacion+')">Desactivar</a> </td>  <td><a class="btn btn-outline-danger" onclick="eliminarCajeroActivo('+element.idCajeroAsignacion+')">Eliminar</a> </td> </tr>');
+                            }else{
+                                 $(table).find('tbody').append('<tr> <td>' + count + '</td> <td>' + element.sede + '</td> <td> ' + element.usuarioCajero + ' </td> <td> ' + element.apellidoPaterno+' '+element.apellidoMaterno+' '+element.nombres1 + ' </td>  <td style="color:red"> Inactivo </td>  <td><a class="btn btn-outline-secondary" onclick="activarCajeroActivo('+element.idCajeroAsignacion+')">Activar</a> </td><td><a class="btn btn-outline-danger" onclick="eliminarCajeroActivo('+element.idCajeroAsignacion+')">Eliminar</a> </td> </tr>');
+                            }
+
+
+                        });
+
+
+                        divAsignaciones.style.opacity='1';
+                        //table.style.opacity='1';
+
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                   }});
+
+
+
+
                 },
                 error : function(xhr, status) {
                 alert('Disculpe, existió un problema');
                }});
 
 
+              // $('#cajerosLista').prepend($('<option />', {
+              //     text: 'I: Líder ' + ($lider_list.length + 1),
+              //     value: $lider_list.length + 1,
+              //   }));
+
+
+        }
+
+        function agregarCajero(){
+            var sede=document.getElementById("sede").value;
+            var periodo=document.getElementById("periodo").value;
+            var usuarioCajero=document.getElementById("cajerosLista").value;
+            console.log(usuarioCajero);
+
+            if(usuarioCajero =='null'){
+                alert('Seleccione un cajero a asignar');
+            }else{
+
+                var objeto={
+                idSede:sede,
+                periodo:periodo,
+                usuarioCajero:usuarioCajero
+                };
+
+                  $.ajax({
+                    url:'@Url.Action("RegistrarCajero", "Cajero")',
+                    data:{_cajeroRegistro:objeto},
+                    type : 'POST',
+                    dataType : 'json',
+                    success : function(resultados) {
+
+                         Swal.fire({
+                            title: "Se ha registrado exitosamente!",
+                            text: "El codigo de guardado es "+resultados,
+                            icon: "success"
+
+                        }).then((result)=>{
+
+                            _listarCajeros();
+
+                        });
+
+
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                   }});
+            }
+
+        }
+
+        function desactivarCajeroActivo(idAsignacion){
+             $.ajax({
+            url:'@Url.Action("DesactivarCajeroAsignado", "Cajero")',
+            data:{idCajeroAsignado:idAsignacion},
+            type : 'POST',
+            dataType : 'json',
+            success : function(resultados) {
+
+                 Swal.fire({
+                    title: "Se ha desactivado exitosamente!",
+
+                    icon: "success"
+
+                }).then((result)=>{
+                    _listarCajeros();
+                });
 
 
             },
             error : function(xhr, status) {
             alert('Disculpe, existió un problema');
-           }});
-
-
-          // $('#cajerosLista').prepend($('<option />', {
-          //     text: 'I: Líder ' + ($lider_list.length + 1),
-          //     value: $lider_list.length + 1,
-          //   }));
-
-
-    }
-
-    function agregarCajero(){
-        var sede=document.getElementById("sede").value;
-        var periodo=document.getElementById("periodo").value;
-        var usuarioCajero=document.getElementById("cajerosLista").value;
-        console.log(usuarioCajero);
-
-        if(usuarioCajero =='null'){
-            alert('Seleccione un cajero a asignar');
-        }else{
-
-            var objeto={
-            idSede:sede,
-            periodo:periodo,
-            usuarioCajero:usuarioCajero
-            };
-
-              $.ajax({
-                url:'@Url.Action("RegistrarCajero", "Cajero")',
-                data:{_cajeroRegistro:objeto},
-                type : 'POST',
-                dataType : 'json',
-                success : function(resultados) {
-
-                     Swal.fire({
-                        title: "Se ha registrado exitosamente!",
-                        text: "El codigo de guardado es "+resultados,
-                        icon: "success"
-
-                    }).then((result)=>{
-
-                        _listarCajeros();
-
-                    });
-
-   
-                },
-                error : function(xhr, status) {
-                alert('Disculpe, existió un problema');
-               }});
+            }});
         }
 
-    }
 
-    function desactivarCajeroActivo(idAsignacion){
-         $.ajax({
-        url:'@Url.Action("DesactivarCajeroAsignado", "Cajero")',
-        data:{idCajeroAsignado:idAsignacion},
-        type : 'POST',
-        dataType : 'json',
-        success : function(resultados) {
+         function activarCajeroActivo(idAsignacion){
+             $.ajax({
+            url:'@Url.Action("ActivarCajeroAsignado", "Cajero")',
+            data:{idCajeroAsignado:idAsignacion},
+            type : 'POST',
+            dataType : 'json',
+            success : function(resultados) {
 
-             Swal.fire({
-                title: "Se ha desactivado exitosamente!",
+                Swal.fire({
+                    title: "Se ha activado exitosamente!",
 
-                icon: "success"
+                    icon: "success"
 
-            }).then((result)=>{
-                _listarCajeros();
-            });
-
-
-        },
-        error : function(xhr, status) {
-        alert('Disculpe, existió un problema');
-        }});
-    }
+                }).then((result)=>{
+                    _listarCajeros();
+                });
 
 
-     function activarCajeroActivo(idAsignacion){
-         $.ajax({
-        url:'@Url.Action("ActivarCajeroAsignado", "Cajero")',
-        data:{idCajeroAsignado:idAsignacion},
-        type : 'POST',
-        dataType : 'json',
-        success : function(resultados) {
+            },
+            error : function(xhr, status) {
+            alert('Disculpe, existió un problema');
+            }});
+        }
 
-            Swal.fire({
-                title: "Se ha activado exitosamente!",
-               
-                icon: "success"
+         function eliminarCajeroActivo(idAsignacion){
+             $.ajax({
+            url:'@Url.Action("EliminarCajeroAsignado", "Cajero")',
+            data:{idCajeroAsignado:idAsignacion},
+            type : 'POST',
+            dataType : 'json',
+            success : function(resultados) {
 
-            }).then((result)=>{
-                _listarCajeros();
-            });
+                 Swal.fire({
+                    title: "Se ha eliminado exitosamente!",
 
+                    icon: "success"
 
-        },
-        error : function(xhr, status) {
-        alert('Disculpe, existió un problema');
-        }});
-    }
+                }).then((result)=>{
+                    _listarCajeros();
+                });
 
-     function eliminarCajeroActivo(idAsignacion){
-         $.ajax({
-        url:'@Url.Action("EliminarCajeroAsignado", "Cajero")',
-        data:{idCajeroAsignado:idAsignacion},
-        type : 'POST',
-        dataType : 'json',
-        success : function(resultados) {
-
-             Swal.fire({
-                title: "Se ha eliminado exitosamente!",
-                
-                icon: "success"
-
-            }).then((result)=>{
-                _listarCajeros();
-            });
-
-        },
-        error : function(xhr, status) {
-        alert('Disculpe, existió un problema');
-        }});
-    }
-
-
-   
+            },
+            error : function(xhr, status) {
+            alert('Disculpe, existió un problema');
+            }});
+        }
 
 
 
-</script>
+
+
+
+    </script>
+
+}
+

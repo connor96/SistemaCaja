@@ -1,7 +1,210 @@
-﻿
+﻿@model IEnumerable<CajaTransaccionCabecera>
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Vouchers Pendientes";
+    int contador = 1;
 }
 
-<h1>Index</h1>
+<div class="container">
+    <div class="row">
+
+
+
+
+        <h1>Vouchers Pendientes para el periodo</h1>
+
+        <div class="col-4 mb-3">
+            <a class="btn btn-primary" onclick="recargarTabla()"> Actualizar Tabla</a>
+        </div>
+        <div class="col-4 mb-3"></div>
+        <div class="col-4 mb-3"></div>
+
+
+        <div class="col-12" >
+
+            <table class="table table-hover" id="tablaTransacciones">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Fecha Pago</th>
+                        <th scope="col">Hora Pago</th>
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Nombre Completo</th>
+                        <th scope="col">Modalidad</th>
+                        <th scope="col">Curso</th>
+                        <th scope="col">Frecuencia - Horario</th>
+                        <th scope="col">Detalles</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <th scope="row">@contador</th>
+                            <td>@item.FechaTransaccion</td>
+                            <td>@item.HoraTransaccion</td>
+                            @if (item.Modalidad!="")
+                            {
+                                <td> <span class="badge text-bg-primary">Matricula</span> </td>
+                            }else{
+                                <td> <span class="badge text-bg-info">Otro</span></td>
+                            }
+                            
+                            <td>@item.NombreCompleto</td>
+                            <td>@item.Modalidad</td>
+                            <td>@item.curso</td>
+                            <td>@item.Horario</td>
+                            <td> <a class="btn btn-outline-success" onclick="detalleTransaccion('@item.IdTransaccionesPagadas')">Detalles</a> </td>
+                            
+                        </tr>
+                        contador++;
+                    }
+                   
+                </tbody>
+            </table>
+
+
+        </div>
+
+
+
+
+
+    </div>
+
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalTransacciones" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+
+        <div id="contenidoModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script>
+
+        function recargarTabla(){
+            var table=document.getElementById("tablaTransacciones");
+
+            table.querySelector("tbody").innerHTML="";
+
+             $.ajax({
+                    url:'@Url.Action("recargarTabla", "Transacciones")',
+                    type : 'POST',
+                    dataType : 'json',
+                    success : function(json) {
+
+                        
+                        var count=0;
+
+                        json.forEach((element) => {
+                            count++;
+                            // if(element.modalidad!=''){
+                            //     $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.fechaTransaccion.getDate()+'/'+element.fechaTransaccion.getMonth()+'/'+element.fechaTransaccion.getFullYear() + ' </td> <td> ' + element.horaTransaccion + ' </td> <td><span class="badge text-bg-primary">Matricula</span>  </td> <td> ' + element.nombreCompleto + ' </td> <td> ' + element.modalidad + ' </td> <td> ' + element.curso + ' </td> <td> ' + element.horario + ' </td>  <td>  <a class="btn btn-outline-success" onclick="detalleTransaccion('+ element.idTransaccionesPagadas +')">Detalles</a>  </td> </tr>');
+                            // }else{
+                            //      $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.fechaTransaccion.getDate()+'/'+element.fechaTransaccion.getMonth()+'/'+element.fechaTransaccion.getFullYear() + ' </td> <td> ' + element.horaTransaccion + ' </td> <span class="badge text-bg-info">Otro</span><td> ' + element.nombreCompleto + ' </td> <td> ' + element.modalidad + ' </td> <td> ' + element.curso + ' </td> <td> ' + element.horario + ' </td>  <td>  <a class="btn btn-outline-success" onclick="detalleTransaccion('+ element.idTransaccionesPagadas +')">Detalles</a>  </td> </tr>');
+                            // }
+
+                            if(element.modalidad!=''){
+                                $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.fechaTransaccion.toLocaleString().split(',')[0] + ' </td> <td> ' + element.horaTransaccion + ' </td> <td><span class="badge text-bg-primary">Matricula</span>  </td> <td> ' + element.nombreCompleto + ' </td> <td> ' + element.modalidad + ' </td> <td> ' + element.curso + ' </td> <td> ' + element.horario + ' </td>  <td>  <a class="btn btn-outline-success" onclick="detalleTransaccion('+ element.idTransaccionesPagadas +')">Detalles</a>  </td> </tr>');
+                            }else{
+                                 $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.fechaTransaccion.toLocaleString().split(',')[0] + ' </td> <td> ' + element.horaTransaccion + ' </td> <span class="badge text-bg-info">Otro</span><td> ' + element.nombreCompleto + ' </td> <td> ' + element.modalidad + ' </td> <td> ' + element.curso + ' </td> <td> ' + element.horario + ' </td>  <td>  <a class="btn btn-outline-success" onclick="detalleTransaccion('+ element.idTransaccionesPagadas +')">Detalles</a>  </td> </tr>');
+                            }
+                        });
+ 
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                }});
+
+
+
+        }
+
+        const containerModalTransacciones = document.getElementById("modalTransacciones");
+        const modalTransaccionesDetalle = new bootstrap.Modal(containerModalTransacciones);
+
+
+        function detalleTransaccion(idTransaccion){
+
+                var data = { id:idTransaccion};
+                var url = '@Url.Action("modalTransacciones", "Transacciones")';
+                $('#contenidoModal').load(url, data, function (responseTxt, statusTxt, xhr) {
+                    if (statusTxt == "success") {
+                        modalTransaccionesDetalle.show();
+                    }
+                });
+
+        }
+
+
+        function procesarPago(idTransaccionpago){
+
+            $.ajax({
+                    url:'@Url.Action("actualizarPago", "Transacciones")',
+                    type : 'POST',
+                    data:{idTransaccionPago:idTransaccionpago},
+                    dataType : 'json',
+                    success : function(json) {
+
+                        if(json='ok'){
+                             Swal.fire({
+                            title: "Se ha procesado exitosamente!",
+                            text: "Exito",
+                            icon: "success"
+
+                            }).then((result)=>{
+
+                                modalTransaccionesDetalle.hide();
+                               recargarTabla();
+
+
+                            });
+                        }else{
+                            Swal.fire({
+                            title: "ha ocurrido un error!",
+                            text: json,
+                            icon: "danger"
+
+                            }).then((result)=>{
+
+                               modalTransaccionesDetalle.hide();
+                               recargarTabla();
+
+                            });
+                        }
+
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                }});
+        }
+
+    </script>
+
+
+
+}
 

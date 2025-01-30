@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace CajaSistema.Data
 {
@@ -45,6 +46,8 @@ namespace CajaSistema.Data
 
         //Caja Transacciones
         public DbSet<CajaTransaccionCabecera> cajaTransaccionCabecera { get; set; }
+        public DbSet<CajaTransaccionDetalleCabecera> cajaTransaccionDetalleCabeceras { get; set; }
+        public DbSet<CajaTransaccionDetalleCuerpo> cajaTransaccionDetalleCuerpos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -210,6 +213,21 @@ namespace CajaSistema.Data
 
             //Caja Transaccion
             builder.Entity<CajaTransaccionCabecera>().HasNoKey().ToTable(nameof(CajaTransaccionCabecera),t=>t.ExcludeFromMigrations());
+
+            builder.Entity<CajaTransaccionDetalleCabecera>(
+                act =>
+                {
+                    act.Property(col => col.Monto).HasColumnType("decimal(18,2)").HasConversion<decimal>();
+                });
+             builder.Entity < CajaTransaccionDetalleCabecera>().HasNoKey().ToTable(nameof(CajaTransaccionDetalleCabecera), t => t.ExcludeFromMigrations());
+            builder.Entity<CajaTransaccionDetalleCuerpo>(
+
+                act =>
+                {
+                    act.Property(col => col.Monto).HasColumnType("decimal(18,2)").HasConversion<decimal>();
+                });
+            builder.Entity<CajaTransaccionDetalleCuerpo>().HasNoKey().ToTable(nameof(CajaTransaccionDetalleCuerpo),t=>t.ExcludeFromMigrations());
+
 
         }
     }

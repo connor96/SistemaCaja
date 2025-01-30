@@ -170,161 +170,169 @@
 
 </div>
 
-<script>
-    function buscarAlumno(){
-        var textoIngresado =document.getElementById("cadena");
+@section Scripts{
 
-        var table=document.getElementById("tabla_alumnos");
+    <script>
+        function buscarAlumno(){
+            var textoIngresado =document.getElementById("cadena");
 
-
-        table.querySelector("tbody").innerHTML="";
-
-         $.ajax({
-                url:'@Url.Action("BusquedaAlumnos", "Becados")',
-                data:{cadena:textoIngresado.value},
-                type : 'POST',
-                dataType : 'json',
-                success : function(json) {
-                    //console.log(json);
-                    var count=0;
-
-                    json.forEach((element) => {
-                        count++;
-                        $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td><a class="btn btn-outline-secondary" onclick="agregarDescuentoAlumno(`'+element.idPersona+'`)">Agregar</a> </tr>');
-
-                    });
-
-                    table.style.opacity='1';
-                },
-                error : function(xhr, status) {
-                alert('Disculpe, existió un problema');
-            }});
+            var table=document.getElementById("tabla_alumnos");
 
 
-    }
+            table.querySelector("tbody").innerHTML="";
 
-    function _activarAlumno(){
-        $('#cadena').removeAttr("disabled");
-        console.log('Soy un texto');
-        //var inputCadena =document.getElementById("cadena");
-    }
-
-
-    function agregarDescuentoAlumno(idPersona){
-            var idDescuento=document.getElementById('descuentoSeleccionado').value;
-
-            console.log(idDescuento);
-            
-            $.ajax({
-                    url:'@Url.Action("RegistrarAlumnoDescuento", "Descuentos")',
-                    data:{idPersona:idPersona,idDescuento:idDescuento},
+             $.ajax({
+                    url:'@Url.Action("BusquedaAlumnos", "Becados")',
+                    data:{cadena:textoIngresado.value},
                     type : 'POST',
                     dataType : 'json',
-                    success : function(result) {
-                        console.log(result);
-                        Swal.fire({
-                                title: "Se ha guardado exitosamente!",
-                                text: "El codigo de guardado es "+result,
-                                icon: "success"
+                    success : function(json) {
+                        //console.log(json);
+                        var count=0;
 
-                            }).then((result)=>{
-                                location.reload();
-                            });
+                        json.forEach((element) => {
+                            count++;
+                            $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td><a class="btn btn-outline-secondary" onclick="agregarDescuentoAlumno(`'+element.idPersona+'`)">Agregar</a> </tr>');
+
+                        });
+
+                        table.style.opacity='1';
                     },
                     error : function(xhr, status) {
                     alert('Disculpe, existió un problema');
                 }});
 
 
-    }
+        }
 
-    function eliminarDescuento(idBecado){
-
-        $.ajax({
-            url:'@Url.Action("EliminarAlumnoDescuento", "Descuentos")',
-            data:{idDescuento:idBecado},
-            type : 'POST',
-            dataType : 'json',
-            success : function(result) {
-
-                if(result='ok'){
-                        Swal.fire({
-                        title: "Exito!",
-                        text: "Se ha eliminado correctamente el alumno ",
-                        icon: "success"
-
-                    }).then((result)=>{
-                        location.reload();
-                    });
-                }else{
-                    alert('Disculpe, existió un problema');
-                }
-
-            },
-            error : function(xhr, status) {
-            alert('Disculpe, existió un problema');
-        }});
-
-    }
-
-    function retirarDescuento(idDescuento){
-
-        $.ajax({
-            url:'@Url.Action("RetirarAlumnoDescuento", "Descuentos")',
-            data:{idDescuento:idDescuento},
-            type : 'POST',
-            dataType : 'json',
-            success : function(result) {
-
-                if(result='ok'){
-                        Swal.fire({
-                        title: "Exito!",
-                        text: "Se ha retirado correctamente el descuento al alumno ",
-                        icon: "success"
-
-                    }).then((result)=>{
-                        location.reload();
-                    });
-                }else{
-                    alert('Disculpe, existió un problema');
-                }
-
-            },
-            error : function(xhr, status) {
-            alert('Disculpe, existió un problema');
-        }});
-
-    }
-
-    function activarDescuento(idDescuento){
-
-        $.ajax({
-            url:'@Url.Action("ActivarAlumnoDescuento", "Descuentos")',
-            data:{idDescuento:idDescuento},
-            type : 'POST',
-            dataType : 'json',
-            success : function(result) {
-
-                if(result='ok'){
-                        Swal.fire({
-                        title: "Exito!",
-                        text: "Se ha activado correctamente el descuento al alumno",
-                        icon: "success"
-
-                    }).then((result)=>{
-                        location.reload();
-                    });
-                }else{
-                    alert('Disculpe, existió un problema');
-                }
-
-            },
-            error : function(xhr, status) {
-            alert('Disculpe, existió un problema');
-        }});
-
-    }
+        function _activarAlumno(){
+            $('#cadena').removeAttr("disabled");
+            console.log('Soy un texto');
+            //var inputCadena =document.getElementById("cadena");
+        }
 
 
+        function agregarDescuentoAlumno(idPersona){
+                var idDescuento=document.getElementById('descuentoSeleccionado').value;
 
-</script>
+                console.log(idDescuento);
+
+                $.ajax({
+                        url:'@Url.Action("RegistrarAlumnoDescuento", "Descuentos")',
+                        data:{idPersona:idPersona,idDescuento:idDescuento},
+                        type : 'POST',
+                        dataType : 'json',
+                        success : function(result) {
+                            console.log(result);
+                            Swal.fire({
+                                    title: "Se ha guardado exitosamente!",
+                                    text: "El codigo de guardado es "+result,
+                                    icon: "success"
+
+                                }).then((result)=>{
+                                    location.reload();
+                                });
+                        },
+                        error : function(xhr, status) {
+                        alert('Disculpe, existió un problema');
+                    }});
+
+
+        }
+
+        function eliminarDescuento(idBecado){
+
+            $.ajax({
+                url:'@Url.Action("EliminarAlumnoDescuento", "Descuentos")',
+                data:{idDescuento:idBecado},
+                type : 'POST',
+                dataType : 'json',
+                success : function(result) {
+
+                    if(result='ok'){
+                            Swal.fire({
+                            title: "Exito!",
+                            text: "Se ha eliminado correctamente el alumno ",
+                            icon: "success"
+
+                        }).then((result)=>{
+                            location.reload();
+                        });
+                    }else{
+                        alert('Disculpe, existió un problema');
+                    }
+
+                },
+                error : function(xhr, status) {
+                alert('Disculpe, existió un problema');
+            }});
+
+        }
+
+        function retirarDescuento(idDescuento){
+
+            $.ajax({
+                url:'@Url.Action("RetirarAlumnoDescuento", "Descuentos")',
+                data:{idDescuento:idDescuento},
+                type : 'POST',
+                dataType : 'json',
+                success : function(result) {
+
+                    if(result='ok'){
+                            Swal.fire({
+                            title: "Exito!",
+                            text: "Se ha retirado correctamente el descuento al alumno ",
+                            icon: "success"
+
+                        }).then((result)=>{
+                            location.reload();
+                        });
+                    }else{
+                        alert('Disculpe, existió un problema');
+                    }
+
+                },
+                error : function(xhr, status) {
+                alert('Disculpe, existió un problema');
+            }});
+
+        }
+
+        function activarDescuento(idDescuento){
+
+            $.ajax({
+                url:'@Url.Action("ActivarAlumnoDescuento", "Descuentos")',
+                data:{idDescuento:idDescuento},
+                type : 'POST',
+                dataType : 'json',
+                success : function(result) {
+
+                    if(result='ok'){
+                            Swal.fire({
+                            title: "Exito!",
+                            text: "Se ha activado correctamente el descuento al alumno",
+                            icon: "success"
+
+                        }).then((result)=>{
+                            location.reload();
+                        });
+                    }else{
+                        alert('Disculpe, existió un problema');
+                    }
+
+                },
+                error : function(xhr, status) {
+                alert('Disculpe, existió un problema');
+            }});
+
+        }
+
+
+
+    </script>
+
+
+
+
+}
+
