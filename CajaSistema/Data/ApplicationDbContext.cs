@@ -43,6 +43,9 @@ namespace CajaSistema.Data
         public DbSet<BancoCanalesPago> bancoCanalesPagos { get; set; } 
         public DbSet<BancoFormasPago> bancoFormasPagos { get; set; }
 
+        //Caja Transacciones
+        public DbSet<CajaTransaccionCabecera> cajaTransaccionCabecera { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -205,7 +208,8 @@ namespace CajaSistema.Data
                 });
             builder.Entity<BancoFormasPago>().ToTable(name: "tb_BancoFormasPago", schema: "CajaWeb", t => t.ExcludeFromMigrations());
 
-
+            //Caja Transaccion
+            builder.Entity<CajaTransaccionCabecera>().HasNoKey().ToTable(nameof(CajaTransaccionCabecera),t=>t.ExcludeFromMigrations());
 
         }
     }
