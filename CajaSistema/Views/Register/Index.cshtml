@@ -1,0 +1,170 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model UserIdentity
+
+@{
+    ViewData["Title"] = "Register";
+    IEnumerable<IdentityRole> roles = ViewBag.Roles;
+    IEnumerable<UserIdentity> usuarios = ViewBag.Users;
+    int contador = 1;
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form id="registerForm" asp-controller="Register" asp-action="Registrar" method="post">
+            <h2>Create a new account.</h2>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="@Model.idPersona" class="form-control" aria-required="true" id="idPersona" />
+                <label asp-for="@Model.idPersona">IdPersona</label>
+                <span asp-validation-for="@Model.idPersona" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="@Model.aPaterno" class="form-control" aria-required="true" placeholder="Perez" id="aPaterno" />
+                <label asp-for="@Model.aPaterno">Apellido Paterno</label>
+                <span asp-validation-for="@Model.aPaterno" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="@Model.aMaterno" class="form-control" aria-required="true" placeholder="Perez" id="aMaterno" />
+                <label asp-for="@Model.aMaterno">Apellido Materno</label>
+                <span asp-validation-for="@Model.aMaterno" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="@Model.nombres1" class="form-control" aria-required="true" placeholder="Juan" id="nombres1" />
+                <label asp-for="@Model.nombres1">Primer Nombre</label>
+                <span asp-validation-for="@Model.nombres1" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="@Model.nombres2" class="form-control" aria-required="true" placeholder="Juan" id="nombres2" />
+                <label asp-for="@Model.nombres2">Segundo Nombre</label>
+                <span asp-validation-for="@Model.nombres1" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <select asp-for="@Model.rol" class="form-select" aria-label="Default select example">
+                    
+                    @foreach (var item in roles)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+                </select>
+
+                <label asp-for="@Model.rol">Rol</label>
+                <span asp-validation-for="@Model.rol" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="@Model.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" id="email" />
+                <label asp-for="@Model.Email">Email</label>
+                <span asp-validation-for="@Model.Email" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="@Model.password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                <label asp-for="@Model.password">Password</label>
+                <span asp-validation-for="@Model.password" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="@Model.confirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                <label asp-for="@Model.confirmPassword">Confirm Password</label>
+                <span asp-validation-for="@Model.confirmPassword" class="text-danger"></span>
+            </div>
+            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+        </form>
+    </div>
+    <div class="col-md-6 col-md-offset-2">
+        <section>
+            <h3>Lista de usuarios.</h3>
+            <hr />
+            <div>
+
+                <table class="table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Usuario</th>
+                            <th scope="col">Nombres Apellidos</th>
+                            <th scope="col">Rol</th>
+                            <th scope="col">Editar</th>
+                            <th scope="col">Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var item in usuarios)
+                        {
+                            <tr>
+                                <th scope="row">@contador</th>
+                                <td>@item.Email</td>
+                                <td>@item.aPaterno @item.aMaterno @item.nombres1 @item.nombres2</td>
+                                @foreach (var item2 in roles)
+                                {
+                                    if(item2.Id==item.rol)
+                                    {
+                                        <td>@item2.Name</td>
+                                    }
+                                }
+                                <td> <a class="btn btn-secondary" onclick="editarRol()">Editar Rol</a> </td>
+                                <td> <a class="btn btn-danger" onclick="eliminarUsuario()"> Eliminar</a> </td>
+                                
+                            </tr>
+                            contador++;
+                        }
+
+                       
+                    </tbody>
+                </table>
+
+
+            </div>
+
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $('#idPersona').keypress(function(e) {
+            var keycode = (e.keyCode ? e.keyCode : e.which);
+            if (keycode == '13') {
+
+                var texto=$('#idPersona').val();
+                
+
+                 $.ajax({
+                    url:'@Url.Action("buscarPersona", "Register")',
+                    data:{idpersona:texto},
+                    type : 'POST',
+                    dataType : 'json',
+                    success : function(json) {
+                        console.log(json);
+
+                        if(json!=null){
+                            $('#aPaterno').val(json[0].apellidoPaterno);
+                            $('#aMaterno').val(json[0].apellidoMaterno);
+                            $('#nombres1').val(json[0].nombres1);
+                            $('#nombres2').val(json[0].nombres2);
+                            $('#email').val(json[0].email);
+
+                        }
+
+
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                }});
+
+                return false;
+            }
+        });
+
+    </script>
+
+
+}
