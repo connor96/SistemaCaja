@@ -1,5 +1,6 @@
 ﻿using CajaSistema.Data;
 using CajaSistema.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pag
 
 namespace CajaSistema.Controllers
 {
+    [Authorize(Roles = "ADMINISTRADOR")]
     public class RegisterController : Controller
     {
         private readonly IUserStore<UserIdentity> _userStore;

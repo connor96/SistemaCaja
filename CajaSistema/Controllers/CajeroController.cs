@@ -1,5 +1,6 @@
 ﻿using CajaSistema.Data;
 using CajaSistema.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection.KeyManagement.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -8,6 +9,7 @@ using System.Transactions;
 
 namespace CajaSistema.Controllers
 {
+    [Authorize(Roles = "ADMINISTRADOR,TESORERO")]
     public class CajeroController : Controller
     {
         public string idUsuarioActivo = "0000000001";

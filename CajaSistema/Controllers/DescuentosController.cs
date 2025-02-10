@@ -1,9 +1,11 @@
 ﻿using CajaSistema.Data;
 using CajaSistema.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CajaSistema.Controllers
 {
+    [Authorize(Roles = "ADMINISTRADOR,ACADEMICO,MARKETING")]
     public class DescuentosController : Controller
     {
         private readonly ApplicationDbContext _appdbContext;

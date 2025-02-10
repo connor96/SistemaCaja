@@ -1,5 +1,6 @@
 ﻿using CajaSistema.Data;
 using CajaSistema.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using System.Transactions;
 
 namespace CajaSistema.Controllers
 {
+    [Authorize(Roles = "ADMINISTRADOR,TESORERO,CAJERO")]
     public class TransaccionesController : Controller
     {
         private readonly ApplicationDbContext _appdbContext;

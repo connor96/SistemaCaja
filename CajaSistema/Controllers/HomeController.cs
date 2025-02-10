@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace CajaSistema.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "ADMINISTRADOR,ACADEMICO,TESORERO,CAJERO,MARKETING")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
