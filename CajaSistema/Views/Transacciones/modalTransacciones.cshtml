@@ -19,8 +19,8 @@
 
                         <form>
                             <div class="mb-3">
-                                <label for="idAlumno" class="form-label">Codigo Alumno</label>
-                                <input type="text" class="form-control" id="idAlumno" aria-describedby="emailHelp" value="@Model.IdPersona">
+                                <label for="idAlumno" class="form-label">DNI Alumno</label>
+                                <input type="text" class="form-control" id="idAlumno" aria-describedby="emailHelp" value="@Model.DNI">
                             </div>
                            
                             <div class="mb-3">
@@ -30,18 +30,24 @@
 
                             <div class="mb-3">
                                 <label for="email" class="form-label">Correo</label>
-                                <input type="text" class="form-control" id="email" aria-describedby="emailHelp" value="">
+                                <input type="text" class="form-control" id="email" aria-describedby="emailHelp" value="@Model.Email">
                             </div>
 
                             <div class="mb-3">
                                 <label for="celular" class="form-label">Celular</label>
-                                <input type="text" class="form-control" id="celular" aria-describedby="emailHelp" value="">
+                                <input type="text" class="form-control" id="celular" aria-describedby="emailHelp" value="@Model.Telefono">
                             </div>
 
                             <div class="mb-3">
                                 <label for="sede" class="form-label">Sede</label>
                                 <input type="text" class="form-control" id="sede" aria-describedby="emailHelp" value="@Model.DetalleSede">
                             </div>
+
+                            <div class="mb-3">
+                                <label for="sede" class="form-label">Examen de ubicacion</label>
+                                <span class="badge bg-primary">No</span>
+                            </div>
+
                         </form>
 
 

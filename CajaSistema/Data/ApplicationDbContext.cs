@@ -23,6 +23,8 @@ namespace CajaSistema.Data
         public DbSet<DescuentoDescuento> descuentoDescuento { get; set; }
       
 
+        //public DbSet<UserIdentity> _identityUserDBSet { get; set; }
+
         //Persona
         public DbSet<PersonaPersona> personaPersona { get; set; }
 
@@ -33,7 +35,7 @@ namespace CajaSistema.Data
         public DbSet<InstitucionSede> institucionSedes { get; set; }
 
         //Periodo Matricula
-        public DbSet<PeriodoIntranet> periodoIntranets { get; set; }
+        //public DbSet<PeriodoIntranet> periodoIntranets { get; set; }
         public DbSet<CajeroAsignacionCajero> cajeroAsignacionCajeros { get; set; }
 
         //Auxiliar
@@ -48,7 +50,15 @@ namespace CajaSistema.Data
         public DbSet<CajaTransaccionCabecera> cajaTransaccionCabecera { get; set; }
         public DbSet<CajaTransaccionDetalleCabecera> cajaTransaccionDetalleCabeceras { get; set; }
         public DbSet<CajaTransaccionDetalleCuerpo> cajaTransaccionDetalleCuerpos { get; set; }
-       
+        public DbSet<CajaTransaccionPagados> cajaTransaccionPagados { get; set; }
+
+        //Periodo Matricula
+        public DbSet<ListaPeriodo> listaPeriodosPeriodos { get; set; }
+
+        //Redireccion
+        public DbSet<RedireccionCajeros> redireccionCajeros { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -147,16 +157,16 @@ namespace CajaSistema.Data
             builder.Entity<InstitucionSede>().ToTable(name: "Sede", schema: "Instituciones", t => t.ExcludeFromMigrations());
 
             //Periodo matricula
-            builder.Entity<PeriodoIntranet>(
-                act =>
-                {
-                    act.HasKey(col => col.idPeriodoMatricula);
-                    act.Property(col => col.periodoDescripcion);
-                    act.Property(col => col.periodoTexto);
-                    act.Property(col => col.estado);
-                }
-                );
-            builder.Entity<PeriodoIntranet>().ToTable(name: "tb_PeriodoMatricula", schema: "Intranet", t => t.ExcludeFromMigrations());
+            //builder.Entity<PeriodoIntranet>(
+            //    act =>
+            //    {
+            //        act.HasKey(col => col.idPeriodoMatricula);
+            //        act.Property(col => col.periodoDescripcion);
+            //        act.Property(col => col.periodoTexto);
+            //        act.Property(col => col.estado);
+            //    }
+            //    );
+            //builder.Entity<PeriodoIntranet>().ToTable(name: "tb_PeriodoMatricula", schema: "Intranet", t => t.ExcludeFromMigrations());
 
             builder.Entity<CajeroAsignacionCajero>(
                 act =>
@@ -227,6 +237,26 @@ namespace CajaSistema.Data
                     act.Property(col => col.Monto).HasColumnType("decimal(18,2)").HasConversion<decimal>();
                 });
             builder.Entity<CajaTransaccionDetalleCuerpo>().HasNoKey().ToTable(nameof(CajaTransaccionDetalleCuerpo),t=>t.ExcludeFromMigrations());
+
+
+            //Lista Periodo
+            builder.Entity<ListaPeriodo>(
+                act =>
+                {
+                    act.HasKey(col => col.idPeriodoMatricula);
+                    act.Property(col => col.periodoTexto);
+                    act.Property(col => col.periodoDescripcion);
+                    act.Property(col => col.fechaInicioMatricula);
+                    act.Property(col => col.fechaFinMatricula);
+                    act.Property(col => col.estado);
+                }
+            );
+            builder.Entity<ListaPeriodo>().ToTable(name: "tb_PeriodoMatricula", schema: "Intranet", t => t.ExcludeFromMigrations());
+
+            //Redireccion Cajeros
+            builder.Entity<RedireccionCajeros>().HasNoKey().ToTable(nameof(RedireccionCajeros), t => t.ExcludeFromMigrations());
+
+            builder.Entity<CajaTransaccionPagados>().HasNoKey().ToTable(nameof(CajaTransaccionPagados), t => t.ExcludeFromMigrations());
 
 
         }

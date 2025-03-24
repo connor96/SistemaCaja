@@ -59,7 +59,11 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+
+
+builder.Services.AddMvc();
 builder.Services.AddDistributedMemoryCache();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(options =>
 {
     options.Cookie.Name = "Seguimiento.Session";
@@ -68,7 +72,7 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-builder.Services.AddMvc();
+
 
 var app = builder.Build();
 
@@ -92,6 +96,8 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
+app.UseSession();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
@@ -100,12 +106,14 @@ app.MapControllerRoute(
 app.MapRazorPages()
    .WithStaticAssets();
 
+
+
 using (var scope=app.Services.CreateScope())
 {
     var roleManager=
         scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-    var roles = new[] { "ADMINISTRADOR", "ACADEMICO","TESORERO", "CAJERO", "MARKETING" };
+    var roles = new[] { "ADMINISTRADOR", "ACADEMICO","TESORERO", "CAJERO", "MARKETING","SECRESEDE" };
 
     foreach (var role in roles)
     {
@@ -137,6 +145,7 @@ using (var scope = app.Services.CreateScope())
     }
 
 }
+
 
 
 app.Run();

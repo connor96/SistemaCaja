@@ -2,10 +2,12 @@
 using CajaSistema.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 namespace CajaSistema.Controllers
 {
-    [Authorize(Roles = "ADMINISTRADOR,ACADEMICO,MARKETING")]
+    [Authorize(Roles = "ADMINISTRADOR,ACADEMICO,MARKETING,SECRESEDE")]
     public class DescuentosController : Controller
     {
         private readonly ApplicationDbContext _appdbContext;
@@ -13,7 +15,7 @@ namespace CajaSistema.Controllers
         DescuentoDescuento _descuendoClase;
 
 
-        public string idUsuarioActivo = "0000000001";
+        public string idUsuarioActivo =  "0000000001";
 
         //List<DescuentoListaAlumnos> _listaAlumnosconDescuento;
 
@@ -21,6 +23,7 @@ namespace CajaSistema.Controllers
         public DescuentosController(ApplicationDbContext context)
         {
             _appdbContext = context;
+
         }
         [HttpGet]
         public IActionResult Index()
@@ -54,9 +57,25 @@ namespace CajaSistema.Controllers
             return View();
         }
 
+
+        [HttpPost]
+        public JsonResult BusquedaAlumnos(string cadena)
+        {
+
+            if (cadena is null)
+            {
+                cadena = "";
+            }
+            var parametro = new SqlParameter("@cadenabuscar", cadena);
+            var listaAlumnos = _appdbContext.becadosListaALumnosBusqueda.FromSqlRaw("CajaWeb.sp_busquedaAlumnos @cadenabuscar", parametro).ToList();
+            return Json(listaAlumnos);
+        }
+
+
         [HttpPost]
         public  JsonResult RegistrarAlumnoDescuento(string idPersona, string idDescuento)
         {
+            idUsuarioActivo = HttpContext.Session.GetString("idPersona");
             _descuendoClase = new DescuentoDescuento();
             _descuendoClase.idDescuentoConcepto = byte.Parse(idDescuento);
             _descuendoClase.idPersona = idPersona;

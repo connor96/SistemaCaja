@@ -1,0 +1,155 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    IEnumerable<ListaPeriodo> _listaPeriodo = ViewBag.listaPeriodos;
+    IEnumerable<dynamic> _listaCajeros = ViewBag.listaCajeros;
+}
+
+<h1>Redirección de Cajeros</h1>
+
+<div class="container row">
+
+    <div class="col-12 row">
+        <h4>Seleccione el periodo</h4>
+        <div class="col-6">
+            <select class="form-select" aria-label="Default select example" id="periodoSeleccionado" onchange="activarOrigen()">
+                <option selected disabled>Seleccione el Periodo</option>
+                @foreach (var item in _listaPeriodo)
+                {
+                    <option value="@item.periodoTexto">@item.periodoDescripcion</option>
+                }
+
+            </select>
+        </div>
+        <div class="mt-3 col-12 row">
+
+            <div class="col-4">
+               @*  <label> Cajero origen</label> *@
+                <select class="form-select" aria-label="Default select example" id="cajeroOrigenSeleccionado" onchange="cambioCajeroOrigen()" disabled>
+                    <option selected disabled>Cajero Origen</option>
+                    @foreach (var item in _listaCajeros)
+                    {
+                        <option value="@item.usuarioCajero">@item.ApellidoPaterno @item.ApellidoMaterno @item.Nombres1 @item.Nombres2</option>
+                    }
+                </select>
+
+
+
+            </div>
+
+            <div class="col-4">
+                @* <label> Cajero destino</label> *@
+                <select class="form-select" aria-label="Default select example" id="cajeroDestinoSeleccionado" disabled>
+                    <option selected disabled>Cajero Destino</option>
+                    @foreach (var item in _listaCajeros)
+                    {
+                        <option value="@item.usuarioCajero">@item.ApellidoPaterno @item.ApellidoMaterno @item.Nombres1 @item.Nombres2</option>
+                    }
+                </select>
+
+            </div>
+
+            <div class="col-4">
+               @*  <label> Transferir</label> *@
+                <input type="submit" class="btn btn-primary" id="_botonTransferir" value="Transferir" onclick="_obteneridClic()" />
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <div class="col-10">
+        <div id="tablaTransaccionesPendientes">
+
+        </div>
+
+
+
+
+    </div>
+
+    
+
+
+</div>
+
+
+
+@section Scripts{
+
+    <script>
+        function cambioCajeroOrigen()
+        {
+
+            //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '0';
+
+            var origen=$('#cajeroOrigenSeleccionado').val();
+            var data = { idCajero:origen};
+            var url = '@Url.Action("TablaTransacciones", "Redireccion")';
+            $('#tablaTransaccionesPendientes').load(url, data, function (responseTxt, statusTxt, xhr) {
+                if (statusTxt == "success") {
+                    //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+                }
+            });
+
+
+        }
+
+        function activarOrigen()
+        {
+             var periodo=$('#periodoSeleccionado').val();
+
+             document.getElementById("cajeroOrigenSeleccionado").innerHTML='';
+             $('#cajeroOrigenSeleccionado').append('<option  selected disabled>Seleccione cajero origen</option>');
+
+             document.getElementById("cajeroDestinoSeleccionado").innerHTML='';
+             $('#cajeroDestinoSeleccionado').append('<option  selected disabled>Seleccione cajero destino</option>');
+
+             $.ajax({
+                    url:'@Url.Action("CajerosActivosPeriodo", "Redireccion")',
+                    data:{periodo:periodo},
+                    type : 'POST',
+                    dataType : 'json',
+                    success : function(json) {
+
+                        if(json.length>0){
+                           $.each(json,function(bb){
+                            $('#cajeroOrigenSeleccionado').append('<option value='+json[bb].idCajero+' >'+json[bb].apellidosNombre+'</option>');
+                            });
+                        }
+
+                        $('#cajeroOrigenSeleccionado').prop("disabled", false); // Element(s) are now enabled.
+
+
+                        if(json.length>0){
+                           $.each(json,function(bb){
+                            $('#cajeroDestinoSeleccionado').append('<option value='+json[bb].idCajero+' >'+json[bb].apellidosNombre+'</option>');
+                            });
+                        }
+
+                        $('#cajeroDestinoSeleccionado').prop("disabled", false); // Element(s) are now enabled.
+
+
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                }});
+
+
+        }
+
+        function _obteneridClic(){
+            $('.custom-control-input').each( (index, element) => {
+
+                if(element.checked){
+                    console.log($(element).attr('id'));
+                }
+            });
+        }
+
+
+    </script>
+
+
+}

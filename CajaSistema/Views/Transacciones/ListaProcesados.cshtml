@@ -1,0 +1,67 @@
+﻿@model List<ListaPeriodo>;
+@{
+    
+    ViewData["Title"] = "ListaProcesados";
+}
+
+<div class="container row">
+    <h4>Lista de Vouchers Procesados</h4>
+
+    <div class="col-12 row mt-3">
+        <div class="col-4">
+            <select class="form-select" aria-label="Default select example" id="periodo" onchange="_actualizarTablaPagados()">
+                <option selected disabled>Seleccione el periodo</option>
+                @foreach (var item in Model)
+                {
+                    <option value="@item.periodoTexto">@item.periodoDescripcion</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-4"></div>
+
+        <div class="col-4">
+            <a onclick="generarReporte()" class="btn btn-success" style="width:100% !important">Generar Reporte Excel</a>
+        </div>
+
+    </div>
+
+
+    <div class="col-12 mt-3">
+        <div class="tablaPagados" id="tablaPagados">
+
+        </div>
+    </div>
+
+
+</div>
+
+
+@section Scripts
+{
+    <script>
+        function _actualizarTablaPagados()
+        {
+            var comboOrigen=$('#periodo').val();
+
+            if(comboOrigen==''){
+                alert('Seleccione un Periodo')
+            }else{
+                var data = { periodo:comboOrigen,idCajero:''};
+                var url = '@Url.Action("TablaProcesados", "Transacciones")';
+                $('#tablaPagados').load(url, data, function (responseTxt, statusTxt, xhr) {
+                    if (statusTxt == "success") {
+                        //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+                    }
+                });
+            }
+
+           
+        }
+    </script>
+    
+}
+
+
+
+

@@ -46,7 +46,7 @@
                 @if (_listaDescuentos.Count() < 1)
                 {
 
-                    <h5>No se encontraron alumnos becados</h5>
+                    <h5>No se encontraron alumnos con descuento</h5>
 
                 }
                 else
@@ -182,7 +182,7 @@
             table.querySelector("tbody").innerHTML="";
 
              $.ajax({
-                    url:'@Url.Action("BusquedaAlumnos", "Becados")',
+                    url:'@Url.Action("BusquedaAlumnos", "Descuentos")',
                     data:{cadena:textoIngresado.value},
                     type : 'POST',
                     dataType : 'json',

@@ -25,6 +25,7 @@
                 <thead>
                     <tr>
                         <th scope="col">#</th>
+                        <th scope="col">Periodo</th>
                         <th scope="col">Fecha Pago</th>
                         <th scope="col">Hora Pago</th>
                         <th scope="col">Tipo</th>
@@ -41,6 +42,7 @@
                     {
                         <tr>
                             <th scope="row">@contador</th>
+                            <td> <span class="badge text-bg-dark">@item.periodoTexto</span> </td>
                             <td>@item.FechaTransaccion</td>
                             <td>@item.HoraTransaccion</td>
                             @if (item.Modalidad!="")
@@ -78,7 +80,7 @@
 
 <!-- Modal -->
 <div class="modal fade" id="modalTransacciones" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
 
         <div id="contenidoModal">
             <div class="modal-content">
@@ -126,11 +128,25 @@
                             // }else{
                             //      $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.fechaTransaccion.getDate()+'/'+element.fechaTransaccion.getMonth()+'/'+element.fechaTransaccion.getFullYear() + ' </td> <td> ' + element.horaTransaccion + ' </td> <span class="badge text-bg-info">Otro</span><td> ' + element.nombreCompleto + ' </td> <td> ' + element.modalidad + ' </td> <td> ' + element.curso + ' </td> <td> ' + element.horario + ' </td>  <td>  <a class="btn btn-outline-success" onclick="detalleTransaccion('+ element.idTransaccionesPagadas +')">Detalles</a>  </td> </tr>');
                             // }
+                            //console.log(element.fechaTransaccion);
+
+                            var fechaa=new Date(element.fechaTransaccion);
+
+                            let day = fechaa.getDate()+1;
+                            let month = fechaa.getMonth() + 1;
+                            let year = fechaa.getFullYear();
+
+                            let monthTexto="";
+                            if(month<10){
+                                monthTexto='0'+month;
+                            }else{
+                                monthTexto=month;
+                            }
 
                             if(element.modalidad!=''){
-                                $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.fechaTransaccion.toLocaleString().split(',')[0] + ' </td> <td> ' + element.horaTransaccion + ' </td> <td><span class="badge text-bg-primary">Matricula</span>  </td> <td> ' + element.nombreCompleto + ' </td> <td> ' + element.modalidad + ' </td> <td> ' + element.curso + ' </td> <td> ' + element.horario + ' </td>  <td>  <a class="btn btn-outline-success" onclick="detalleTransaccion('+ element.idTransaccionesPagadas +')">Detalles</a>  </td> </tr>');
+                                $(table).find('tbody').append('<tr> <td>' + count + '</td>  <td> <span class="badge text-bg-dark"> ' + element.periodoTexto + '</span>  </td>  <td> ' + day+'/'+monthTexto+'/'+year + ' </td> <td> ' + element.horaTransaccion + ' </td> <td> <span class="badge text-bg-primary">Matricula</span>  </td> <td> ' + element.nombreCompleto + ' </td> <td> ' + element.modalidad + ' </td> <td> ' + element.curso + ' </td> <td> ' + element.horario + ' </td>  <td>  <a class="btn btn-outline-success" onclick="detalleTransaccion('+ element.idTransaccionesPagadas +')">Detalles</a>  </td> </tr>');
                             }else{
-                                 $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.fechaTransaccion.toLocaleString().split(',')[0] + ' </td> <td> ' + element.horaTransaccion + ' </td> <span class="badge text-bg-info">Otro</span><td> ' + element.nombreCompleto + ' </td> <td> ' + element.modalidad + ' </td> <td> ' + element.curso + ' </td> <td> ' + element.horario + ' </td>  <td>  <a class="btn btn-outline-success" onclick="detalleTransaccion('+ element.idTransaccionesPagadas +')">Detalles</a>  </td> </tr>');
+                                 $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> <span class="badge text-bg-dark"> ' + element.periodoTexto + '</span>  </td>  <td> ' + day+'/'+monthTexto+'/'+year + ' </td> <td> ' + element.horaTransaccion + ' </td>  <td> <span class="badge text-bg-info">Otro</span> </td> <td>  ' + element.nombreCompleto + ' </td> <td> ' + element.modalidad + ' </td> <td> ' + element.curso + ' </td> <td> ' + element.horario + ' </td>  <td>  <a class="btn btn-outline-success" onclick="detalleTransaccion('+ element.idTransaccionesPagadas +')">Detalles</a>  </td> </tr>');
                             }
                         });
  

@@ -15,12 +15,13 @@ namespace CajaSistema.Controllers
         public string idUsuarioActivo = "0000000001";
         CajeroCajeroActivo _cajeroActivo;
         CajeroAsignacionCajero _cajeroAsignacionCajero;
-
+       
 
         private readonly ApplicationDbContext _appdbContext;
         public CajeroController(ApplicationDbContext context)
         {
             _appdbContext = context;
+            
         }
 
         [HttpGet]
@@ -60,6 +61,8 @@ namespace CajaSistema.Controllers
         [HttpPost]
         public JsonResult AgregarCajero(string idPersona)
         {
+
+            idUsuarioActivo = HttpContext.Session.GetString("idPersona");
             _cajeroActivo = new CajeroCajeroActivo();
             _cajeroActivo.usuarioCajero= idPersona;
             _cajeroActivo.usuarioRegistro = idUsuarioActivo;
@@ -116,7 +119,7 @@ namespace CajaSistema.Controllers
         public IActionResult AsignarCajero()
         {
             var _listaSedes = _appdbContext.institucionSedes.Where(x => x.Estado == 1).ToList();
-            var _listaPeriodo = _appdbContext.periodoIntranets.ToList();
+            var _listaPeriodo = _appdbContext.listaPeriodosPeriodos.ToList();
             
             ViewBag.periodo=_listaPeriodo;
             return View(_listaSedes);
@@ -166,6 +169,7 @@ namespace CajaSistema.Controllers
         [HttpPost]
         public JsonResult RegistrarCajero(CajeroAsignacionCajero _cajeroRegistro)
         {
+            idUsuarioActivo = HttpContext.Session.GetString("idPersona");
             _cajeroRegistro.estado = true;
             _cajeroRegistro.fechaRegistro = DateTime.Now;
             _cajeroRegistro.usuarioRegistro=idUsuarioActivo;
@@ -194,7 +198,8 @@ namespace CajaSistema.Controllers
         [HttpPost]
         public JsonResult DesactivarCajeroAsignado(string idCajeroAsignado)
         {
-            if(idCajeroAsignado ==null)
+            idUsuarioActivo = HttpContext.Session.GetString("idPersona");
+            if (idCajeroAsignado ==null)
             {
                 return Json("No ha seleccionado ningun valor");
             }
@@ -220,6 +225,7 @@ namespace CajaSistema.Controllers
         [HttpPost]
         public JsonResult ActivarCajeroAsignado(string idCajeroAsignado)
         {
+            idUsuarioActivo = HttpContext.Session.GetString("idPersona");
             if (idCajeroAsignado == null)
             {
                 return Json("No ha seleccionado ningun valor");

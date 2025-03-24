@@ -7,18 +7,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CajaSistema.Controllers
 {
-    [Authorize(Roles = "ADMINISTRADOR,ACADEMICO")]
+    [Authorize(Roles = "ADMINISTRADOR,ACADEMICO,SECRESEDE")]
     public class BecadosController : Controller
     {
 
         public string idUsuarioActivo = "0000000001";
 
         public BecadosAlumnoBecado _becadoAlumnoBecado;
+        
 
         private readonly ApplicationDbContext _appdbContext;
         public BecadosController(ApplicationDbContext context)
         {
             _appdbContext = context;
+            
         }
 
 
@@ -70,6 +72,7 @@ namespace CajaSistema.Controllers
         [HttpPost]
         public JsonResult RegistrarBecado(string idPersona)
         {
+            idUsuarioActivo = HttpContext.Session.GetString("idPersona");
             _becadoAlumnoBecado = new BecadosAlumnoBecado();
             _becadoAlumnoBecado.idPersona = idPersona;
             _becadoAlumnoBecado.estado = true;
@@ -116,6 +119,7 @@ namespace CajaSistema.Controllers
         [HttpPost]
         public JsonResult ActivarBecado(string idBecado)
         {
+            idUsuarioActivo = HttpContext.Session.GetString("idPersona");
             _becadoAlumnoBecado = new BecadosAlumnoBecado();
             _becadoAlumnoBecado = _appdbContext.becadosAlumnoBecados.SingleOrDefault(x => x.idBecado == int.Parse(idBecado));
             _becadoAlumnoBecado.estado = true;
@@ -138,6 +142,7 @@ namespace CajaSistema.Controllers
         [HttpPost]
         public JsonResult DesactivarBecado(string idBecado)
         {
+            idUsuarioActivo = HttpContext.Session.GetString("idPersona");
             _becadoAlumnoBecado = new BecadosAlumnoBecado();
             _becadoAlumnoBecado = _appdbContext.becadosAlumnoBecados.SingleOrDefault(x => x.idBecado == int.Parse(idBecado));
             _becadoAlumnoBecado.estado = false;

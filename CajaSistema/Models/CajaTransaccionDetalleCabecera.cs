@@ -4,6 +4,7 @@
     {
         public int IdTransaccionesPagadas { get; set; }
         public string? IdPersona { get; set; }
+        public string? DNI { get; set; }
         public string? Alumno { get; set; }
         public DateOnly FechaTransaccion { get; set; }
         public TimeOnly HoraTransaccion { get; set; }
@@ -16,5 +17,7 @@
         public int IdSede { get; set; }
         public string? DetalleSede { get; set; }
         public List<CajaTransaccionDetalleCuerpo> DetallePago { get; set; }
+        public string? Email { get;  set; }
+        public string? Telefono { get;  set; }
     }
 }

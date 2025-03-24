@@ -5,17 +5,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Transactions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CajaSistema.Controllers
 {
-    [Authorize(Roles = "ADMINISTRADOR,TESORERO,CAJERO")]
+    
+    [Authorize(Roles = "ADMINISTRADOR,TESORERO,CAJERO,SECRESEDE")]
+    
     public class TransaccionesController : Controller
     {
         private readonly ApplicationDbContext _appdbContext;
 
+
         CajaTransaccionDetalleCabecera transaccionDetalleCabecera;
 
-        private string idCajeroActivo = "1105240228";
+
+        private string idUsuarioActivo = "0000000001";
         public TransaccionesController(ApplicationDbContext context)
         {
             _appdbContext = context;
@@ -23,11 +30,13 @@ namespace CajaSistema.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            idUsuarioActivo = HttpContext.Session.GetString("idPersona");
+
             var parameters = new[]
             {
                 new SqlParameter("@opcion",1),
-                new SqlParameter("@idCajero",idCajeroActivo),
-                new SqlParameter("@periodo","2501"),
+                new SqlParameter("@idCajero",idUsuarioActivo),
+                new SqlParameter("@periodo","2502"),
                 new SqlParameter("@sede",1)
             };
 
@@ -39,11 +48,12 @@ namespace CajaSistema.Controllers
         [HttpPost]
         public JsonResult recargarTabla()
         {
+            idUsuarioActivo = HttpContext.Session.GetString("idPersona");
             var parameters = new[]
             {
                 new SqlParameter("@opcion",1),
-                new SqlParameter("@idCajero",idCajeroActivo),
-                new SqlParameter("@periodo","2501"),
+                new SqlParameter("@idCajero",idUsuarioActivo),
+                new SqlParameter("@periodo","2502"),
                 new SqlParameter("@sede",1)
             };
 
@@ -76,6 +86,7 @@ namespace CajaSistema.Controllers
                             {
                                 cabeza.IdTransaccionesPagadas,
                                 cabeza.IdPersona,
+                                cabeza.DNI,
                                 cabeza.Alumno,
                                 cabeza.FechaTransaccion,
                                 cabeza.HoraTransaccion,
@@ -85,14 +96,20 @@ namespace CajaSistema.Controllers
                                 cabeza.NumOperacionBanco,
                                 cabeza.Cuenta,
                                 cabeza.Monto,
-                                sede.Sede
+                                sede.Sede,
+                                cabeza.Email,
+                                cabeza.Telefono
                             });
+
+
+
             if (cabecera.Count()>0)
             {
                 foreach (var item in cabecera)
                 {
                     transaccionDetalleCabecera.IdTransaccionesPagadas = item.IdTransaccionesPagadas;
                     transaccionDetalleCabecera.IdPersona = item.IdPersona;
+                    transaccionDetalleCabecera.DNI= item.DNI;
                     transaccionDetalleCabecera.Alumno = item.Alumno;
                     transaccionDetalleCabecera.FechaTransaccion = item.FechaTransaccion;
                     transaccionDetalleCabecera.HoraTransaccion = item.HoraTransaccion;
@@ -103,6 +120,8 @@ namespace CajaSistema.Controllers
                     transaccionDetalleCabecera.Cuenta = item.Cuenta;
                     transaccionDetalleCabecera.Monto = item.Monto;
                     transaccionDetalleCabecera.DetalleSede = item.Sede;
+                    transaccionDetalleCabecera.Email = item.Email;
+                    transaccionDetalleCabecera.Telefono=item.Telefono;
 
                 }
 
@@ -114,7 +133,12 @@ namespace CajaSistema.Controllers
 
                 transaccionDetalleCabecera.DetallePago=_appdbContext.cajaTransaccionDetalleCuerpos.FromSqlRaw("Intranet.sp_cajaTransaccionDetalle @opcion, @idTransaccionDetalle", par).ToList();
             }
-            
+
+            var p = new[]
+            {
+                new SqlParameter("@idPersona",transaccionDetalleCabecera.IdPersona)
+            };
+
 
 
             return PartialView(transaccionDetalleCabecera);
@@ -141,6 +165,32 @@ namespace CajaSistema.Controllers
             }
            
         }
+
+
+        [HttpGet]
+        public IActionResult ListaProcesados()
+        {
+            var periodos = _appdbContext.listaPeriodosPeriodos.ToList();
+            return View(periodos);
+        }
+
+        [HttpPost]
+        public PartialViewResult TablaProcesados(string periodo, string idCajero)
+        {
+            idCajero = HttpContext.Session.GetString("idPersona");
+
+            var parametros = new[]
+            {
+                new SqlParameter("@idCajero",idCajero),
+                new SqlParameter("@periodo",periodo)
+            };
+
+            var cajaTransaccionPagos=_appdbContext.cajaTransaccionPagados.FromSqlRaw("CajaWeb.sp_CajaPagosProcesados @idCajero, @periodo", parametros).ToList();
+
+            return PartialView(cajaTransaccionPagos);
+        }
+
+
 
     }
 }

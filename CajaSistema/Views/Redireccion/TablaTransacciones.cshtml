@@ -1,0 +1,68 @@
+﻿@model List<CajaTransaccionCabecera>
+@{
+    ViewData["Title"] = "TablaTransacciones";
+
+    int contador = 1;
+
+}
+
+<div class="container mt-3">
+    <div class="row">
+
+        @* <h1>Vouchers Pendientes para el periodo</h1> *@
+
+        @* <div class="col-4 mb-3">
+            <a class="btn btn-primary" onclick="recargarTabla()"> Actualizar Tabla</a>
+        </div>
+        <div class="col-4 mb-3"></div>
+        <div class="col-4 mb-3"></div> *@
+
+        <div class="col-12">
+            <table class="table table-hover" id="tablaTransaccionesPendientes">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Seleccionar</th>
+                        <th scope="col">Periodo</th>
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Nombre Completo</th>
+                        <th scope="col">Modalidad</th>
+                        <th scope="col">Curso</th>
+                        <th scope="col">Frecuencia - Horario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <th scope="row">@contador</th>
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input custom-control-input" type="checkbox" value="" id="@item.IdTransaccionesPagadas">
+                                </div>
+                            </td>
+                            <td> <span class="badge text-bg-dark">@item.periodoTexto</span> </td>
+                            @if (item.Modalidad != "")
+                            {
+                                <td> <span class="badge text-bg-primary">Matricula</span> </td>
+                            }
+                            else
+                            {
+                                <td> <span class="badge text-bg-info">Otro</span></td>
+                            }
+
+                            <td>@item.NombreCompleto</td>
+                            <td>@item.Modalidad</td>
+                            <td>@item.curso</td>
+                            <td>@item.Horario</td>
+                            
+                        </tr>
+                        contador++;
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

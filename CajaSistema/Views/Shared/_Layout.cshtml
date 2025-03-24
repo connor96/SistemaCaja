@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -42,15 +42,27 @@
 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Caja
+                                Contabilidad
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-controller="Cajero" asp-action="Index">Cajeros</a></li>
-                                <li><a class="dropdown-item" asp-controller="Cajero" asp-action="AsignarCajero">Cajeros</a></li>
-                                <li><a class="dropdown-item" asp-controller="Transacciones" asp-action="Index">Pagos</a></li>
+                                <li><a class="dropdown-item" asp-controller="Cajero" asp-action="AsignarCajero">Asignar Cajeros</a></li>
+                                <li><a class="dropdown-item" asp-controller="Redireccion" asp-action="Index">Reasignar Pagos</a></li>
 
                             </ul>
                         </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Caja
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Transacciones" asp-action="Index">Pagos Pendientes</a></li>
+                                <li><a class="dropdown-item" asp-controller="Transacciones" asp-action="ListaProcesados">Pagos Procesados</a></li>
+
+                            </ul>
+                        </li>
+
 
                     </ul>
                     <partial name="_LoginPartial" />

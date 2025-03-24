@@ -14,6 +14,7 @@ namespace CajaSistema.Controllers
         private readonly IUserStore<UserIdentity> _userStore;
         private readonly IUserEmailStore<UserIdentity> _emailStore;
         private readonly UserManager<UserIdentity> _userManager;
+        private string idUsuarioActivo="0000000001";
 
         private readonly ApplicationDbContext _appdbContext;
         public RegisterController(ApplicationDbContext context, UserManager<UserIdentity> userManager,
