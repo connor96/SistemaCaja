@@ -2,10 +2,27 @@
 @{
     ViewData["Title"] = "TablaProcesados";
     int contador = 1;
+
+    ListaPeriodo periodoElemento = new ListaPeriodo();
+
+    periodoElemento=ViewBag.periodoElemento;
 }
+
+
 
 <div class="container mt-3">
     <div class="row">
+
+        <div class="col-6">
+            <h4>La lista de Pagos Procesados en @periodoElemento.periodoDescripcion es</h4>
+        </div>
+        <div class="col-2">
+        </div>
+        <div class="col-4">
+            <a class="btn btn-success" style="width:100% !important" href="@Url.Action("ReportePagosRealizados","Reportes",new {periodo=periodoElemento.periodoTexto})">
+                    <i class="mdi mdi-download"></i> Generar Reporte Excel
+                </a>
+        </div>
 
         @* <h1>Vouchers Pendientes para el periodo</h1> *@
 
@@ -15,7 +32,7 @@
         <div class="col-4 mb-3"></div>
         <div class="col-4 mb-3"></div> *@
 
-        <div class="col-12">
+        <div class="col-12 mt-3">
             <table class="table table-hover" id="tablaTransaciconesProcesadas">
                 <thead>
                     <tr>
@@ -27,7 +44,7 @@
                         <th scope="col">Monto</th>
                         <th scope="col">DNI</th>
                         <th scope="col">Nombre Completo</th>
-
+                        <th scope="col">Ver Detalles</th>
                         @* <th scope="col">Modalidad</th>
                         <th scope="col">Curso</th>
                         <th scope="col">Frecuencia - Horario</th> *@
@@ -39,7 +56,7 @@
                         <tr>
                             <th scope="row">@contador</th>
                             <td>@item.IdTransaccionesPagadas</td>
-                            @if (item.tipoPago == "MATRICULA")
+                            @if (item.Modalidad != "")
                             {
                                 <td> <span class="badge text-bg-primary">Matricula</span> </td>
                             }
@@ -53,7 +70,7 @@
                             <td>@item.Monto</td>
                             <td>@item.DNI</td>
                             <td>@item.NombreCompleto</td>
-                         
+                            <td> <a class="btn btn-outline-danger" onclick="detalleTransaccion('@item.IdTransaccionesPagadas')">Ver Detalle</a> </td>
 
                         </tr>
                         contador++;

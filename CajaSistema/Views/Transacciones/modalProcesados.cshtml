@@ -1,0 +1,154 @@
+﻿@model CajaTransaccionDetalleCabecera
+@{
+    ViewData["Title"] = "modalProcesados";
+    int contador = 1;
+}
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Detalle del Pago</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div class="container">
+            <div class="row">
+                <div class="col-6">
+                    <div class="card" style="padding:2rem;">
+                        <h3>Alumno</h3>
+
+                        <form>
+                            <div class="mb-3">
+                                <label for="idAlumno" class="form-label">DNI Alumno</label>
+                                <input type="text" class="form-control" id="idAlumno" aria-describedby="emailHelp" value="@Model.DNI">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="idAlumno" class="form-label">Nombres y Apellidos</label>
+                                <input type="text" class="form-control" id="idAlumno" aria-describedby="emailHelp" value="@Model.Alumno">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Correo</label>
+                                <input type="text" class="form-control" id="email" aria-describedby="emailHelp" value="@Model.Email">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="celular" class="form-label">Celular</label>
+                                <input type="text" class="form-control" id="celular" aria-describedby="emailHelp" value="@Model.Telefono">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="sede" class="form-label">Sede</label>
+                                <input type="text" class="form-control" id="sede" aria-describedby="emailHelp" value="@Model.DetalleSede">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="sede" class="form-label">Examen de ubicacion</label>
+                                <span class="badge bg-primary">No</span>
+                            </div>
+
+                        </form>
+
+
+                    </div>
+
+
+
+                </div>
+                <div class="col-6">
+
+                    <div class="card" style="padding:2rem;">
+                        <h3>Voucher de Pago</h3>
+                        <form>
+                            <div class="mb-3">
+                                <label for="fechaPago" class="form-label">Fecha Voucher</label>
+                                <input type="text" class="form-control" id="fechaPago" aria-describedby="emailHelp" value="@Model.FechaTransaccion">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="horaPago" class="form-label">Hora Voucher</label>
+                                <input type="text" class="form-control" id="horaPago" aria-describedby="emailHelp" value="@Model.HoraTransaccion">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="banco" class="form-label">Banco</label>
+                                <input type="text" class="form-control" id="banco" aria-describedby="emailHelp" value="@Model.CodigoBanco">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="canal" class="form-label">Canal de Pago</label>
+                                <input type="text" class="form-control" id="canal" aria-describedby="emailHelp" value="@Model.CanalPago">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="forma" class="form-label">Forma pago</label>
+                                <input type="text" class="form-control" id="forma" aria-describedby="emailHelp" value="@Model.FormaPago">
+                            </div>
+                            <div class="mb-3">
+                                <label for="numOperacion" class="form-label">Numero Operación</label>
+                                <input type="text" class="form-control" id="numOperacion" aria-describedby="emailHelp" value="@Model.NumOperacionBanco">
+                            </div>
+                            <div class="mb-3">
+                                <label for="monto" class="form-label">Monto pagado</label>
+                                <input type="text" class="form-control" id="monto" aria-describedby="emailHelp" value="@Model.Monto">
+                            </div>
+
+                        </form>
+
+
+                    </div>
+
+
+                </div>
+                <div class="col-12 mt-3" style="padding:2rem;">
+
+                    <table class="table table-hover" id="tablaDetallePagos">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Concepto</th>
+                                <th scope="col">Curso</th>
+                                <th scope="col">Aula</th>
+                                <th scope="col">Frecuencia</th>
+                                <th scope="col">Docente</th>
+                                <th scope="col">Monto</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model.DetallePago)
+                            {
+                                <tr>
+                                    <th scope="row">@contador</th>
+                                    <td>@item.Descripcion</td>
+                                    <td>@item.curso</td>
+                                    <td>@item.aula</td>
+                                    <td>@item.horario</td>
+                                    <td>@item.docente</td>
+                                    <td>@item.Monto</td>
+
+                                </tr>
+                                contador++;
+                            }
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+    </div>
+    <div class="modal-footer">
+
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+     </div>
+</div>
+
+
+

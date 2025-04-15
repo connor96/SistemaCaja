@@ -1,0 +1,140 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<div class="container">
+    <div class="col-12 row">
+        <div class="col-6">
+            <div class="input-group mb-3">
+                <input id="apNombres" type="text" class="form-control" placeholder="DNI o Apellidos y Nombres" aria-label="Recipient's username" aria-describedby="button-addon2">
+                <button class="btn btn-outline-primary" type="button" id="button-addon2" onclick="buscarAlumnos()">Buscar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="col-12">
+            <table class="table table-hover" id="tablaBusqueda" style="display:none;height:100% !important">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">IdPersona</th>
+                        <th scope="col">Apellidos y Nombres</th>
+                        <th scope="col">Seleccionar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @* <tr>
+                        <th scope="row">1</th>
+                        <td>Mark</td>
+                        <td> 
+                            <input type="button" class="btn btn-warning" value="Buscar" />
+                        </td>
+                    </tr> *@
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div id="listaPendientes" style="display:none">
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+@section Scripts
+{
+    <script>
+        function buscarAlumnos(){
+            var consulta=$('#apNombres').val();
+            var table=document.getElementById("tablaBusqueda");
+
+            table.style.display='none';
+            document.getElementById("listaPendientes").style.display='none';
+
+            //console.log(consulta);
+
+            if(consulta==''){
+                alert('Es necesario que coloque un codigo o apellidos y nombres');
+            }else{
+                $.ajax({
+                    url:'@Url.Action("BusquedaAlumnos", "Anulaciones")',
+                    data:{cadena:consulta},
+                    type : 'POST',
+                    dataType : 'json',
+                    success : function(json) {
+                        console.log(json);
+                        var count=0;
+                        table.querySelector("tbody").innerHTML="";
+                        json.forEach((element) => {
+                            count++;
+                            console.log(element);
+
+                            $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td><a class="btn btn-outline-primary" onclick="seleccionarAlumno(`'+element.idPersona+'`)">Seleccionar</a> </tr>');
+
+                        });
+
+                        table.style.display='initial';
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                }});
+            }
+
+
+        }
+
+        function seleccionarAlumno(idPersona){
+            var table=document.getElementById("tablaBusqueda");
+            table.style.display='none';
+
+            var data = { idPersona:idPersona};
+            var url = '@Url.Action("ListaPendientes", "Anulaciones")';
+            $('#listaPendientes').load(url, data, function (responseTxt, statusTxt, xhr) {
+            if (statusTxt == "success") {
+                document.getElementById("listaPendientes").style.display='initial';
+                //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+            }
+            });
+
+        }
+
+        function eliminarTransaccion(idTransaccion){
+
+
+            $.ajax({
+            url:'@Url.Action("EliminarTransaccion", "Anulaciones")',
+            data:{idTransaccion:idTransaccion},
+            type : 'POST',
+            dataType : 'json',
+            success : function(resultados) {
+
+                 Swal.fire({
+                    title: "Se ha eliminado correctamente!",
+
+                    icon: "success"
+
+                }).then((result)=>{
+                    location.reload();
+                });
+
+
+            },
+            error : function(xhr, status) {
+            alert('Disculpe, existió un problema');
+            }});
+
+        }
+
+
+
+    </script>
+}
+

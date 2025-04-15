@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Index";
     IEnumerable<ListaPeriodo> _listaPeriodo = ViewBag.listaPeriodos;
+    IEnumerable<InstitucionSede> _listaSedes = ViewBag.listaSedes;
     IEnumerable<dynamic> _listaCajeros = ViewBag.listaCajeros;
 }
 
@@ -10,17 +11,40 @@
 <div class="container row">
 
     <div class="col-12 row">
-        <h4>Seleccione el periodo</h4>
-        <div class="col-6">
-            <select class="form-select" aria-label="Default select example" id="periodoSeleccionado" onchange="activarOrigen()">
-                <option selected disabled>Seleccione el Periodo</option>
-                @foreach (var item in _listaPeriodo)
-                {
-                    <option value="@item.periodoTexto">@item.periodoDescripcion</option>
-                }
 
-            </select>
+        <h4>Seleccione el periodo y Sede</h4>
+        <div class="col-12 row">
+            <div class="col-4">
+                <select class="form-select" aria-label="Default select example" id="periodoSeleccionado">
+                    <option selected disabled>Seleccione el Periodo</option>
+                    @foreach (var item in _listaPeriodo)
+                    {
+                        <option value="@item.periodoTexto">@item.periodoDescripcion</option>
+                    }
+
+                </select>
+            </div>
+
+            <div class="col-4">
+                <select class="form-select" aria-label="Default select example" id="sedeSeleccionado" onchange="activarOrigen()">
+                    <option selected disabled>Seleccione la Sede</option>
+                    @foreach (var item in _listaSedes)
+                    {
+                        <option value="@item.IdSede">@item.Sede</option>
+                    }
+
+                </select>
+            </div>
+
+            <div class="col-4">
+                <input type="button" class="btn btn-danger" id="_botonVerResumen" value="Resumen" onclick="detalleResumenPagos()" />
+            </div>
+
         </div>
+
+        
+        
+
         <div class="mt-3 col-12 row">
 
             <div class="col-4">
@@ -33,7 +57,7 @@
                     }
                 </select>
 
-
+                
 
             </div>
 
@@ -59,7 +83,7 @@
 
     </div>
 
-    <div class="col-10">
+    <div class="col-12">
         <div id="tablaTransaccionesPendientes">
 
         </div>
@@ -75,40 +99,105 @@
 </div>
 
 
+<!-- Modal -->
+<div class="modal fade" id="modalTransacciones" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+
+        <div id="contenidoModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalResumen" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+
+        <div id="contenidoModalResumen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
 
 @section Scripts{
 
     <script>
         function cambioCajeroOrigen()
         {
-
-            //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '0';
-
             var origen=$('#cajeroOrigenSeleccionado').val();
-            var data = { idCajero:origen};
-            var url = '@Url.Action("TablaTransacciones", "Redireccion")';
-            $('#tablaTransaccionesPendientes').load(url, data, function (responseTxt, statusTxt, xhr) {
+
+            
+
+            if(origen=='1000')
+            {
+                var periodo=$('#periodoSeleccionado').val();
+                var sede=$('#sedeSeleccionado').val();
+                var data = { sede:sede,periodo:periodo};
+                var url = '@Url.Action("TablaTransaccionesTodos", "Redireccion")';
+                $('#tablaTransaccionesPendientes').load(url, data, function (responseTxt, statusTxt, xhr) {
+                if (statusTxt == "success") {
+                    //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+                }
+                 });
+            }else{
+                var data = { idCajero:origen};
+                var url = '@Url.Action("TablaTransacciones", "Redireccion")';
+                $('#tablaTransaccionesPendientes').load(url, data, function (responseTxt, statusTxt, xhr) {
                 if (statusTxt == "success") {
                     //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
                 }
             });
-
+            }
 
         }
 
         function activarOrigen()
         {
              var periodo=$('#periodoSeleccionado').val();
+             var sede=$('#sedeSeleccionado').val();
+             var valueTodos=1000;
 
              document.getElementById("cajeroOrigenSeleccionado").innerHTML='';
              $('#cajeroOrigenSeleccionado').append('<option  selected disabled>Seleccione cajero origen</option>');
+             
 
              document.getElementById("cajeroDestinoSeleccionado").innerHTML='';
              $('#cajeroDestinoSeleccionado').append('<option  selected disabled>Seleccione cajero destino</option>');
 
              $.ajax({
                     url:'@Url.Action("CajerosActivosPeriodo", "Redireccion")',
-                    data:{periodo:periodo},
+                    data:{periodo:periodo,sede:sede},
                     type : 'POST',
                     dataType : 'json',
                     success : function(json) {
@@ -136,16 +225,106 @@
                     alert('Disculpe, existió un problema');
                 }});
 
+            $('#cajeroOrigenSeleccionado').append('<option value='+valueTodos+'>TODOS</option>');
 
         }
 
         function _obteneridClic(){
-            $('.custom-control-input').each( (index, element) => {
 
+            let transactionPasar=[];
+
+            $('.custom-control-input').each( (index, element) => {
                 if(element.checked){
-                    console.log($(element).attr('id'));
+                    var idTransaccion=$(element).attr('id');
+
+                    transactionPasar.push(idTransaccion);
+
+
+                    
                 }
             });
+
+            //console.log(transactionPasar);
+
+            var cajeroDestino=$('#cajeroDestinoSeleccionado').val();
+
+            if(transactionPasar.length==0){
+                alert('Debe seleccionar uno de los elementos');
+            }else if(cajeroDestino=='') {
+                alert('Debe seleccionar un cajero');
+            }else{
+
+                $.ajax({
+                        url:'@Url.Action("TransferirElementos", "Redireccion")',
+                        data:{itemsTransferir:transactionPasar,idCajeroNuevo:cajeroDestino},
+                        type : 'POST',
+                        dataType : 'json',
+                        success : function(result) {
+                            console.log(result);
+                            Swal.fire({
+                                    title: "Se ha guardado exitosamente!",
+                                    icon: "success"
+
+                                }).then((result)=>{
+                                    cambioCajeroOrigen();
+
+                                });
+                        },
+                        error : function(xhr, status) {
+                        alert('Disculpe, existió un problema');
+                  }});
+
+            }
+        }
+
+
+         const containerModalTransacciones = document.getElementById("modalTransacciones");
+        const modalTransaccionesDetalle = new bootstrap.Modal(containerModalTransacciones);
+
+
+        function detalleTransaccion(idTransaccion){
+
+                var data = { id:idTransaccion};
+                var url = '@Url.Action("modalTransacciones", "Redireccion")';
+                $('#contenidoModal').load(url, data, function (responseTxt, statusTxt, xhr) {
+                    if (statusTxt == "success") {
+                        modalTransaccionesDetalle.show();
+                    }
+                });
+
+        }
+
+
+        const containerModalPagos = document.getElementById("modalResumen");
+        const modalPagosPendientes = new bootstrap.Modal(containerModalPagos);
+
+
+        function detalleResumenPagos(){
+
+                var periodo=$('#periodoSeleccionado').val();
+                var sede=$('#sedeSeleccionado').val();
+
+                console.log(periodo);
+                console.log(sede);
+
+                if(periodo == null||sede ==null)
+                {
+                    alert('Falta seleccionar el periodo o la sede')
+                }else{
+
+                    var data = { periodo:periodo,sede:sede};
+                    var url = '@Url.Action("modalResumenCajeros", "Redireccion")';
+                    $('#contenidoModalResumen').load(url, data, function (responseTxt, statusTxt, xhr) {
+                        if (statusTxt == "success") {
+                            modalPagosPendientes.show();
+                        }
+                    });
+
+                }
+
+
+               
+
         }
 
 

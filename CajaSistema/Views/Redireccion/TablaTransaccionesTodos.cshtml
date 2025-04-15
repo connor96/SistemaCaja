@@ -1,6 +1,6 @@
 ﻿@model List<CajaTransaccionListaPendientes>
 @{
-    ViewData["Title"] = "TablaTransacciones";
+    ViewData["Title"] = "TablaTransaccionesTodos";
 
     int contador = 1;
 
@@ -57,7 +57,7 @@
                             <td>@item.curso</td>
                             <td>@item.Horario</td>
                             <td> <a class="btn btn-outline-success" onclick="detalleTransaccion('@item.idTransacciones')">Detalles</a> </td>
-                            
+
                         </tr>
                         contador++;
                     }
@@ -67,4 +67,6 @@
         </div>
     </div>
 </div>
+
+
 

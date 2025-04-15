@@ -48,6 +48,7 @@ namespace CajaSistema.Data
 
         //Caja Transacciones
         public DbSet<CajaTransaccionCabecera> cajaTransaccionCabecera { get; set; }
+        public DbSet<CajaTransaccionListaPendientes> cajaTransaccionListaPendientes { get; set; }
         public DbSet<CajaTransaccionDetalleCabecera> cajaTransaccionDetalleCabeceras { get; set; }
         public DbSet<CajaTransaccionDetalleCuerpo> cajaTransaccionDetalleCuerpos { get; set; }
         public DbSet<CajaTransaccionPagados> cajaTransaccionPagados { get; set; }
@@ -57,6 +58,12 @@ namespace CajaSistema.Data
 
         //Redireccion
         public DbSet<RedireccionCajeros> redireccionCajeros { get; set; }
+
+        public DbSet<resumenCajerosPagos> resumenCajerosPagosCaja { get; set; }
+
+        public DbSet<ListaPendientesAlumno> listaPendientesAlumnos { get; set; }
+
+        public DbSet<ListaEliminarAumno> listaEliminarAumnos { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -224,6 +231,10 @@ namespace CajaSistema.Data
             //Caja Transaccion
             builder.Entity<CajaTransaccionCabecera>().HasNoKey().ToTable(nameof(CajaTransaccionCabecera),t=>t.ExcludeFromMigrations());
 
+
+            builder.Entity<CajaTransaccionListaPendientes>().HasNoKey().ToTable(nameof(CajaTransaccionListaPendientes), t => t.ExcludeFromMigrations());
+
+
             builder.Entity<CajaTransaccionDetalleCabecera>(
                 act =>
                 {
@@ -257,6 +268,13 @@ namespace CajaSistema.Data
             builder.Entity<RedireccionCajeros>().HasNoKey().ToTable(nameof(RedireccionCajeros), t => t.ExcludeFromMigrations());
 
             builder.Entity<CajaTransaccionPagados>().HasNoKey().ToTable(nameof(CajaTransaccionPagados), t => t.ExcludeFromMigrations());
+
+            builder.Entity<resumenCajerosPagos>().HasNoKey().ToTable(nameof(resumenCajerosPagos), t => t.ExcludeFromMigrations());
+
+
+            builder.Entity<ListaPendientesAlumno>().HasNoKey().ToTable(nameof(ListaPendientesAlumno), t => t.ExcludeFromMigrations());
+
+            builder.Entity<ListaEliminarAumno>().HasNoKey().ToTable(nameof(ListaEliminarAumno), t => t.ExcludeFromMigrations());
 
 
         }

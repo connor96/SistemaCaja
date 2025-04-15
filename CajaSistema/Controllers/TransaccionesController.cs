@@ -144,15 +144,103 @@ namespace CajaSistema.Controllers
             return PartialView(transaccionDetalleCabecera);
         }
 
+
+        [HttpPost]
+        public PartialViewResult modalProcesados(int id)
+        {
+
+            var parametros = new[]
+            {
+                new SqlParameter("@opcion",1),
+                new SqlParameter("@idTransaccionDetalle",id),
+            };
+
+            transaccionDetalleCabecera = new CajaTransaccionDetalleCabecera();
+
+            var cabecera = (from cabeza in _appdbContext.cajaTransaccionDetalleCabeceras.FromSqlRaw("Intranet.sp_cajaTransaccionDetalle @opcion, @idTransaccionDetalle", parametros).ToList()
+                            join banco in _appdbContext.bancoBancos.ToList()
+                            on cabeza.CodigoBanco equals banco.codigoBanco
+                            join canal in _appdbContext.bancoCanalesPagos.ToList()
+                            on cabeza.CanalPago equals canal.codigoCanal
+                            join forma in _appdbContext.bancoFormasPagos.ToList()
+                            on cabeza.FormaPago equals forma.codigoFormaPago
+                            join sede in _appdbContext.institucionSedes.ToList()
+                            on cabeza.IdSede equals sede.IdSede
+                            select new
+                            {
+                                cabeza.IdTransaccionesPagadas,
+                                cabeza.IdPersona,
+                                cabeza.DNI,
+                                cabeza.Alumno,
+                                cabeza.FechaTransaccion,
+                                cabeza.HoraTransaccion,
+                                banco.descripcionBanco,
+                                canal.descripcionCanal,
+                                forma.descripcionFormaPago,
+                                cabeza.NumOperacionBanco,
+                                cabeza.Cuenta,
+                                cabeza.Monto,
+                                sede.Sede,
+                                cabeza.Email,
+                                cabeza.Telefono
+                            });
+
+
+
+            if (cabecera.Count() > 0)
+            {
+                foreach (var item in cabecera)
+                {
+                    transaccionDetalleCabecera.IdTransaccionesPagadas = item.IdTransaccionesPagadas;
+                    transaccionDetalleCabecera.IdPersona = item.IdPersona;
+                    transaccionDetalleCabecera.DNI = item.DNI;
+                    transaccionDetalleCabecera.Alumno = item.Alumno;
+                    transaccionDetalleCabecera.FechaTransaccion = item.FechaTransaccion;
+                    transaccionDetalleCabecera.HoraTransaccion = item.HoraTransaccion;
+                    transaccionDetalleCabecera.CodigoBanco = item.descripcionBanco;
+                    transaccionDetalleCabecera.CanalPago = item.descripcionCanal;
+                    transaccionDetalleCabecera.FormaPago = item.descripcionFormaPago;
+                    transaccionDetalleCabecera.NumOperacionBanco = item.NumOperacionBanco;
+                    transaccionDetalleCabecera.Cuenta = item.Cuenta;
+                    transaccionDetalleCabecera.Monto = item.Monto;
+                    transaccionDetalleCabecera.DetalleSede = item.Sede;
+                    transaccionDetalleCabecera.Email = item.Email;
+                    transaccionDetalleCabecera.Telefono = item.Telefono;
+
+                }
+
+                var par = new[]
+                {
+                    new SqlParameter("@opcion",2),
+                    new SqlParameter("@idTransaccionDetalle",id),
+                };
+
+                transaccionDetalleCabecera.DetallePago = _appdbContext.cajaTransaccionDetalleCuerpos.FromSqlRaw("Intranet.sp_cajaTransaccionDetalle @opcion, @idTransaccionDetalle", par).ToList();
+            }
+
+            var p = new[]
+            {
+                new SqlParameter("@idPersona",transaccionDetalleCabecera.IdPersona)
+            };
+
+            return PartialView(transaccionDetalleCabecera);
+        }
+
         [HttpPost]
         public JsonResult actualizarPago(int idTransaccionPago)
         {
+            DateTime fecha = new DateTime();
+            fecha = System.DateTime.Now;
+
             var parametros = new[]
             {
-                new SqlParameter("@idTransaccion",idTransaccionPago)
+                new SqlParameter("@idTransaccion",idTransaccionPago),
+                new SqlParameter("@fecha",fecha)
             };
 
-            var command = "update Intranet.tb_TransaccionesPagadas set CajaEstado='1' where IdTransaccionesPagadas=@idTransaccion";
+           
+
+            var command = "update Intranet.tb_TransaccionesPagadas set CajaEstado='1', FechaCajero=@fecha where IdTransaccionesPagadas=@idTransaccion";
 
             try
             {
@@ -170,7 +258,7 @@ namespace CajaSistema.Controllers
         [HttpGet]
         public IActionResult ListaProcesados()
         {
-            var periodos = _appdbContext.listaPeriodosPeriodos.ToList();
+            var periodos = _appdbContext.listaPeriodosPeriodos.Where(x=>x.estado==true).ToList();
             return View(periodos);
         }
 
@@ -186,6 +274,10 @@ namespace CajaSistema.Controllers
             };
 
             var cajaTransaccionPagos=_appdbContext.cajaTransaccionPagados.FromSqlRaw("CajaWeb.sp_CajaPagosProcesados @idCajero, @periodo", parametros).ToList();
+
+            var periodoElemento = _appdbContext.listaPeriodosPeriodos.Where(x => x.periodoTexto == periodo).SingleOrDefault();
+
+            ViewBag.periodoElemento = periodoElemento;
 
             return PartialView(cajaTransaccionPagos);
         }

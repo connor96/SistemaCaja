@@ -119,7 +119,7 @@ namespace CajaSistema.Controllers
         public IActionResult AsignarCajero()
         {
             var _listaSedes = _appdbContext.institucionSedes.Where(x => x.Estado == 1).ToList();
-            var _listaPeriodo = _appdbContext.listaPeriodosPeriodos.ToList();
+            var _listaPeriodo = _appdbContext.listaPeriodosPeriodos.Where(x => x.estado == true).ToList();
             
             ViewBag.periodo=_listaPeriodo;
             return View(_listaSedes);

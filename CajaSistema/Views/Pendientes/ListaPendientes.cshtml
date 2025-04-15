@@ -1,0 +1,77 @@
+﻿@model List<ListaPendientesAlumno>
+@{
+    ViewData["Title"] = "ListaPendientes";
+    int contador = 1;
+
+    PersonaPersona persona = ViewBag.persona;
+}
+<div class="container">
+
+    <div class="col-12 mb-3">
+        <h4>Lista de pagos de: @persona.ApellidoPaterno @persona.ApellidoMaterno @persona.Nombres1 @persona.Nombres2</h4>
+        <h4>DNI: @persona.DNI</h4>
+
+    </div>
+
+    <div class="col-12 mb-3">
+        <table class="table table-hover" id="tablaPagos" style="height:100% !important">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Id Transaccion</th>
+                    <th scope="col">Tipo Pago</th>
+                    <th scope="col">Curso</th>
+                    <th scope="col">Fecha Envio</th>
+                    <th scope="col">Hora Envio</th>
+                    <th scope="col">Periodo</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Cajero</th>
+                    <th scope="col">Eliminado</th>
+                    <th scope="col">Sistema de Caja</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <th scope="row">@contador</th>
+                        <td>@item.IdTransaccionesTransacciones</td>
+                        <td>@item.tipoPago</td>
+                        <td>@item.curso</td>
+                        <td>@item.fechaEnvio</td>
+                        <td>@item.horaEnvio</td>
+                        <td>@item.periodo</td>
+
+                        @if (item.estado)
+                        {
+                            <td><span class="badge bg-success">Procesado</span></td>
+                        }else{
+                            <td><span class="badge bg-danger">En Proceso</span></td>
+                        }
+                        <td>@item.cajeroDatos</td>
+
+                        @if (item.eliminado)
+                        {
+                            <td><span class="badge bg-info">Eliminado</span></td>
+                            
+                        }
+                        else
+                        {
+                            <td><span class="badge bg-success">No eliminado</span></td>
+                            
+                        }
+                        <td>@item.cajaPagos</td>
+                        
+                    </tr>
+                    contador++;
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
