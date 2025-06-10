@@ -42,7 +42,7 @@ namespace CajaSistema.Controllers
                 cadena = "";
             }
             var parametro = new SqlParameter("@cadenabuscar", cadena);
-            var listaAlumnos = _appdbContext.becadosListaALumnosBusqueda.FromSqlRaw("CajaWeb.sp_busquedaAlumnos @cadenabuscar", parametro).ToList();
+            var listaAlumnos = _appdbContext.becadosListaALumnosBusqueda.FromSqlRaw("CajaWeb.sp_busquedaAlumnosDescuento @cadenabuscar", parametro).ToList();
             return Json(listaAlumnos);
         }
 
@@ -162,6 +162,71 @@ namespace CajaSistema.Controllers
 
         }
 
+        [HttpPost]
+        public PartialViewResult tablaBusquedaAlumnos(string cadenaBusqueda,string opcion)
+        {
+            if (cadenaBusqueda is null)
+            {
+                cadenaBusqueda = "";
+                cadenaBusqueda = cadenaBusqueda.ToUpper();
+            }
+            else
+            {
+                cadenaBusqueda = cadenaBusqueda.ToUpper();
+            }
+            
+
+            if (opcion == "1")
+            {
+                var listaAlumnosBecados = _appdbContext.becadosListaAlumnos.FromSqlRaw("EXEC CajaWeb.sp_listarAlumnosBecados").ToList();
+
+                var listaAlumnosBecados2 = listaAlumnosBecados.Where(s => s.nombresApellidos.Contains(cadenaBusqueda)).ToList();
+
+                var listaAlumnosBecados3= listaAlumnosBecados.Where(s => s.idPersona.Contains(cadenaBusqueda)).ToList();
+
+
+                if(cadenaBusqueda is null || cadenaBusqueda=="")
+                {
+                    
+                }
+                else if(listaAlumnosBecados2.Count<1)
+                {
+                    listaAlumnosBecados = listaAlumnosBecados3;
+
+                }
+                else if (listaAlumnosBecados3.Count < 1)
+                {
+                    listaAlumnosBecados = listaAlumnosBecados2;
+                }
+                else
+                {
+                    listaAlumnosBecados = listaAlumnosBecados2;
+
+                    foreach (var item in listaAlumnosBecados3)
+                    {
+                        listaAlumnosBecados.Add(item);
+                    }
+                }
+                
+
+                ViewBag.listaAlumnos = listaAlumnosBecados;
+
+
+            }
+            else
+            {
+                var listaAlumnosDesaprobados = _appdbContext.becadosListaAlumnos.FromSqlRaw("EXEC CajaWeb.sp_listarAlumnosBecados").ToList();
+
+                listaAlumnosDesaprobados = listaAlumnosDesaprobados.Where(s => s.Aprobado == false).ToList();
+
+
+                ViewBag.listaAlumnos = listaAlumnosDesaprobados;
+            }
+
+
+            return PartialView();
+
+        }
 
 
 

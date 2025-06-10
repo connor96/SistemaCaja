@@ -1,0 +1,87 @@
+﻿@model IEnumerable<ListaPeriodo>
+@{
+    ViewData["Title"] = "Index";
+    int contador = 1;
+}
+
+<div class="row container">
+
+    <!-- Button trigger modal -->
+
+    <div class="row" style="padding-top:2em;padding-bottom:2em">
+        <div class="col-8">
+            <h4>Lista de Periodos</h4>
+        </div>
+
+
+        <div class="col-4 d-flex justify-content-end">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Agregar Periodo
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Lista Perido -->
+
+    <div id="tablaListaPeriodo" class="tablaListaPeriodo">
+
+        <table class="table table-hover" id="tablaPeriodos">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Periodo</th>
+                    <th scope="col">Descripcion</th>
+                    <th scope="col">Fecha Inicio</th>
+                    <th scope="col">Fecha Fin</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Editar</th>
+                    <th scope="col">Eliminar</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpo_tabla">
+
+                @if (Model.Count() < 1)
+                {
+                    <h5>No se encontraron alumnos con descuento</h5>
+                }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr class="item-tr-@contador">
+                            <td scope="row">@contador</td>
+                            <td id="label-@contador">@item.periodoTexto</td>
+                            <td id="label-@contador">@item.periodoDescripcion</td>
+                            <td id="label-@contador">@item.fechaInicioMatricula.ToString("dd/MM/YYYY") </td>
+                            <td id="label-@contador">@item.fechaFinMatricula.ToString("dd/MM/yyyy")</td>
+                            
+                            <td id="label-@contador">
+
+                                @if (item.estado == true)
+                                {
+                                    <p style="color:blue"> Activo</p>
+                                }
+                                else
+                                {
+                                    <p style="color:red"> Inactivo</p>
+                                }
+
+                            </td>
+
+                            <td> <a class="btn btn-outline-secondary" onclick="editarPeriodo('@item.idPeriodoMatricula')">Editar</a> </td>
+                            <td> <a class="btn btn-outline-danger" onclick="eliminarPeriodo('@item.idPeriodoMatricula')">Eliminar</a> </td>
+
+                        </tr>
+                        contador++;
+                    }
+                }
+
+
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+

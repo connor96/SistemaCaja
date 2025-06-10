@@ -16,5 +16,6 @@ namespace CajaSistema.Models
         public int? estado { get; set; }
         [Column("usuarioRegistro")]
         public string? usuarioRegistro { get; set; }
+        public DateTime fechaRegistro { get; set; }
     }
 }

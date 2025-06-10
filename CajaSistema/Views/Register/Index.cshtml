@@ -108,8 +108,8 @@
                                         <td>@item2.Name</td>
                                     }
                                 }
-                                <td> <a class="btn btn-secondary" onclick="editarRol()">Editar Rol</a> </td>
-                                <td> <a class="btn btn-danger" onclick="eliminarUsuario()"> Eliminar</a> </td>
+                                <td> <a class="btn btn-secondary" onclick="editarRol('@item.Id')">Editar Rol</a> </td>
+                                <td> <a class="btn btn-danger" onclick="eliminarUsuario('@item.Id')"> Eliminar</a> </td>
                                 
                             </tr>
                             contador++;
@@ -126,17 +126,29 @@
     </div>
 </div>
 
+<div class="modal fade" id="modalRegisterCompleto" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modalRegister" id="modalRegister">
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 
+
     <script>
+        const containerRegister = document.getElementById("modalRegisterCompleto");
+        const modalRegister = new bootstrap.Modal(containerRegister);
         $('#idPersona').keypress(function(e) {
             var keycode = (e.keyCode ? e.keyCode : e.which);
             if (keycode == '13') {
 
                 var texto=$('#idPersona').val();
-                
-
                  $.ajax({
                     url:'@Url.Action("buscarPersona", "Register")',
                     data:{idpersona:texto},
@@ -151,10 +163,7 @@
                             $('#nombres1').val(json[0].nombres1);
                             $('#nombres2').val(json[0].nombres2);
                             $('#email').val(json[0].email);
-
                         }
-
-
                     },
                     error : function(xhr, status) {
                     alert('Disculpe, existió un problema');
@@ -164,7 +173,77 @@
             }
         });
 
+        function editarRol(id){
+            var data = { id:id};
+            var url = '@Url.Action("modalRegister", "Register")';
+            $('#modalRegister').load(url, data, function (responseTxt, statusTxt, xhr) {
+                if (statusTxt == "success") {
+                    modalRegister.show();
+                }
+            });
+        }
+
+        function _cancelarRegistro(){
+            modalRegister.hide();
+        }
+
+        function _actualizarRegistro(){
+            var idPersona=$('#idAlumno').val();
+            var rol=$('#comboRoles').val();
+            var activo=$('#radioDefault1').is(":checked");
+            var inactivo=$('#radioDefault2').is(":checked");
+            $.ajax({
+                    url:'@Url.Action("editarRegistro", "Register")',
+                    data:{idPersona:idPersona,rol:rol,activo:activo,inactivo:inactivo},
+                    type : 'POST',
+                    dataType : 'json',
+                    success : function(json) {
+                        console.log(json);
+                        if(json='ok'){
+                            modalRegister.hide();
+                            location.reload();
+                        }
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                }});
+        }
+
+        function eliminarUsuario(idUsuario){
+            Swal.fire({
+                title: "¿Seguro que desea eliminar el registro",
+                showDenyButton: false,
+                showCancelButton: true,
+                confirmButtonText: "Eliminar"
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+
+                    $.ajax({
+                        url:'@Url.Action("eliminarRegistro", "Register")',
+                        data:{idRegistro:idUsuario},
+                        type : 'POST',
+                        dataType : 'json',
+                        success : function(result) {
+                            console.log(result);
+                            Swal.fire({
+                                    title: "Se ha eliminado exitosamente!",
+                                    icon: "success"
+
+                                }).then((result)=>{
+                                    location.reload();
+                                });
+                        },
+                        error : function(xhr, status) {
+                        alert('Disculpe, existió un problema');
+                    }});
+                }
+            });
+        }
+
+
     </script>
+
 
 
 }

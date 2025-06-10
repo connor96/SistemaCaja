@@ -21,7 +21,8 @@ namespace CajaSistema.Data
         //Descuento
         public DbSet<DescuentoListaDescuentos> descuentoListaDescuentos { get; set; }
         public DbSet<DescuentoDescuento> descuentoDescuento { get; set; }
-      
+        public DbSet<DescuentoLista>  descuentoListas { get; set; }
+
 
         //public DbSet<UserIdentity> _identityUserDBSet { get; set; }
 
@@ -39,6 +40,8 @@ namespace CajaSistema.Data
         public DbSet<CajeroAsignacionCajero> cajeroAsignacionCajeros { get; set; }
 
         //Auxiliar
+
+        public DbSet<AuxiliarString> auxiliarStrings { get; set; }
         public DbSet<AuxDobleString> auxDobleStrings { get; set; }  
 
         //Bancos
@@ -49,6 +52,7 @@ namespace CajaSistema.Data
         //Caja Transacciones
         public DbSet<CajaTransaccionCabecera> cajaTransaccionCabecera { get; set; }
         public DbSet<CajaTransaccionListaPendientes> cajaTransaccionListaPendientes { get; set; }
+        public DbSet<CajaTransaccionListaTodos> cajaTransaccionListaTodos { get; set; }
         public DbSet<CajaTransaccionDetalleCabecera> cajaTransaccionDetalleCabeceras { get; set; }
         public DbSet<CajaTransaccionDetalleCuerpo> cajaTransaccionDetalleCuerpos { get; set; }
         public DbSet<CajaTransaccionPagados> cajaTransaccionPagados { get; set; }
@@ -64,6 +68,21 @@ namespace CajaSistema.Data
         public DbSet<ListaPendientesAlumno> listaPendientesAlumnos { get; set; }
 
         public DbSet<ListaEliminarAumno> listaEliminarAumnos { get; set; }
+
+        //Reporte Caja
+        public DbSet<CajaReporteProcesado> cajaReporteProcesados { get; set; }
+
+        //Examen de Ubicacion
+        public DbSet<UbicacionListaExamen> ubicacionListaExamenes { get; set; }
+
+        public DbSet<UbicacionAlumnoBusqueda>  ubicacionAlumnoBusquedas { get; set; }
+        public DbSet<UbicacionDetalleModal> ubicacionDetalleModal {  get; set; }
+
+        //Tarifario Otros
+        public DbSet<TarifarioOtrosLista> tarifarioOtrosListas { get; set; }
+        public DbSet<PostergacionesCursosLista> postergacionesCursosListas { get; set; }
+        public DbSet<AlumnoBusqueda> alumnoBusquedas { get; set; }
+        public DbSet<OtrosConceptosVarios>  otrosConceptosVarios { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -118,6 +137,8 @@ namespace CajaSistema.Data
                 act.Property(col => col.usuarioRegistro);
             });
             builder.Entity<DescuentoDescuento>().ToTable(name: "tb_Descuento", schema: "Intranet", t => t.ExcludeFromMigrations());
+
+            builder.Entity<DescuentoLista>().HasNoKey().ToTable(nameof(DescuentoLista), t => t.ExcludeFromMigrations());
 
 
             //Persona
@@ -191,6 +212,9 @@ namespace CajaSistema.Data
 
             builder.Entity<AuxDobleString>().HasNoKey().ToTable(nameof(AuxDobleString), t => t.ExcludeFromMigrations());
 
+            builder.Entity<AuxiliarString>().HasNoKey().ToTable(nameof(AuxiliarString), t => t.ExcludeFromMigrations());
+
+
             //Bancos
             builder.Entity<BancoBancos>(
                 act =>
@@ -234,6 +258,8 @@ namespace CajaSistema.Data
 
             builder.Entity<CajaTransaccionListaPendientes>().HasNoKey().ToTable(nameof(CajaTransaccionListaPendientes), t => t.ExcludeFromMigrations());
 
+            builder.Entity<CajaTransaccionListaTodos>().HasNoKey().ToTable(nameof(CajaTransaccionListaTodos), t => t.ExcludeFromMigrations());
+
 
             builder.Entity<CajaTransaccionDetalleCabecera>(
                 act =>
@@ -275,6 +301,87 @@ namespace CajaSistema.Data
             builder.Entity<ListaPendientesAlumno>().HasNoKey().ToTable(nameof(ListaPendientesAlumno), t => t.ExcludeFromMigrations());
 
             builder.Entity<ListaEliminarAumno>().HasNoKey().ToTable(nameof(ListaEliminarAumno), t => t.ExcludeFromMigrations());
+
+            //Reporte Cajero
+
+            builder.Entity<CajaReporteProcesado>().HasNoKey().ToTable(nameof(CajaReporteProcesado), t => t.ExcludeFromMigrations());
+
+
+
+            //Examen de Ubicacion
+            builder.Entity<UbicacionListaExamen>(
+                act =>
+                {
+                    act.HasKey(col => col.IdExamenUbicacion);
+                    act.Property(col => col.IdPersona);
+                    act.Property(col => col.CodCurso);
+                    act.Property(col => col.Estado);
+                    act.Property(col => col.Periodo);
+                    act.Property(col => col.UsuarioRegistro);
+                    act.Property(col => col.FechaRegistro);
+                }
+            );
+            builder.Entity<UbicacionListaExamen>().ToTable(name: "tb_ExamenUbicacion", schema: "Intranet", t => t.ExcludeFromMigrations());
+
+            builder.Entity<UbicacionAlumnoBusqueda>().HasNoKey().ToTable(nameof(UbicacionAlumnoBusqueda), t => t.ExcludeFromMigrations());
+
+            builder.Entity<UbicacionDetalleModal>().HasNoKey().ToTable(nameof(UbicacionDetalleModal), t => t.ExcludeFromMigrations());
+
+
+            //Tarifario otros
+
+            builder.Entity<TarifarioOtrosLista>(
+                act =>
+                {
+                    act.HasKey(col => col.idTarifario);
+                    act.Property(col => col.descripcion);
+                    act.Property(col => col.academico);
+                    act.Property(col => col.administrado);
+                    act.Property(col => col.monto);
+                    act.Property(col => col.estado);
+                    act.Property(col => col.usuarioRegistro);
+                    act.Property(col => col.fechaRegistro);
+                }
+            );
+            builder.Entity<TarifarioOtrosLista>().ToTable(name: "tb_Tarifario_Otros", schema: "Intranet", t => t.ExcludeFromMigrations());
+
+
+            builder.Entity<PostergacionesCursosLista>(
+                act =>
+                {
+                    act.HasKey(col => col.idPostergacion);
+                    act.Property(col => col.idPersona);
+                    act.Property(col => col.descripcion);
+                    act.Property(col => col.estado);
+                    act.Property(col => col.usuarioRegistro);
+                    act.Property(col => col.fechaRegistro);
+                }
+            );
+
+            builder.Entity<PostergacionesCursosLista>().ToTable(name: "tb_PostergacionesCursos", schema: "Intranet", t => t.ExcludeFromMigrations());
+
+            builder.Entity<AlumnoBusqueda>().HasNoKey().ToTable(nameof(AlumnoBusqueda), t => t.ExcludeFromMigrations());
+
+
+            builder.Entity<OtrosConceptosVarios>(
+                act =>
+                {
+                    act.HasKey(col => col.idConceptosVarios);
+                    act.Property(col => col.idMatricula);
+                    act.Property(col => col.idPersona);
+                    act.Property(col => col.descripcion);
+                    act.Property(col => col.idSede);
+                    act.Property(col => col.codCurso);
+                    act.Property(col => col.periodo);
+                    act.Property(col => col.estado);
+                    act.Property(col => col.idTarifarioOtros);
+                    act.Property(col => col.idTransaccion);
+                    act.Property(col => col.usuarioRegistro);
+                    act.Property(col => col.fechaRegistro);
+                }
+            );
+            builder.Entity<OtrosConceptosVarios>().ToTable(name: "tb_OtrosConceptosVarios", schema: "Intranet", t => t.ExcludeFromMigrations());
+
 
 
         }

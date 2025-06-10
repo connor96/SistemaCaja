@@ -1,6 +1,6 @@
 ﻿@model AuxiliarString;
 @{
-    var _listaDescuentos = ViewBag.listaDescuentos as IEnumerable<dynamic>;
+    var _listaDescuentos = ViewBag.listaDescuentos as IEnumerable<DescuentoLista>;
     var _listaDescuento = ViewBag.listaDescuento as IEnumerable<DescuentoListaDescuentos>;
     int contador = 1;
     ViewData["Title"] = "Descuentos";
@@ -24,7 +24,29 @@
             </button>
         </div>
 
+        
+
     </div>
+
+
+    <!-- Buscar Descuento -->
+
+    <div class="row" style="padding-top:2em;padding-bottom:2em">
+        <div class="col-8">
+            
+            <input type="text" class="form-control" style="width:100%" id="textBusqueda" placeholder="Busqueda de alumno por DNI, codigo, o Apellidos y Nombres" />
+        
+        </div>
+
+        <div class="col-2">
+            <a class="btn btn-outline-secondary" onclick="buscarAlumnoTexto()">Buscar Alumno</a>
+        </div>
+        <div class="col-2">
+            <a class="btn btn-outline-danger" onclick="listaDesaprobados()">Listar Desaprobados</a>
+        </div>
+
+    </div>
+
 
     <div id="listaAlumnosDescuento" class="listaAlumnosDescuento">
 
@@ -34,8 +56,12 @@
                     <th scope="col">#</th>
                     <th scope="col">Codigo Alumno</th>
                     <th scope="col">Apellidos y Nombres</th>
-                    <th scope="col">Descuento</th>
+                    <th scope="col">Fecha Registro</th>
                     <th scope="col">Monto</th>
+                    <th scope="col">Descripcion</th>
+                    <th scope="col">U. Periodo</th>
+                    <th scope="col">U. Curso</th>
+                    <th scope="col">Nota</th>
                     <th scope="col">Estado</th>
                     <th scope="col">Editar</th>
                     <th scope="col">Eliminar</th>
@@ -45,9 +71,7 @@
 
                 @if (_listaDescuentos.Count() < 1)
                 {
-
                     <h5>No se encontraron alumnos con descuento</h5>
-
                 }
                 else
                 {
@@ -56,12 +80,27 @@
                         <tr class="item-tr-@contador">
                             <td scope="row">@contador</td>
                             <td id="label-@contador">@item.idPersona</td>
-                            <td id="label-@contador">@item.ApellidoPaterno @item.ApellidoMaterno @item.Nombres1 @item.Nombres2</td>
-                            <td id="label-@contador">@item.DesDescuento</td>
+                            <td id="label-@contador">@item.nombresApellidos</td>
+                            <td id="label-@contador">@item.fechaRegistro</td>
                             <td id="label-@contador">@item.monto</td>
+                            <td id="label-@contador">@item.descripcionDescuento</td>
+                            <td id="label-@contador">@item.periodo</td>
+                            <td id="label-@contador">@item.curso</td>
+
+                            @if (item.Aprobado == true)
+                            {
+                                <td id="label-@contador" style="text-align:center">@item.notafinal</td>
+                            }
+                            else
+                            {
+                                <td id="label-@contador" style="background-color:#ffded7;text-align:center">
+                                    @item.notafinal
+                                </td>
+                            }
+
                             <td id="label-@contador">
 
-                                @if (item.estado == 1)
+                                @if (item.estado == "Activo")
                                 {
                                     <p style="color:blue"> Activo</p>
                                 }
@@ -71,7 +110,9 @@
                                 }
 
                             </td>
-                            @if (item.estado == 1)
+
+
+                            @if (item.estado == "Activo")
                             {
                                 <td> <a class="btn btn-outline-secondary" onclick="retirarDescuento('@item.idDescuento')">Desactivar</a> </td>
                             }
@@ -140,6 +181,7 @@
                                     <th scope="col">#</th>
                                     <th scope="col">IdAlumno</th>
                                     <th scope="col">Nombres</th>
+                                    <th scope="col">Estado</th>
                                     <th scope="col">Asignar</th>
                                 </tr>
                             </thead>
@@ -192,8 +234,17 @@
 
                         json.forEach((element) => {
                             count++;
-                            $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td><a class="btn btn-outline-secondary" onclick="agregarDescuentoAlumno(`'+element.idPersona+'`)">Agregar</a> </tr>');
 
+                            if(element.asignado=='NO')
+                            {
+                                  $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td> NO ASIGNADO </td> <td><a class="btn btn-outline-secondary" onclick="agregarDescuentoAlumno(`'+element.idPersona+'`)">Agregar</a>  </td></tr>');
+
+                            }else{
+                                 $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td> '+element.asignado+' </td> <td>  </td></tr>');
+
+                            }
+
+                          
                         });
 
                         table.style.opacity='1';
@@ -326,6 +377,40 @@
             }});
 
         }
+
+        function buscarAlumnoTexto(){
+
+            var busqueda=document.getElementById('textBusqueda').value;
+
+             var data = { cadenaBusqueda:busqueda,opcion:'1'};
+            var url = '@Url.Action("tablaBusquedaAlumnos", "Descuentos")';
+            $('#listaAlumnosDescuento').load(url, data, function (responseTxt, statusTxt, xhr) {
+            if (statusTxt == "success") {
+                
+                //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+            }
+            });
+
+
+
+        }
+
+
+        function listaDesaprobados(){
+
+            var busqueda=document.getElementById('textBusqueda').value;
+
+             var data = { cadenaBusqueda:busqueda,opcion:'2'};
+            var url = '@Url.Action("tablaBusquedaAlumnos", "Descuentos")';
+            $('#listaAlumnosDescuento').load(url, data, function (responseTxt, statusTxt, xhr) {
+            if (statusTxt == "success") {
+
+                //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+            }
+            });
+
+        }
+
 
 
 

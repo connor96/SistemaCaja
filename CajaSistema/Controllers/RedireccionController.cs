@@ -92,7 +92,7 @@ namespace CajaSistema.Controllers
                 new SqlParameter("@periodo",periodo),
             };
 
-            var listaTransacciones = _appdbContext.cajaTransaccionListaPendientes.FromSqlRaw("CajaWeb.sp_CajaTransaccionListaTodos @sede,@periodo", parameters).ToList();
+            var listaTransacciones = _appdbContext.cajaTransaccionListaTodos.FromSqlRaw("CajaWeb.sp_CajaTransaccionListaTodos @sede,@periodo", parameters).ToList();
 
             return PartialView(listaTransacciones);
         }
@@ -165,7 +165,8 @@ namespace CajaSistema.Controllers
                                 cabeza.Monto,
                                 sede.Sede,
                                 cabeza.Email,
-                                cabeza.Telefono
+                                cabeza.Telefono,
+                                cabeza.exaUbicacion
                             });
 
 
@@ -189,6 +190,7 @@ namespace CajaSistema.Controllers
                     transaccionDetalleCabecera.DetalleSede = item.Sede;
                     transaccionDetalleCabecera.Email = item.Email;
                     transaccionDetalleCabecera.Telefono = item.Telefono;
+                    transaccionDetalleCabecera.exaUbicacion = item.exaUbicacion;
 
                 }
 

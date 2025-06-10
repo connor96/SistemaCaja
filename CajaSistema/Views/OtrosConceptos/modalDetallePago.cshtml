@@ -1,9 +1,8 @@
-﻿@model CajaTransaccionDetalleCabecera
+﻿@model UbicacionDetalleModal
 @{
-    ViewData["Title"] = "modalTransacciones";
+    ViewData["Title"] = "modalDetallePago";
     int contador = 1;
 }
-
 
 <div class="modal-content">
     <div class="modal-header">
@@ -22,7 +21,7 @@
                                 <label for="idAlumno" class="form-label">DNI Alumno</label>
                                 <input type="text" class="form-control" id="idAlumno" aria-describedby="emailHelp" value="@Model.DNI">
                             </div>
-                           
+
                             <div class="mb-3">
                                 <label for="idAlumno" class="form-label">Nombres y Apellidos</label>
                                 <input type="text" class="form-control" id="idAlumno" aria-describedby="emailHelp" value="@Model.Alumno">
@@ -43,21 +42,13 @@
                                 <input type="text" class="form-control" id="sede" aria-describedby="emailHelp" value="@Model.DetalleSede">
                             </div>
 
+                            <div class="mb-3">
+                                <label for="sede" class="form-label">Cajero</label>
+                                <input type="text" class="form-control" id="cajero" aria-describedby="emailHelp" value="@Model.cajero">
+                            </div>
 
-                            @if (Model.exaUbicacion=="")
-                            {
-                                <div class="mb-3">
-                                    <label for="sede" class="form-label">Examen de ubicacion</label>
-                                    <span class="badge bg-primary">No</span>
-                                </div>
-                            }else{
-                                <div class="mb-3">
-                                    <label for="sede" class="form-label">Examen de ubicacion</label>
-                                    <span class="badge bg-danger">Si - @Model.exaUbicacion</span>
-                                </div>
-                            }
 
-                           
+
 
                         </form>
 
@@ -119,30 +110,21 @@
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Concepto</th>
-                                <th scope="col">Curso</th>
-                                <th scope="col">Aula</th>
-                                <th scope="col">Frecuencia</th>
-                                <th scope="col">Docente</th>
                                 <th scope="col">Monto</th>
-                                
+
                             </tr>
                         </thead>
                         <tbody>
 
-                            @foreach (var item in Model.DetallePago)
-                            {
-                                <tr>
-                                    <th scope="row">@contador</th>
-                                    <td>@item.Descripcion</td>
-                                    <td>@item.curso</td>
-                                    <td>@item.aula</td>
-                                    <td>@item.horario</td>
-                                    <td>@item.docente</td>
-                                    <td>@item.Monto</td>
-                                   
-                                </tr>
-                                contador++;
-                            }
+
+                            <tr>
+                                <th scope="row">@contador</th>
+                                <td>@Model.Descripcion</td>
+                                <td>@Model.Monto</td>
+
+                            </tr>
+
+
 
                         </tbody>
                     </table>
@@ -157,11 +139,9 @@
 
     </div>
     <div class="modal-footer">
-
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
-        <a class="btn btn-primary" onclick="procesarPago('@Model.IdTransaccionesPagadas')">Procesar</a>
-      
     </div>
 </div>
+
+
 
 

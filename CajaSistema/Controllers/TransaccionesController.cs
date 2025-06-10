@@ -98,7 +98,8 @@ namespace CajaSistema.Controllers
                                 cabeza.Monto,
                                 sede.Sede,
                                 cabeza.Email,
-                                cabeza.Telefono
+                                cabeza.Telefono,
+                                cabeza.exaUbicacion
                             });
 
 
@@ -122,6 +123,7 @@ namespace CajaSistema.Controllers
                     transaccionDetalleCabecera.DetalleSede = item.Sede;
                     transaccionDetalleCabecera.Email = item.Email;
                     transaccionDetalleCabecera.Telefono=item.Telefono;
+                    transaccionDetalleCabecera.exaUbicacion = item.exaUbicacion;
 
                 }
 
@@ -182,7 +184,8 @@ namespace CajaSistema.Controllers
                                 cabeza.Monto,
                                 sede.Sede,
                                 cabeza.Email,
-                                cabeza.Telefono
+                                cabeza.Telefono,
+                                cabeza.exaUbicacion
                             });
 
 
@@ -206,6 +209,7 @@ namespace CajaSistema.Controllers
                     transaccionDetalleCabecera.DetalleSede = item.Sede;
                     transaccionDetalleCabecera.Email = item.Email;
                     transaccionDetalleCabecera.Telefono = item.Telefono;
+                    transaccionDetalleCabecera.exaUbicacion = item.exaUbicacion;
 
                 }
 
@@ -235,12 +239,9 @@ namespace CajaSistema.Controllers
             var parametros = new[]
             {
                 new SqlParameter("@idTransaccion",idTransaccionPago),
-                new SqlParameter("@fecha",fecha)
             };
 
-           
-
-            var command = "update Intranet.tb_TransaccionesPagadas set CajaEstado='1', FechaCajero=@fecha where IdTransaccionesPagadas=@idTransaccion";
+            var command = "exec CajaWeb.sp_procesarPago @idTransaccion";
 
             try
             {
@@ -258,7 +259,9 @@ namespace CajaSistema.Controllers
         [HttpGet]
         public IActionResult ListaProcesados()
         {
-            var periodos = _appdbContext.listaPeriodosPeriodos.Where(x=>x.estado==true).ToList();
+            //var periodos = _appdbContext.listaPeriodosPeriodos.Where(x=>x.estado==true).ToList();
+            var periodos = _appdbContext.listaPeriodosPeriodos.OrderByDescending(x=>x.idPeriodoMatricula).ToList();
+
             return View(periodos);
         }
 

@@ -1,6 +1,6 @@
 ﻿namespace CajaSistema.Models
 {
-    public class CajaTransaccionDetalleCabecera
+    public class UbicacionDetalleModal
     {
         public int IdTransaccionesPagadas { get; set; }
         public string? IdPersona { get; set; }
@@ -16,9 +16,9 @@
         public decimal Monto { get; set; }
         public int IdSede { get; set; }
         public string? DetalleSede { get; set; }
-        public List<CajaTransaccionDetalleCuerpo> DetallePago { get; set; }
-        public string? Email { get;  set; }
-        public string? Telefono { get;  set; }
-        public string? exaUbicacion { get; set; }
+        public string? Email { get; set; }
+        public string? Telefono { get; set; }
+        public string? Descripcion { get; set; }
+        public string? cajero { get; set; }
     }
 }

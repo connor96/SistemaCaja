@@ -26,9 +26,19 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Register" asp-action="Index">Registro</a>
+                       
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Administrador
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Register" asp-action="Index">Registro</a></li>
+                                <li><a class="dropdown-item" asp-controller="Periodo" asp-action="Index">Periodos</a></li>
+                            </ul>
                         </li>
+
+
+
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Academico
@@ -36,7 +46,9 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-controller="Becados" asp-action="Index">Becados</a></li>
                                 <li><a class="dropdown-item" asp-controller="Descuentos" asp-action="Index">Descuentos</a></li>
-                               
+                                <li><a class="dropdown-item" asp-controller="Ubicacion" asp-action="Index">Exa.Ubicacion</a></li>
+                                <li><a class="dropdown-item" asp-controller="PostergacionesCursos" asp-action="Index">Postergaciones</a></li>
+                                <li><a class="dropdown-item" asp-controller="OtrosConceptos" asp-action="Index">Otros Conceptos</a></li>
                             </ul>
                         </li>
 

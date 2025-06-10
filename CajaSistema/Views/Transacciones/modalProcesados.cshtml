@@ -42,10 +42,20 @@
                                 <input type="text" class="form-control" id="sede" aria-describedby="emailHelp" value="@Model.DetalleSede">
                             </div>
 
-                            <div class="mb-3">
-                                <label for="sede" class="form-label">Examen de ubicacion</label>
-                                <span class="badge bg-primary">No</span>
-                            </div>
+                            @if (@Model.exaUbicacion == "")
+                            {
+                                <div class="mb-3">
+                                    <label for="sede" class="form-label">Examen de ubicacion</label>
+                                    <span class="badge bg-primary">No</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="mb-3">
+                                    <label for="sede" class="form-label">Examen de ubicacion</label>
+                                    <span class="badge bg-danger">Si - @Model.exaUbicacion</span>
+                                </div>
+                            }
 
                         </form>
 

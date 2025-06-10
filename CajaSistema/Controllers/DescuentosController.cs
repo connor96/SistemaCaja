@@ -28,32 +28,17 @@ namespace CajaSistema.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            //_listaAlumnosconDescuento = new List<DescuentoListaAlumnos>();
-            var _listaAlumnosconDescuento = (from desal in _appdbContext.descuentoDescuento.ToList()
-                                 join des in _appdbContext.descuentoListaDescuentos.ToList()
-                                 on desal.idDescuentoConcepto equals des.IdDescuento
-                                 join persona in _appdbContext.personaPersona.ToList()
-                                 on desal.idPersona equals persona.IdPersona
-                                 select new
-                                 {
-                                     desal.idDescuento,
-                                     desal.idPersona,
-                                     persona.ApellidoPaterno,
-                                     persona.ApellidoMaterno,
-                                     persona.Nombres1,
-                                     persona.Nombres2,
-                                     des.DesDescuento,
-                                     desal.monto,
-                                     desal.estado
-                                 });
 
-            var _listaDescuentos=_appdbContext.descuentoListaDescuentos.Where(s => s.Estado== 1).ToList();
+
+            var _listaDescuentosLista=_appdbContext.descuentoListaDescuentos.Where(s => s.Estado== 1).ToList();
+
+            var listaDescuentos = _appdbContext.descuentoListas.FromSqlRaw("EXEC CajaWeb.sp_listarAlumnosDescuentos").ToList();
 
             //var listDescuentos = _appdbContext.descuentoDescuento.ToList();
 
 
-            ViewBag.listaDescuento = _listaDescuentos;
-            ViewBag.listaDescuentos = _listaAlumnosconDescuento;
+            ViewBag.listaDescuento = _listaDescuentosLista;
+            ViewBag.listaDescuentos = listaDescuentos;
             return View();
         }
 
@@ -67,7 +52,7 @@ namespace CajaSistema.Controllers
                 cadena = "";
             }
             var parametro = new SqlParameter("@cadenabuscar", cadena);
-            var listaAlumnos = _appdbContext.becadosListaALumnosBusqueda.FromSqlRaw("CajaWeb.sp_busquedaAlumnos @cadenabuscar", parametro).ToList();
+            var listaAlumnos = _appdbContext.becadosListaALumnosBusqueda.FromSqlRaw("CajaWeb.sp_busquedaAlumnosDescuento @cadenabuscar", parametro).ToList();
             return Json(listaAlumnos);
         }
 
@@ -82,6 +67,7 @@ namespace CajaSistema.Controllers
             _descuendoClase.estado = 1;
             _descuendoClase.monto = 25;
             _descuendoClase.usuarioRegistro = idUsuarioActivo;
+            _descuendoClase.fechaRegistro = DateTime.Now;
 
             int id = 0;
             try
@@ -173,6 +159,77 @@ namespace CajaSistema.Controllers
                 return Json(e.Message);
             }
         }
+
+        [HttpPost]
+        public PartialViewResult tablaBusquedaAlumnos(string cadenaBusqueda, string opcion)
+        {
+
+            if (cadenaBusqueda is null)
+            {
+                cadenaBusqueda = "";
+                cadenaBusqueda = cadenaBusqueda.ToUpper();
+            }
+            else
+            {
+                cadenaBusqueda = cadenaBusqueda.ToUpper();
+            }
+
+
+            if (opcion == "1")
+            {
+                var listaAlumnosBecados = _appdbContext.descuentoListas.FromSqlRaw("EXEC CajaWeb.sp_listarAlumnosDescuentos").ToList();
+
+                var listaAlumnosBecados2 = listaAlumnosBecados.Where(s => s.nombresApellidos.Contains(cadenaBusqueda)).ToList();
+
+                var listaAlumnosBecados3 = listaAlumnosBecados.Where(s => s.idPersona.Contains(cadenaBusqueda)).ToList();
+
+
+                if (cadenaBusqueda is null || cadenaBusqueda == "")
+                {
+
+                }
+                else if (listaAlumnosBecados2.Count < 1)
+                {
+                    listaAlumnosBecados = listaAlumnosBecados3;
+
+                }
+                else if (listaAlumnosBecados3.Count < 1)
+                {
+                    listaAlumnosBecados = listaAlumnosBecados2;
+                }
+                else
+                {
+                    listaAlumnosBecados = listaAlumnosBecados2;
+
+                    foreach (var item in listaAlumnosBecados3)
+                    {
+                        listaAlumnosBecados.Add(item);
+                    }
+                }
+
+
+                ViewBag.listaAlumnos = listaAlumnosBecados;
+
+
+            }
+            else
+            {
+                var listaAlumnosDesaprobados = _appdbContext.descuentoListas.FromSqlRaw("EXEC CajaWeb.sp_listarAlumnosDescuentos").ToList();
+
+                listaAlumnosDesaprobados = listaAlumnosDesaprobados.Where(s => s.Aprobado == false).ToList();
+
+
+                ViewBag.listaAlumnos = listaAlumnosDesaprobados;
+            }
+
+
+            return PartialView();
+
+
+        }
+
+
+
 
     }
 }

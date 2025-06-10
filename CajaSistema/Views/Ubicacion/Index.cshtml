@@ -1,0 +1,267 @@
+﻿@model IEnumerable<ListaPeriodo>;
+@{
+    ViewData["Title"] = "Index";
+
+    List<InstitucionSede> sedes = new List<InstitucionSede>();
+    sedes = ViewBag.sedes;
+
+}
+
+<div class="row container">
+
+    <h4>Lista de Alumnos de Examen de ubicacion</h4>
+
+    <div class="col-3 row mt-3">
+        <div class="col-12">
+            <select class="form-select" aria-label="Default select example" id="periodo">
+                <option selected disabled>Seleccione periodo</option>
+                @foreach (var item in Model)
+                {
+                    <option value="@item.periodoTexto">@item.periodoDescripcion</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-12 mt-3">
+            <select class="form-select" aria-label="Default select example" id="sedes">
+                <option selected disabled>Seleccione Sede</option>
+                @foreach (var item in sedes)
+                {
+                    <option value="@item.IdSede">@item.Sede</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-12 mt-3">
+            <input type="button" class="btn btn-success" style="width:100%" id="_botonListaUbicacion" value="Listar" onclick="_actualizarTablaExamen()" />
+        </div>
+
+
+    </div>
+
+
+    <div class="col-9 mt-3">
+        <div class="tablaUbicacion" id="tablaUbicacion">
+
+
+
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalUbicacion" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Agregar becados</h1>
+                    @* <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> *@
+                </div>
+                <div class="modal-body">
+                    <form method="POST">
+
+                        <div class="container row">
+                            <div class="col-10">
+                                <input type="text" class="form-control" style="width:100%" id="textoAlumno" placeholder="Busqueda de alumno por DNI, codigo, o Apellidos y Nombres" />
+                            </div>
+                            <div class="col-2">
+                                <a class="btn btn-outline-secondary" onclick="buscarAlumnoUbicacion()">Buscar</a>
+                            </div>
+                        </div>
+                    </form>
+
+                    <br />
+
+                    <div class="row">
+
+                        <table class="table table-hover" id="tabla_alumnosUbicacion" style="opacity:0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">IdAlumno</th>
+                                    <th scope="col">Nombres</th>
+                                    <th scope="col">Estado</th>
+                                    <th scope="col">Asignar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @* <tr>
+                                    <th scope="row">1</th>
+                                    <td>13254156</td>
+                                    <td>Otto</td>
+                                    <td><a class="btn btn-outline-secondary" onclick="agregarBecado('id','@contador')">Editar</a> </td>
+                                </tr> *@
+
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                </div>
+                 <div class="modal-footer">
+                    <input type="button" class="btn btn-success" style="width:100%" value="Cerrar" onclick="_cerrarModalUbicacion()" />
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="modalTransaccionUbicacion" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modaDetallelUbicacion" id="modaDetallelUbicacion">
+
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts{
+
+    <script>
+
+        const containerUbicacion = document.getElementById("modalUbicacion");
+        const modalUbicacion = new bootstrap.Modal(containerUbicacion);
+
+        const containerDetalleUbicacion = document.getElementById("modalTransaccionUbicacion");
+        const modaTransaccionlUbicacion = new bootstrap.Modal(containerDetalleUbicacion);
+
+
+        function _actualizarTablaExamen()
+        {
+            var comboPeriodo=$('#periodo').val();
+
+            var comboSede=$('#sedes').val();
+
+            if(comboPeriodo==null || comboSede==null){
+                alert('Seleccione un Periodo o una Sede')
+            }else{
+                var data = { periodo:comboPeriodo,idSede:comboSede};
+                var url = '@Url.Action("TablaUbicacion", "Ubicacion")';
+                $('#tablaUbicacion').load(url, data, function (responseTxt, statusTxt, xhr) {
+                    if (statusTxt == "success") {
+                        //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+                    }
+                });
+            }
+        }
+
+
+        function agregarUbicacion(periodo, sede){
+            modalUbicacion.show();
+        }
+
+        function buscarAlumnoUbicacion(){
+            var textoIngresado =document.getElementById("textoAlumno");
+            var table=document.getElementById("tabla_alumnosUbicacion");
+            table.querySelector("tbody").innerHTML="";
+            $.ajax({
+                url:'@Url.Action("BusquedaAlumnos", "Ubicacion")',
+                data:{cadena:textoIngresado.value},
+                type : 'POST',
+                dataType : 'json',
+                success : function(json) {
+                    //console.log(json);
+                    var count=0;
+                    json.forEach((element) => {
+                        count++;
+                        if(element.examen=='NO')
+                        {
+                                $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td> NO </td> <td><a class="btn btn-outline-secondary" onclick="_agregarUbicacion(`'+element.idPersona+'`)">Agregar</a>  </td></tr>');
+                        }else{
+                                $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td> '+element.examen+' </td> <td>  </td></tr>');
+                        }
+                    });
+
+                    table.style.opacity='1';
+                },
+                error : function(xhr, status) {
+                alert('Disculpe, existió un problema');
+              }});
+        }
+
+        function _cerrarModalUbicacion(){
+            modalUbicacion.hide();
+        }
+        function _agregarUbicacion(idPersona){
+            var comboPeriodo=$('#periodo').val();
+            var comboSede=$('#sedes').val();
+
+             $.ajax({
+                url:'@Url.Action("registrarUbicacion", "Ubicacion")',
+                data:{idPersona:idPersona,idSede:comboSede,periodo:comboPeriodo},
+                type : 'POST',
+                dataType : 'json',
+                success : function(json) {
+                    //console.log(json);
+                    Swal.fire({
+                        title: "Se ha guardado exitosamente!",
+                        text: "El codigo de guardado es "+json,
+                        icon: "success"
+
+                    }).then((result)=>{
+                        modalUbicacion.hide();
+                        _actualizarTablaExamen();
+
+
+                    });
+
+                },
+                error : function(xhr, status) {
+                alert('Disculpe, existió un problema');
+              }});
+
+        }
+
+        function eliminarUbicacion(idExamenUbicacion)
+        {
+            $.ajax({
+                url:'@Url.Action("eliminarUbicacion", "Ubicacion")',
+                data:{idExamenUbicacion:idExamenUbicacion},
+                type : 'POST',
+                dataType : 'json',
+                success : function(json) {
+                    //console.log(json);
+
+                    if(json='1')
+                    {
+                        Swal.fire({
+                        title: "Se ha eliminado exitosamente!",
+                        icon: "success"
+
+                        }).then((result)=>{
+                            _actualizarTablaExamen();
+
+                        });
+                    }else{
+                        alert("Ha ocurrido un error");
+                    }
+
+                },
+                error : function(xhr, status) {
+                alert('Disculpe, existió un problema');
+              }});
+        }
+
+        function verPagoExamen(idTransaccionUbicacion){
+
+            var data = { idExamenUbicacion:idTransaccionUbicacion};
+            var url = '@Url.Action("modalDetallePago", "Ubicacion")';
+            $('#modaDetallelUbicacion').load(url, data, function (responseTxt, statusTxt, xhr) {
+                if (statusTxt == "success") {
+                    //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+                    modaTransaccionlUbicacion.show();
+                }
+            });
+        }
+
+
+    </script>
+
+
+}
+

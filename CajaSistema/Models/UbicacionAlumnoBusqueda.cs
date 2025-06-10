@@ -1,9 +1,9 @@
 ﻿namespace CajaSistema.Models
 {
-    public class BecadosAlumnoBusqueda
+    public class UbicacionAlumnoBusqueda
     {
         public string? idPersona { get; set; }
         public string? fullname { get; set; }
-        public string? asignado { get; set; }
+        public string? examen { get; set; }
     }
 }

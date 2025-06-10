@@ -1,0 +1,392 @@
+﻿@model IEnumerable<dynamic>
+@{
+    ViewData["Title"] = "Index";
+    int contador = 1;
+
+    List<InstitucionSede> sedes = new List<InstitucionSede>();
+    sedes = ViewBag.listaSedes;
+
+    List<ListaPeriodo> periodos = new List<ListaPeriodo>();
+    periodos = ViewBag.listaPeriodos;
+
+    List<AuxDobleString> listaConceptos = new List<AuxDobleString>();
+    listaConceptos = ViewBag.listaConceptos;
+}
+
+@section Styles{
+    <style>
+
+        .fullscreen-spinner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none; /* oculto por defecto */
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+        }
+
+    </style>
+}
+
+
+<!-- Spinner pantalla completa -->
+<div class="fullscreen-spinner" id="spinner">
+    <div class="spinner-border text-light" role="status">
+        <span class="visually-hidden">Cargando...</span>
+    </div>
+</div>
+
+
+<div class="row container">
+    <!-- Button trigger modal -->
+    <div class="row" style="padding-top:2em;padding-bottom:2em">
+        <div class="col-12">
+            <h4>Lista de Alumnos de otros Conceptos</h4>
+        </div>
+
+
+        <div class="col-3 row mt-3">
+            <div class="col-12">
+                <select class="form-select" aria-label="Default select example" id="periodo">
+                    <option selected disabled>Seleccione periodo</option>
+                    @foreach (var item in periodos)
+                    {
+                        <option value="@item.periodoTexto">@item.periodoDescripcion</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-12 mt-3">
+                <select class="form-select" aria-label="Default select example" id="sedes">
+                    <option selected disabled>Seleccione Sede</option>
+                    @foreach (var item in sedes)
+                    {
+                        <option value="@item.IdSede">@item.Sede</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-12 mt-3">
+                <select class="form-select" aria-label="Default select example" id="listaConceptos">
+                    <option selected disabled>Seleccione Concepto</option>
+                    @foreach (var item in listaConceptos)
+                    {
+                        <option value="@item.cadena1">@item.cadena2</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-12 mt-3">
+                <input type="button" class="btn btn-success" style="width:100%" id="_botonListaotrosConceptos" value="Listar" onclick="_actualizarTablaConceptos()" />
+            </div>
+
+
+        </div>
+
+        <div class="col-9 mt-3">
+            <div class="tablaConceptos" id="tablaConceptos">
+            </div>
+        </div>
+
+
+
+    </div>
+
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Agregar Conceptos</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST">
+
+                    <div class="container row">
+
+                        <div class="col-10 mt-1">
+                            <select class="form-select" aria-label="Default select example" id="conceptoPostergacion">
+                                @* <option value="default" selected disabled>Seleccione el concepto</option>
+                                 *@
+                            </select>
+                        </div>
+
+                        <div class="col-10 mt-2">
+                            <input type="text" class="form-control" style="width:100%" id="textoAlumno" placeholder="Busqueda de alumno por DNI, codigo, o Apellidos y Nombres" />
+                        </div>
+                        <div class="col-2">
+                            <a class="btn btn-outline-secondary" onclick="buscarAlumno()">Buscar</a>
+                        </div>
+                    </div>
+                </form>
+
+                <br />
+
+                <div class="row">
+
+                    <table class="table table-hover" id="tabla_alumnos" style="opacity:0">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">IdAlumno</th>
+                                <th scope="col">Nombres</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Asignar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @* <tr>
+                                    <th scope="row">1</th>
+                                    <td>13254156</td>
+                                    <td>Otto</td>
+                                    <td><a class="btn btn-outline-secondary" onclick="agregarBecado('id','@contador')">Editar</a> </td>
+                                </tr> *@
+
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+            @*  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div> *@
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modalOtrosConceptos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modaDetallelConceptos" id="modaDetallelPostergacion">
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+ @section Scripts {
+
+    <script>
+
+        const spinner = document.getElementById('spinner');
+
+        const containerAlumno = document.getElementById("exampleModal");
+        const modalAlumno = new bootstrap.Modal(containerAlumno);
+
+        const containerDetalleConceptos = document.getElementById("modalOtrosConceptos");
+        const modaTransaccionlConceptos = new bootstrap.Modal(containerDetalleConceptos);
+
+
+        function cleanddl(objeto) {
+            $("#" + objeto)
+                .empty()
+                .append("<option disabled selected>Selecciona una opción</option>");
+        }
+
+
+        function _actualizarTablaConceptos(){
+
+            var comboPeriodo=$('#periodo').val();
+
+            var comboSede=$('#sedes').val();
+
+            var concepto=$('#listaConceptos').val();
+
+            console.log(comboPeriodo);
+            console.log(comboSede);
+            console.log(concepto);
+
+            if(comboPeriodo==null || comboSede==null || concepto==null){
+                alert('Seleccione un Periodo o una Sede o un Concepto');
+            }else{
+
+                spinner.style.display = 'flex';
+
+                var data = { periodo:comboPeriodo,sede:comboSede,concepto:concepto};
+                var url = '@Url.Action("TablaConceptos", "OtrosConceptos")';
+                $('#tablaConceptos').load(url, data, function (responseTxt, statusTxt, xhr) {
+                    if (statusTxt == "success") {
+
+                        //conceptoPostergacion
+
+                        cleanddl("conceptoPostergacion");
+                        
+                        $.ajax({
+                            url: '@Url.Action("ListaConceptos", "OtrosConceptos")',
+                            type: "POST",
+                            data: { tipoConcepto: concepto},
+                            success: function (resultado) {
+                                console.log(resultado);
+                                $.each(resultado, function (key, item) {
+                                    $("#conceptoPostergacion").append('<option value="' + item.idTarifario + '">' + item.descripcion + '</option>');
+                                });
+
+                                spinner.style.display = 'none';
+
+                            },
+                            error: function (errormessage) {
+                                alert(errormessage.responseText);
+                            }
+                        });
+
+
+
+                    }
+                });
+            }
+
+        }
+
+
+        function agregarConcepto(periodo, sede){
+            modalAlumno.show();
+        }
+
+        function buscarAlumno(){
+
+            var textoIngresado =document.getElementById("textoAlumno");
+
+            var comboPeriodo=document.getElementById("periodo");
+
+            var comboSede=document.getElementById("sedes");
+
+            var concepto=$('#listaConceptos').val();
+
+            var table=document.getElementById("tabla_alumnos");
+            table.querySelector("tbody").innerHTML="";
+            $.ajax({
+                url:'@Url.Action("BusquedaAlumnos", "OtrosConceptos")',
+                data:{cadena:textoIngresado.value,idSede:comboSede.value,periodo:comboPeriodo.value,concepto:concepto},
+                type : 'POST',
+                dataType : 'json',
+                success : function(json) {
+                    //console.log(json);
+                    var count=0;
+                    json.forEach((element) => {
+                        count++;
+                        if(element.diferenciador=='NO')
+                        {
+                                $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td> NO </td> <td><a class="btn btn-outline-secondary" onclick="_agregarConcepto(`'+element.idPersona+'`)">Agregar</a>  </td></tr>');
+                        }else{
+                                $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td> '+element.diferenciador+' </td> <td><a class="btn btn-outline-secondary" onclick="_agregarConcepto(`'+element.idPersona+'`)">Agregar</a>  </td></tr>');
+                        }
+                    });
+
+                    table.style.opacity='1';
+                },
+                error : function(xhr, status) {
+                alert('Disculpe, existió un problema');
+              }});
+        }
+
+
+        function _agregarConcepto(idPersona){
+
+            var concepto=document.getElementById("conceptoPostergacion").value;
+            var comboPeriodo=document.getElementById("periodo");
+            var comboSede=document.getElementById("sedes");
+
+            // console.log(idPersona);
+            // console.log(postergado);
+
+            if(concepto!='default'){
+
+                if(concepto!=null){
+                    $.ajax({
+                    url:'@Url.Action("registrarConcepto", "OtrosConceptos")',
+                    data:{idPersona:idPersona,concepto:concepto,periodo:comboPeriodo.value,sede:comboSede.value},
+                    type : 'POST',
+                    dataType : 'json',
+                    success : function(json) {
+
+                        console.log(json[0]);
+
+                        Swal.fire({
+                            title: "Se ha guardado exitosamente!",
+                            text: "El codigo de guardado es "+json[0].cadenaString,
+                            icon: "success"
+
+                        }).then((result)=>{
+                            modalAlumno.hide();
+                            _actualizarTablaConceptos();
+
+                        });
+
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                  }});
+                }else{
+                    alert('Debe seleccionar un concepto');
+                }
+
+
+            }else{
+                alert('Seleccione un concepto');
+            }
+
+        }
+
+        function eliminarConcepto(idConcepto)
+        {
+
+            $.ajax({
+                url:'@Url.Action("eliminarConcepto", "OtrosConceptos")',
+                data:{idConcepto:idConcepto},
+                type : 'POST',
+                dataType : 'json',
+                success : function(json) {
+                    //console.log(json);
+
+                    if(json='1')
+                    {
+                        Swal.fire({
+                        title: "Se ha eliminado exitosamente!",
+                        icon: "success"
+
+                        }).then((result)=>{
+                            _actualizarTablaConceptos();
+
+                        });
+                    }else{
+                        alert("Ha ocurrido un error");
+                    }
+
+                },
+                error : function(xhr, status) {
+                alert('Disculpe, existió un problema');
+              }});
+
+        }
+
+        function verPagoConcepto(idConcepto){
+
+            var data = { idConcepto:idConcepto};
+            var url = '@Url.Action("modalDetallePago", "OtrosConceptos")';
+            $('#modaDetallelConceptos').load(url, data, function (responseTxt, statusTxt, xhr) {
+                if (statusTxt == "success") {
+                    //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+                    modaTransaccionlConceptos.show();
+                }
+            });
+
+        }
+
+
+    </script>
+ 
+ 
+ }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using System;
 
 namespace CajaSistema.Controllers
 {
@@ -75,6 +76,92 @@ namespace CajaSistema.Controllers
             }
 
         }
-       
+
+        [HttpPost]
+        public PartialViewResult modalRegister(string id)
+        {
+
+            UserIdentity personaRegistro = _appdbContext.Users.Where(x => x.Id == id).SingleOrDefault();
+            var roles = _appdbContext.Roles.ToList();
+
+            ViewBag.roles = roles;
+
+            return PartialView(personaRegistro);
+        }
+
+        [HttpPost]
+        public JsonResult editarRegistro(string idPersona, string rol, bool activo, bool inactivo)
+        {
+
+            UserIdentity personal = _appdbContext.Users.Where(x => x.idPersona == idPersona).SingleOrDefault();
+
+            string idPersonaNet=personal.Id;
+
+            personal.rol = rol;
+            if (inactivo)
+            {
+                personal.LockoutEnabled = false;
+                personal.LockoutEnd = DateTime.Now.AddYears(200);
+            }
+
+            IdentityUserRole<string> rolPersona = _appdbContext.UserRoles.Where(x => x.UserId == idPersonaNet).SingleOrDefault();
+
+            IdentityRole rolTexto = _appdbContext.Roles.Where(x => x.Id == rol).SingleOrDefault();
+
+
+            try
+            {
+                _appdbContext.Users.Update(personal);
+                
+
+                _appdbContext.UserRoles.Remove(rolPersona);
+
+
+                _appdbContext.UserRoles.Add(new IdentityUserRole<string>
+                {
+                    UserId = rolPersona.UserId,
+                    RoleId = rol,
+                });
+
+                _appdbContext.SaveChanges();
+
+                return Json("ok");
+
+            }
+            catch (Exception e)
+            {
+                return Json(e.Message);
+            }
+ 
+        }
+
+
+        [HttpPost]
+        public JsonResult eliminarRegistro(string idRegistro)
+        {
+            var user= _appdbContext.Users.Where(x => x.Id == idRegistro).SingleOrDefault();
+            var rol= _appdbContext.UserRoles.Where(x => x.UserId == idRegistro).SingleOrDefault();
+
+            try
+            {
+                _appdbContext.UserRoles.Remove(rol);
+                _appdbContext.Users.Remove(user);
+                _appdbContext.SaveChanges();
+
+                return Json("ok");
+
+
+            }
+            catch (Exception e)
+            {
+                return Json(e.Message);
+            }
+
+        }
+           
+
+
+
+
     }
 }
