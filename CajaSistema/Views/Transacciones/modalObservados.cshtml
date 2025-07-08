@@ -1,9 +1,8 @@
 ﻿@model CajaTransaccionDetalleCabecera
 @{
-    ViewData["Title"] = "modalTransacciones";
+    ViewData["Title"] = "modalObservados";
     int contador = 1;
 }
-
 
 <div class="modal-content">
     <div class="modal-header">
@@ -46,35 +45,31 @@
                             @if (@Model.exaUbicacion == "")
                             {
                                 <div class="mb-3">
-                                    <label for="sede" class="form-label">Examen de ubicacion</label>
+                                    <label for="exaubicacion" class="form-label">Examen de ubicacion</label>
                                     <span class="badge bg-primary">No</span>
                                 </div>
                             }
                             else
                             {
                                 <div class="mb-3">
-                                    <label for="sede" class="form-label">Examen de ubicacion</label>
+                                    <label for="exaubicacion" class="form-label">Examen de ubicacion</label>
                                     <span class="badge bg-danger">Si - @Model.exaUbicacion</span>
                                 </div>
                             }
 
-                            @if(Model.observacion is not null){
-
-                                <div class="mb-3" style="color:red;">
-                                    <label for="observacion" class="form-label">Observacion</label>
-                                    <p>
-                                        @Model.observacion
-                                    </p>
-
-                                </div>
-                            }
+                            <div class="mb-3" style="color:red;">
+                                <label for="observacion" class="form-label">Observacion</label>
+                                <p>
+                                    @Model.observacion
+                                </p>
+                                
+                            </div>
 
 
                         </form>
 
 
                     </div>
-
 
 
                 </div>
@@ -170,7 +165,7 @@
     <div class="modal-footer">
 
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
-       
+        <a class="btn btn-primary" onclick="procesarPago('@Model.IdTransaccionesPagadas')">Procesar</a>
     </div>
 </div>
 

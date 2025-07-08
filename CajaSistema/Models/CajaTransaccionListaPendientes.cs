@@ -11,5 +11,7 @@
         public string? Modalidad { get; set; }
         public string? curso { get; set; }
         public string? Horario { get; set; }
+        public bool observado { get; set; }
+
     }
 }

@@ -20,5 +20,6 @@
         public string? Email { get;  set; }
         public string? Telefono { get;  set; }
         public string? exaUbicacion { get; set; }
+        public string? observacion { get; set; }
     }
 }

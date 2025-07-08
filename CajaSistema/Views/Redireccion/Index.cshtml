@@ -171,7 +171,8 @@
                 }
                  });
             }else{
-                var data = { idCajero:origen};
+                var periodo=$('#periodoSeleccionado').val();
+                var data = { idCajero:origen,periodo:periodo};
                 var url = '@Url.Action("TablaTransacciones", "Redireccion")';
                 $('#tablaTransaccionesPendientes').load(url, data, function (responseTxt, statusTxt, xhr) {
                 if (statusTxt == "success") {

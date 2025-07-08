@@ -67,7 +67,7 @@ namespace CajaSistema.Controllers
         public PartialViewResult TablaPostergados(string periodo, string sede)
         {
 
-            var consulta = (from postergados in _appdbContext.postergacionesCursosListas.ToList()
+            var consulta = (from postergados in _appdbContext.postergacionesCursosListas.Where(x=>x.idSede==int.Parse(sede)&&x.periodo==periodo).ToList()
                             join persona in _appdbContext.personaPersona.ToList()
                             on postergados.idPersona equals persona.IdPersona
                             select new

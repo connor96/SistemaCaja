@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.ComponentModel.DataAnnotations;
 
 namespace CajaSistema.Areas.Identity.Pages.Account
@@ -109,6 +110,7 @@ namespace CajaSistema.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+                    HttpContext.Session.SetString("idPersona", Input.Email);
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

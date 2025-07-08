@@ -13,5 +13,6 @@
         public string? Horario { get; set; }
         public string? Cajero { get; set; }
         public DateTime FechaRegistro { get; set; }
+        public bool observado { get; set; }
     }
 }

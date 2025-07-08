@@ -24,12 +24,14 @@ namespace CajaSistema.Controllers
         }
 
 
-
         [HttpGet]
         public IActionResult Index()
         {
-            var listaAlumnosBecados = _appdbContext.becadosListaAlumnos.FromSqlRaw("EXEC CajaWeb.sp_listarAlumnosBecados").ToList();
-            ViewBag.listaAlumnos = listaAlumnosBecados;
+            var listaSedes = _appdbContext.institucionSedes.Where(x=>x.Estado==1).ToList();
+            ViewBag.listaSedes = listaSedes;
+
+            //var listaAlumnosBecados = _appdbContext.becadosListaAlumnos.FromSqlRaw("EXEC CajaWeb.sp_listarAlumnosBecados").ToList();
+            //ViewBag.listaAlumnos = listaAlumnosBecados;
             return View();
         }
 
@@ -70,7 +72,7 @@ namespace CajaSistema.Controllers
 
 
         [HttpPost]
-        public JsonResult RegistrarBecado(string idPersona)
+        public JsonResult RegistrarBecado(string idPersona,string sede)
         {
             idUsuarioActivo = HttpContext.Session.GetString("idPersona");
             _becadoAlumnoBecado = new BecadosAlumnoBecado();
@@ -78,6 +80,7 @@ namespace CajaSistema.Controllers
             _becadoAlumnoBecado.estado = true;
             _becadoAlumnoBecado.usuarioRegistro = idUsuarioActivo;
             _becadoAlumnoBecado.fechaRegistro = DateTime.Now;
+            _becadoAlumnoBecado.idSede = int.Parse(sede);
             int id = 0;
             try
             {
@@ -163,7 +166,7 @@ namespace CajaSistema.Controllers
         }
 
         [HttpPost]
-        public PartialViewResult tablaBusquedaAlumnos(string cadenaBusqueda,string opcion)
+        public PartialViewResult tablaBusquedaAlumnos(string cadenaBusqueda,string opcion,string sede)
         {
             if (cadenaBusqueda is null)
             {
@@ -175,16 +178,23 @@ namespace CajaSistema.Controllers
                 cadenaBusqueda = cadenaBusqueda.ToUpper();
             }
             
-
             if (opcion == "1")
             {
-                var listaAlumnosBecados = _appdbContext.becadosListaAlumnos.FromSqlRaw("EXEC CajaWeb.sp_listarAlumnosBecados").ToList();
+                var listaAlumnosBecados = new List<BecadosListaBecados>();
+
+                if (sede == "99")
+                {
+                    listaAlumnosBecados = _appdbContext.becadosListaAlumnos.FromSqlRaw("EXEC CajaWeb.sp_listarAlumnosBecados").
+                        ToList();
+                }
+                else
+                {
+                    listaAlumnosBecados = _appdbContext.becadosListaAlumnos.FromSqlRaw("EXEC CajaWeb.sp_listarAlumnosBecados").AsEnumerable().Where(x => x.idSede == int.Parse(sede)).ToList();
+
+                }
 
                 var listaAlumnosBecados2 = listaAlumnosBecados.Where(s => s.nombresApellidos.Contains(cadenaBusqueda)).ToList();
-
                 var listaAlumnosBecados3= listaAlumnosBecados.Where(s => s.idPersona.Contains(cadenaBusqueda)).ToList();
-
-
                 if(cadenaBusqueda is null || cadenaBusqueda=="")
                 {
                     
@@ -192,7 +202,6 @@ namespace CajaSistema.Controllers
                 else if(listaAlumnosBecados2.Count<1)
                 {
                     listaAlumnosBecados = listaAlumnosBecados3;
-
                 }
                 else if (listaAlumnosBecados3.Count < 1)
                 {
@@ -201,25 +210,20 @@ namespace CajaSistema.Controllers
                 else
                 {
                     listaAlumnosBecados = listaAlumnosBecados2;
-
                     foreach (var item in listaAlumnosBecados3)
                     {
                         listaAlumnosBecados.Add(item);
                     }
                 }
-                
-
                 ViewBag.listaAlumnos = listaAlumnosBecados;
 
 
             }
             else
             {
-                var listaAlumnosDesaprobados = _appdbContext.becadosListaAlumnos.FromSqlRaw("EXEC CajaWeb.sp_listarAlumnosBecados").ToList();
-
-                listaAlumnosDesaprobados = listaAlumnosDesaprobados.Where(s => s.Aprobado == false).ToList();
-
-
+                var listaAlumnosDesaprobados = _appdbContext.becadosListaAlumnos.FromSqlRaw("EXEC CajaWeb.sp_listarAlumnosBecados").AsEnumerable()
+                    .Where(x => x.idSede == int.Parse(sede) && x.Aprobado==false).ToList();
+                //listaAlumnosDesaprobados = listaAlumnosDesaprobados.Where(s => s.Aprobado == false).ToList();
                 ViewBag.listaAlumnos = listaAlumnosDesaprobados;
             }
 

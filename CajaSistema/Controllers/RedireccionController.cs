@@ -24,7 +24,8 @@ namespace CajaSistema.Controllers
         public IActionResult Index()
         {
 
-            var listaPeriodos=_appdbContext.listaPeriodosPeriodos.Where(x=>x.estado==true).ToList();
+            //var listaPeriodos=_appdbContext.listaPeriodosPeriodos.Where(x=>x.estado==true).ToList();
+            var listaPeriodos = _appdbContext.listaPeriodosPeriodos.OrderByDescending(x => x.idPeriodoMatricula).ToList();
             ViewBag.listaPeriodos = listaPeriodos;
 
             var listaCajeros = (from cajeros in _appdbContext.cajeroCajeroActivos.ToList()
@@ -66,14 +67,14 @@ namespace CajaSistema.Controllers
 
 
         [HttpPost]
-        public PartialViewResult TablaTransacciones(string idCajero)
+        public PartialViewResult TablaTransacciones(string idCajero, string periodo)
         {
 
             var parameters = new[]
             {
                 new SqlParameter("@opcion",1),
                 new SqlParameter("@idCajero",idCajero),
-                new SqlParameter("@periodo","2502"),
+                new SqlParameter("@periodo",periodo),
                 new SqlParameter("@sede",1)
             };
 
@@ -166,7 +167,8 @@ namespace CajaSistema.Controllers
                                 sede.Sede,
                                 cabeza.Email,
                                 cabeza.Telefono,
-                                cabeza.exaUbicacion
+                                cabeza.exaUbicacion,
+                                cabeza.observacion
                             });
 
 
@@ -191,6 +193,7 @@ namespace CajaSistema.Controllers
                     transaccionDetalleCabecera.Email = item.Email;
                     transaccionDetalleCabecera.Telefono = item.Telefono;
                     transaccionDetalleCabecera.exaUbicacion = item.exaUbicacion;
+                    transaccionDetalleCabecera.observacion = item.observacion;
 
                 }
 

@@ -1,4 +1,6 @@
+using Azure.Core;
 using CajaSistema.Data;
+using CajaSistema.Filters;
 using CajaSistema.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +27,10 @@ builder.Services
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders()
     .AddDefaultUI();
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add(new SessionCheckAtribute("idPersona"));
+});
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -38,7 +43,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     //options.Password.RequiredUniqueChars = 1;
 
     // Lockout settings.
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(3);
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(1);
     options.Lockout.MaxFailedAccessAttempts = 5;
     //options.Lockout.AllowedForNewUsers = true;
 
@@ -52,7 +57,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     // Cookie settings
     options.Cookie.HttpOnly = true;
-    options.ExpireTimeSpan = TimeSpan.FromDays(3);
+    options.ExpireTimeSpan = TimeSpan.FromDays(1);
 
     options.LoginPath = "/Identity/Account/Login";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
@@ -67,7 +72,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(options =>
 {
     options.Cookie.Name = "Seguimiento.Session";
-    options.IdleTimeout = TimeSpan.FromDays(3);
+    options.IdleTimeout = TimeSpan.FromDays(1);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
@@ -105,6 +110,23 @@ app.MapControllerRoute(
 
 app.MapRazorPages()
    .WithStaticAssets();
+
+
+//app.Use(async (context, next) =>
+//{
+//    // Por ejemplo, validamos si "Usuario" está en la sesión
+//    var usuario = context.Session.GetString("idPersona");
+
+//    if (string.IsNullOrEmpty(usuario) &&
+//        !context.Request.Path.StartsWithSegments("/Identity/Account/Login"))
+//    {
+//        // Si no existe y no estamos ya en /login, redirigimos
+//        context.Response.Redirect("/Identity/Account/Login?returnUrl=");
+//        return ;
+//    }
+
+//    await next.Invoke();
+//});
 
 
 

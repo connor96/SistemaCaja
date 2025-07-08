@@ -1,0 +1,143 @@
+﻿@model List<ListaPeriodo>
+@{
+
+    ViewData["Title"] = "ListaObservador";
+}
+
+<div class="container row">
+    <h4>Lista de Vouchers Observados</h4>
+
+    <div class="col-12 row mt-3">
+        <div class="col-4">
+            <select class="form-select" aria-label="Default select example" id="periodo" onchange="_actualizarTablaObservados()">
+                <option selected disabled>Seleccione el periodo</option>
+                @foreach (var item in Model)
+                {
+                    <option value="@item.periodoTexto">@item.periodoDescripcion</option>
+                }
+            </select>
+        </div>
+
+    </div>
+
+
+    <div class="col-12 mt-3">
+        <div class="tablaObservados" id="tablaObservados">
+        </div>
+    </div>
+
+
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalTransacciones" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+
+        <div id="contenidoModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+
+@section Scripts
+{
+    <script>
+        function _actualizarTablaObservados()
+        {
+            var comboOrigen=$('#periodo').val();
+
+            if(comboOrigen==''){
+                alert('Seleccione un Periodo')
+            }else{
+                var data = { periodo:comboOrigen,idCajero:''};
+                var url = '@Url.Action("TablaObservados", "Transacciones")';
+                $('#tablaObservados').load(url, data, function (responseTxt, statusTxt, xhr) {
+                    if (statusTxt == "success") {
+                        //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+                    }
+                });
+            }
+
+
+        }
+
+
+        const containerModalTransacciones = document.getElementById("modalTransacciones");
+        const modalTransaccionesDetalle = new bootstrap.Modal(containerModalTransacciones);
+
+
+        function detalleTransaccion(idTransaccion){
+
+                var data = { id:idTransaccion};
+                var url = '@Url.Action("modalObservados", "Transacciones")';
+                $('#contenidoModal').load(url, data, function (responseTxt, statusTxt, xhr) {
+                    if (statusTxt == "success") {
+                        modalTransaccionesDetalle.show();
+                    }
+                });
+
+        }
+
+         function procesarPago(idTransaccionpago){
+
+            $.ajax({
+                    url:'@Url.Action("actualizarPago", "Transacciones")',
+                    type : 'POST',
+                    data:{idTransaccionPago:idTransaccionpago},
+                    dataType : 'json',
+                    success : function(json) {
+
+                        if(json='ok'){
+                             Swal.fire({
+                            title: "Se ha procesado exitosamente!",
+                            text: "Exito",
+                            icon: "success"
+
+                            }).then((result)=>{
+
+                                modalTransaccionesDetalle.hide();
+                               recargarTabla();
+
+
+                            });
+                        }else{
+                            Swal.fire({
+                            title: "ha ocurrido un error!",
+                            text: json,
+                            icon: "danger"
+
+                            }).then((result)=>{
+
+                               modalTransaccionesDetalle.hide();
+                               recargarTabla();
+
+                            });
+                        }
+
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                }});
+        }
+
+    </script>
+
+}

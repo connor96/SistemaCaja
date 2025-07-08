@@ -218,6 +218,65 @@
                 }});
         }
 
+        function observarPago(idTransaccionpago){
+
+            var txtObsevacion=document.getElementById('txtObservacion');
+
+            var observacion=txtObsevacion.value;
+
+            console.log(observacion);
+
+            if(observacion=='')
+            {
+                
+                txtObsevacion.classList.add('is-invalid');
+                alert('Debe de registrar una observacion');
+
+            }else{
+                $.ajax({
+                    url:'@Url.Action("observarPago", "Transacciones")',
+                    type : 'POST',
+                    data:{idTransaccionPago:idTransaccionpago,observacion:observacion},
+                    dataType : 'json',
+                    success : function(json) {
+
+                        if(json='ok'){
+                             Swal.fire({
+                            title: "Se ha procesado exitosamente!",
+                            text: "Exito",
+                            icon: "success"
+
+                            }).then((result)=>{
+
+                                modalTransaccionesDetalle.hide();
+                               recargarTabla();
+
+
+                            });
+                        }else{
+                            Swal.fire({
+                            title: "ha ocurrido un error!",
+                            text: json,
+                            icon: "danger"
+
+                            }).then((result)=>{
+
+                               modalTransaccionesDetalle.hide();
+                               recargarTabla();
+
+                            });
+                        }
+
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                }});
+            }
+
+            
+        }
+
+
     </script>
 
 

@@ -12,6 +12,7 @@
         public string? curso { get; set; }
         public string? notafinal { get; set; }
         public bool? Aprobado { get; set; }
+        public int idSede { get; set; }
 
     }
 }

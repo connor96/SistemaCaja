@@ -7,5 +7,6 @@
         public bool? estado { get; set; }
         public string? usuarioRegistro { get; set; }
         public DateTime? fechaRegistro { get; set; }
+        public int idSede { get; set; }
     }
 }

@@ -13,17 +13,34 @@ namespace CajaSistema.Controllers
         private readonly ApplicationDbContext _appdbContext;
         public AnulacionesController(ApplicationDbContext context)
         {
+            
             _appdbContext = context;
+            //_ = HttpContext.Session.GetString("idPersona");
+            //if (idUsuarioActivo is null)
+            //{
+            //    Response.Redirect("./Login");
+            //}
+
         }
         [HttpGet]
         public IActionResult Index()
         {
+            //idUsuarioActivo= HttpContext.Session.GetString("idPersona");
+            //if(idUsuarioActivo is null)
+            //{
+            //    return Redirect("/Authentication");
+            //}
             return View();
         }
 
         [HttpPost]
         public JsonResult BusquedaAlumnos(string cadena)
         {
+            //idUsuarioActivo = HttpContext.Session.GetString("idPersona");
+            //if (idUsuarioActivo is null)
+            //{
+            //    return Json("error");
+            //}
 
             if (cadena is null)
             {
@@ -37,25 +54,41 @@ namespace CajaSistema.Controllers
         [HttpPost]
         public PartialViewResult ListaPendientes(string idPersona)
         {
+            //try
+            //{
+            //    idUsuarioActivo = HttpContext.Session.GetString("idPersona");
+            //    if (idUsuarioActivo is null)
+            //    {
+            //        throw new Exception("error");
+            //    }
 
-            var parameter = new[]
-            {
-                new SqlParameter("@idPersona",idPersona)
-            };
-            var listaPendientesAlumno = _appdbContext.listaEliminarAumnos.FromSqlRaw("CajaWeb.sp_listaPendientesAlumnoAnulaciones @idPersona", parameter).ToList();
+                var parameter = new[]
+                {
+                    new SqlParameter("@idPersona",idPersona)
+                };
+                var listaPendientesAlumno = _appdbContext.listaEliminarAumnos.FromSqlRaw("CajaWeb.sp_listaPendientesAlumnoAnulaciones @idPersona", parameter).ToList();
 
 
-            var datosAlumno = _appdbContext.personaPersona.Where(x => x.IdPersona == idPersona).SingleOrDefault();
+                var datosAlumno = _appdbContext.personaPersona.Where(x => x.IdPersona == idPersona).SingleOrDefault();
 
-            ViewBag.persona = datosAlumno;
+                ViewBag.persona = datosAlumno;
 
-            return PartialView(listaPendientesAlumno);
+                return PartialView(listaPendientesAlumno);
+
+            //}
+            //catch (Exception)
+            //{
+
+            //    throw;
+            //}
+           
 
         }
 
         [HttpPost]
         public JsonResult EliminarTransaccion(int idTransaccion)
         {
+            idUsuarioActivo = User.Identity?.Name;
             
             var parameter = new[]
             {

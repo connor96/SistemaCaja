@@ -64,6 +64,18 @@
 
                     </div>
 
+                    <div class="card" style="padding:2rem;margin-top:1rem">
+                        <h3 >Observaciones</h3>
+
+                        <form>
+                            <div class="mb-3">
+                                <label for="txtObservacion" class="form-label">Observacion</label>
+                                <input type="text" class="form-control" id="txtObservacion" aria-describedby="emailHelp" value="">
+                            </div>
+                        </form>
+
+
+                    </div>
 
 
                 </div>
@@ -159,8 +171,10 @@
     <div class="modal-footer">
 
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <a class="btn btn-warning" onclick="observarPago('@Model.IdTransaccionesPagadas')">Observar</a>
         <a class="btn btn-primary" onclick="procesarPago('@Model.IdTransaccionesPagadas')">Procesar</a>
-      
+        
+
     </div>
 </div>
 

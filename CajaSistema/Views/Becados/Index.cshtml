@@ -1,9 +1,11 @@
 ﻿@model AuxiliarString;
 @{
     //ViewData["Title"] = "Index";
-    IEnumerable<BecadosListaBecados> _listaBecados = ViewBag.listaAlumnos;
+    // IEnumerable<BecadosListaBecados> _listaBecados = ViewBag.listaAlumnos;
     int contador = 1;
     ViewData["Title"] = "Becados";
+
+    IEnumerable<InstitucionSede> _listaSedes = ViewBag.listaSedes;
 }
 
 
@@ -18,8 +20,20 @@
         </div>
 
 
-        <div class="col-4 d-flex justify-content-end">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <div class="col-2 d-flex justify-content-end">
+            
+            <select class="form-select" aria-label="Default select example" id="sedeSeleccionado" onchange="buscarAlumnoBecado()">
+                <option value="0" selected disabled>Seleccione la Sede</option>
+                @foreach (var item in _listaSedes)
+                {
+                    <option value="@item.IdSede">@item.Sede</option>
+                }
+
+            </select>
+
+        </div>
+        <div class="col-2 d-flex justify-content-end">
+            <button id="modalButtonAgregar" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" disabled>
                 Agregar Becado
             </button>
         </div>
@@ -37,11 +51,11 @@
         </div>
 
         <div class="col-2">
-            <a class="btn btn-outline-secondary" onclick="buscarAlumnoBecado()">Buscar Alumno</a>
+            <a class="btn btn-outline-secondary" onclick="buscarAlumnoBecadotxt()">Buscar Alumno</a>
         </div>
 
         <div class="col-2">
-            <a class="btn btn-outline-danger" onclick="listaDesaprobados()">Listar Desaprobados</a>
+            <a class="btn btn-outline-danger" onclick="listaDesaprobados()" >Listar Desaprobados</a>
         </div>
 
     </div>
@@ -49,7 +63,7 @@
     
     <div id="listaAlumnos" class="listaAlumnos">
 
-        <table class="table table-hover" id="tablaAlumnos">
+        @* <table class="table table-hover" id="tablaAlumnos">
             <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -125,7 +139,7 @@
                 
                 
             </tbody>
-        </table>
+        </table> *@
 
     </div>
 
@@ -241,7 +255,9 @@
         function agregarBecado(idPersona){
 
 
-                  $.ajax({
+            var sede=document.getElementById('sedeSeleccionado').value;
+            
+            $.ajax({
                     url:'@Url.Action("BusquedaAlumnos", "Becados")',
                     data:{cadena:idPersona},
                     type : 'POST',
@@ -261,7 +277,7 @@
 
                                     $.ajax({
                                         url:'@Url.Action("RegistrarBecado", "Becados")',
-                                        data:{idPersona:idPersona},
+                                        data:{idPersona:idPersona,sede:sede},
                                         type : 'POST',
                                         dataType : 'json',
                                         success : function(result) {
@@ -451,9 +467,31 @@
 
         function buscarAlumnoBecado(){
 
-            var busqueda=document.getElementById('busquedaBecado').value;
+            document.getElementById("modalButtonAgregar").disabled = false;
 
-            var data = { cadenaBusqueda:busqueda,opcion:'1'};
+            var busqueda=document.getElementById('busquedaBecado').value;
+            var sede=document.getElementById('sedeSeleccionado').value;
+
+            if(sede=='0'){
+                alert('Debe seleccionar una Sede');
+            }else{
+                    var data = { cadenaBusqueda:busqueda,opcion:'1',sede:sede };
+                    var url = '@Url.Action("tablaBusquedaAlumnos", "Becados")';
+                    $('#listaAlumnos').load(url, data, function (responseTxt, statusTxt, xhr) {
+                    if (statusTxt == "success") {
+
+                        //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+                    }
+                    });
+            }
+
+        }
+
+        function buscarAlumnoBecadotxt(){
+
+            var busqueda=document.getElementById('busquedaBecado').value;
+           
+            var data = { cadenaBusqueda:busqueda,opcion:'1',sede:'99' };
             var url = '@Url.Action("tablaBusquedaAlumnos", "Becados")';
             $('#listaAlumnos').load(url, data, function (responseTxt, statusTxt, xhr) {
             if (statusTxt == "success") {
@@ -461,21 +499,34 @@
                 //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
             }
             });
+           
 
         }
+
 
         function listaDesaprobados(){
 
             //var busqueda=document.getElementById('busquedaBecado').value;
 
-            var data = { cadenaBusqueda:'1',opcion:'2'};
-            var url = '@Url.Action("tablaBusquedaAlumnos", "Becados")';
-            $('#listaAlumnos').load(url, data, function (responseTxt, statusTxt, xhr) {
-            if (statusTxt == "success") {
+             var sede=document.getElementById('sedeSeleccionado').value;
+             console.log(sede);
 
-                //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+             if(sede=='0'){
+                alert('Debe seleccionar una Sede');
+               }else{
+
+                var data = { cadenaBusqueda:'1',opcion:'2',sede:sede};
+                var url = '@Url.Action("tablaBusquedaAlumnos", "Becados")';
+                $('#listaAlumnos').load(url, data, function (responseTxt, statusTxt, xhr) {
+                if (statusTxt == "success") {
+
+                    //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+                }
+                });
+
             }
-            });
+
+            
 
         }
 

@@ -49,11 +49,21 @@
                             <td> <span class="badge text-bg-dark">@item.periodoTexto</span> </td>
                             @if (item.Modalidad != "")
                             {
-                                <td> <span class="badge text-bg-primary">Matricula</span> </td>
+                                @if(item.observado!=true){
+                                    <td> <span class="badge text-bg-primary">Matricula</span> </td>
+                                }else{
+                                    <td> <span class="badge text-bg-danger">Matricula</span> </td>
+                                }
+
                             }
                             else
                             {
-                                <td> <span class="badge text-bg-info">Otro</span></td>
+                                @if (item.observado != true)
+                                {
+                                    <td> <span class="badge text-bg-info">Otro</span></td>
+                                }else{
+                                    <td> <span class="badge text-bg-danger">Otro</span></td>
+                                }
                             }
 
                             <td>@item.NombreCompleto</td>
