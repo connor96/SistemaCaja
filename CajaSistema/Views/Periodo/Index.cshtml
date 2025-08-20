@@ -85,3 +85,38 @@
 
 </div>
 
+@section Scripts{
+    <script>
+        function editarPeriodo(idPeriodoMatricula){
+
+        }
+
+        function eliminarPeriodo(idPeriodoMatricula){
+            $.ajax({
+                url:'@Url.Action("eliminarPeriodo", "Periodo")',
+                data:{idPeriodo:idPeriodoMatricula},
+                type : 'POST',
+                dataType : 'json',
+                success : function(json) {
+
+                    if(json='1')
+                    {
+                        Swal.fire({
+                        title: "Se ha eliminado exitosamente!",
+                        icon: "success"
+                        }).then((result)=>{
+                            location.reload();
+                        });
+                    }else{
+                        alert("Ha ocurrido un error");
+                    }
+
+                },
+                error : function(xhr, status) {
+                alert('Disculpe, existió un problema');
+              }});
+        }
+
+
+    </script>
+}

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CajaSistema.Controllers
 {
-    [Authorize(Roles = "ADMINISTRADOR,MARKETING,SECRESEDE")]
+    [Authorize(Roles = "ADMINISTRADOR,ACADEMICO,TESORERO,CAJERO,MARKETING,SECRESEDE")]
     public class AnulacionesController : Controller
     {
         public string idUsuarioActivo = "0000000001";

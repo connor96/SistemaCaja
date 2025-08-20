@@ -1,0 +1,117 @@
+﻿@model List<ReporteNotas>
+@{
+    ViewData["Title"] = "reporteNotas";
+
+    List<AuxiliarString> auxiliarStrings = new List<AuxiliarString>();
+
+    auxiliarStrings = ViewBag.auxiliarString;
+    int contador = 1;
+}
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Detalle Notas</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card" style="padding:2rem;">
+                        <h3>Notas del alumno: @auxiliarStrings[0].cadenaString</h3>
+
+                    </div>
+
+                </div>
+                
+                <div class="col-12 mt-3" style="padding:2rem;">
+
+                    <table class="table table-hover" id="tablaDetallePagos">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Periodo</th>
+                                <th scope="col">Curso</th>
+                                <th scope="col">Nota F.</th>
+                                <th scope="col">Final G.</th>
+                                <th scope="col">Docente</th>
+                                <th scope="col">Local</th>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Modalidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                                if (item.Aprobado)
+                                {
+                                    <tr>
+                                        <th scope="row">@contador</th>
+                                        <td>@item.Periodo</td>
+                                        <td>@item.IdCurso</td>
+                                        <td>@item.NotaFinal</td>
+                                        
+                                        <td>@item.FinalGrade</td>
+                                        <td>@item.Docente</td>
+                                        <td>@item.Local</td>
+                                        <td>@item.Fecha</td>
+
+                                        @if (item.Modalidad=="VIRTUAL")
+                                        {
+
+                                        <td> <span class="badge text-bg-primary">@item.Modalidad</span> </td>
+                                        }
+                                        else
+                                        {
+                                            <td> <span class="badge text-bg-secondary">@item.Modalidad</span> </td>
+                                        }
+
+                                    </tr>
+                                }else{
+                                    <tr class="table-danger">
+                                        <th scope="row">@contador</th>
+                                        <td>@item.Periodo</td>
+                                        <td>@item.IdCurso</td>
+                                        <td>@item.NotaFinal</td>
+                                        <td>@item.FinalGrade</td>
+                                        <td>@item.Docente</td>
+                                        <td>@item.Local</td>
+                                        <td>@item.Fecha</td>
+                                        @if (item.Modalidad == "VIRTUAL")
+                                        {
+
+                                            <td> <span class="badge text-bg-primary">@item.Modalidad</span> </td>
+                                        }
+                                        else
+                                        {
+                                            <td> <span class="badge text-bg-secondary">@item.Modalidad</span> </td>
+                                        }
+
+                                    </tr>
+                                }
+
+                                
+                                contador++;
+                            }
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+    </div>
+    <div class="modal-footer">
+
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+
+
+    </div>
+</div>

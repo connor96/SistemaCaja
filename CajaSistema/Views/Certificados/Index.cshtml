@@ -1,0 +1,140 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+
+    List<InstitucionSede> sedes = new List<InstitucionSede>();
+    sedes = ViewBag.sedes;
+
+    List<ListaPeriodo> periodos = new List<ListaPeriodo>();
+    periodos = ViewBag.periodos;
+}
+
+<div class="row container">
+
+    <h4>Lista de Alumnos que solicitaron su certificado</h4>
+
+    <div class="col-12 row mt-3">
+        <div class="col-4 ">
+            <select class="form-select" aria-label="Default select example" id="periodo">
+                <option selected disabled>Seleccione periodo</option>
+                @foreach (var item in periodos)
+                {
+                    <option value="@item.periodoTexto">@item.periodoDescripcion</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-4 ">
+            <select class="form-select" aria-label="Default select example" id="sedes">
+                <option selected disabled>Seleccione Sede</option>
+                @foreach (var item in sedes)
+                {
+                    <option value="@item.IdSede">@item.Sede</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-4 ">
+            <input type="button" class="btn btn-success" style="width:100%" id="_botonListaUbicacion" value="Listar" onclick="_actualizarTablaCertificados()" />
+        </div>
+
+
+    </div>
+
+
+    <div class="col-12 mt-3">
+        <div class="tablaCertificados" id="tablaCertificados">
+        </div>
+    </div>
+
+ 
+
+
+    <div class="modal fade" id="modalTransaccionCertificado" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modalDetalleCertificado" id="modalDetalleCertificado">
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts{
+
+    <script>
+
+        const containerModalTransacciones = document.getElementById("modalTransaccionCertificado");
+        const modalTransaccionesDetalle = new bootstrap.Modal(containerModalTransacciones);
+
+        function _actualizarTablaCertificados(){
+            var comboPeriodo=$('#periodo').val();
+            var comboSede=$('#sedes').val();
+            if(comboPeriodo==null || comboSede==null){
+                alert('Seleccione un Periodo o una Sede')
+            }else{
+                var data = { periodo:comboPeriodo,idSede:comboSede};
+                var url = '@Url.Action("TablaDetalle", "Certificados")';
+                $('#tablaCertificados').load(url, data, function (responseTxt, statusTxt, xhr) {
+                    if (statusTxt == "success") {
+                        //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+                    }
+                });
+            }
+        }
+
+        function verPagoCertificado(idCertificado){
+            var data = { idCertificado:idCertificado};
+            var url = '@Url.Action("modalTransacciones", "Certificados")';
+            $('#modalDetalleCertificado').load(url, data, function (responseTxt, statusTxt, xhr) {
+                if (statusTxt == "success") {
+                    modalTransaccionesDetalle.show();
+                }
+            });
+        }
+
+        function verReporteNotas(idCertificado){
+            var data = { idCertificado:idCertificado};
+            var url = '@Url.Action("reporteNotas", "Certificados")';
+            $('#modalDetalleCertificado').load(url, data, function (responseTxt, statusTxt, xhr) {
+                if (statusTxt == "success") {
+                    modalTransaccionesDetalle.show();
+                }
+            });
+        }
+
+        function eliminarCertificado(idCertificado)
+        {
+            $.ajax({
+                url:'@Url.Action("eliminarCertificado", "Certificados")',
+                data:{idCertificado:idCertificado},
+                type : 'POST',
+                dataType : 'json',
+                success : function(json) {
+
+                    if(json='1')
+                    {
+                        Swal.fire({
+                        title: "Se ha eliminado exitosamente!",
+                        icon: "success"
+
+                        }).then((result)=>{
+                            _actualizarTablaCertificados();
+
+                        });
+                    }else{
+                        alert("Ha ocurrido un error");
+                    }
+
+                },
+                error : function(xhr, status) {
+                alert('Disculpe, existió un problema');
+              }});
+        }
+
+
+    </script>
+}

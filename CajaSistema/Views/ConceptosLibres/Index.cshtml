@@ -1,0 +1,348 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    List<ListaPeriodo> periodo = new List<ListaPeriodo>();
+    periodo = ViewBag.periodo;
+    IEnumerable<InstitucionSede> _listaSedes = ViewBag.listaSedes;
+}
+
+<div class="row" style="padding-top:2em;padding-bottom:2em">
+    <div class="col-8">
+        <h4>Lista de Conceptos Libres</h4>
+    </div>
+
+
+    <div class="col-12 row">
+        <div class="col-4">
+            <select class="form-select" aria-label="Default select example" id="periodo" onchange= "_actualizarTablaConceptos()">
+                <option selected disabled>Seleccione periodo</option>
+                @foreach (var item in periodo)
+                {
+                    <option value="@item.periodoTexto">@item.periodoDescripcion</option>
+                }
+            </select>
+
+        </div>
+
+      @*   <div class="col-4 ">
+            <input type="button" class="btn btn-primary" style="width:100%" id="_botonListarTodos" value="Listar Todos" onclick="_actualizarTablaConceptos()" />
+        </div> *@
+
+        <div class="col-4 ">
+            <input type="button" class="btn btn-success" style="width:100%" id="_botonAgregar" value="Agregar" onclick="_agregarConcepto()" />
+        </div>
+
+
+    </div>
+
+    <div class="col-12 mt-3">
+
+        <div class="container">
+            <div class="tablaConceptoLibre" id="tablaConceptoLibre">
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Agregar nuevo Concepto Libre</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <div id="seccion1">
+                    <div class="container row mb-3">
+                        <div class="col-10">
+                            <input type="text" id="cadenaString" class="form-control" style="width:100%" placeholder="Busqueda de alumno por DNI, codigo, o Apellidos y Nombres" />
+                        </div>
+                        <div class="col-2">
+                            <a class="btn btn-outline-secondary" onclick="buscarAlumno()">Buscar</a>
+                        </div>
+                    </div>
+
+
+                    <br />
+
+                    <div class="container row">
+
+                        <table class="table table-hover" id="tabla_alumnos">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">IdAlumno</th>
+                                    <th scope="col">Nombres</th>
+                                    <th scope="col">Seleccionar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @* <tr>
+                                    <th scope="row">1</th>
+                                    <td>13254156</td>
+                                    <td>Otto</td>
+                                    <td><a class="btn btn-outline-secondary" onclick="agregarBecado('id','@contador')">Editar</a> </td>
+                                </tr> *@
+
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                </div>
+
+                
+                <div class="container" id="detalleConceptos" style="display:none">
+
+                    <div class="mb-2" style="display:none">
+                        <label for="codigoAlumno" class="form-label">Codigo Alumno Seleccionado</label>
+                        <input type="text" class="form-control" id="codigoAlumno" placeholder="Alumno" disabled>
+                    </div>
+
+                    <div class="mb-2">
+                        <label for="alumnoSeleccionado" class="form-label">Alumno Seleccionado</label>
+                        <input type="text" class="form-control" id="alumnoSeleccionado" placeholder="Alumno" disabled>
+                    </div>
+
+                    <div class="mb-2">
+                        <label for="sedeSeleccionado" class="form-label">Sede seleccionada</label>
+                        <select class="form-select" aria-label="Default select example" id="sedeSeleccionado">
+                            <option value="0" selected disabled>Seleccione la Sede</option>
+                            @foreach (var item in _listaSedes)
+                            {
+                                <option value="@item.IdSede">@item.Sede</option>
+                            }
+
+                        </select>
+
+                    </div>
+                    
+                    <div class="mb-2">
+                        <label for="conceptoTexto" class="form-label">Descripcion Concepto</label>
+                        <input type="text" class="form-control" id="conceptoTexto" placeholder="Libro u otro">
+                    </div>
+
+                    <div class="mb-2">
+                        <label for="monto" class="form-label">Monto</label>
+                        <input type="number" class="form-control" id="monto" placeholder="Monto" disable>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-6 mb-2 mt-2 ">
+                            <input type="button" class="btn btn-danger" style="width:100%" id="_botonRegistrar" value="Cancelar" onclick="_cancelar()" />
+                        </div>
+
+                        <div class="col-6 mb-2 mt-2 ">
+                            <input type="button" class="btn btn-success" style="width:100%" id="_botonRegistrar" value="Registrar" onclick="_registrarConceptoLibre()" />
+                        </div>
+
+                        
+                    </div>
+
+                  
+
+                </div>
+
+
+
+            </div>
+            @*  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div> *@
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+        const containerModalTransacciones = document.getElementById("exampleModal");
+        const modalTransaccionesDetalle = new bootstrap.Modal(containerModalTransacciones);
+
+        function _actualizarTablaConceptos(){
+
+            var periodo=document.getElementById("periodo").value;
+
+             if(periodo==null){
+                alert('Seleccione el Periodo')
+            }else{
+                var data = { periodo:periodo};
+                var url = '@Url.Action("TablaConceptos", "ConceptosLibres")';
+                $('#tablaConceptoLibre').load(url, data, function (responseTxt, statusTxt, xhr) {
+                    if (statusTxt == "success") {
+                        //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+                    }
+                });
+            }
+
+
+        }
+
+        function _agregarConcepto(){
+
+            var periodo=document.getElementById("periodo").value;
+             if(periodo==null){
+                alert('Seleccione el Periodo')
+            }else{
+
+                _limpiarModal();
+                modalTransaccionesDetalle.show();
+
+            }
+        }
+
+        function _limpiarModal(){
+
+            var detalleConceptos= $("#detalleConceptos").css("display","none");
+            var seccion1=$("#seccion1").css("display","initial");
+            $("#cadenaString").val('');
+            var table=document.getElementById("tabla_alumnos");
+            table.querySelector("tbody").innerHTML="";
+            $("#codigoAlumno").val('');
+            $("#sedeSeleccionado").val(0);
+            $("#conceptoTexto").val('');
+            $("#monto").val('');
+
+        }
+
+        function buscarAlumno(){
+            var consulta=$('#cadenaString').val();
+            var table=document.getElementById("tabla_alumnos");
+
+            table.style.display='none';
+           
+            //console.log(consulta);
+
+            if(consulta==''){
+                alert('Es necesario que coloque un codigo o apellidos y nombres');
+            }else{
+                $.ajax({
+                    url:'@Url.Action("BusquedaAlumnos", "ConceptosLibres")',
+                    data:{cadena:consulta},
+                    type : 'POST',
+                    dataType : 'json',
+                    success : function(json) {
+                        console.log(json);
+                        var count=0;
+                        table.querySelector("tbody").innerHTML="";
+                        json.forEach((element) => {
+                            count++;
+                            console.log(element);
+
+                            $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td><a class="btn btn-outline-primary" onclick="seleccionarAlumno(`'+element.idPersona+'`)">Seleccionar</a> </tr>');
+
+                        });
+
+                        table.style.display='initial';
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                }});
+            }
+
+
+        }
+
+
+        function seleccionarAlumno(idPersona){
+            $.ajax({
+                    url:'@Url.Action("CargarAlumno", "ConceptosLibres")',
+                    data:{idPersona:idPersona},
+                    type : 'POST',
+                    dataType : 'json',
+                    success : function(json) {
+                        console.log(json);
+                        $("#codigoAlumno").val(json.idPersona);
+                        $("#alumnoSeleccionado").val(json.name);
+
+                        var detalleConceptos= $("#detalleConceptos").css("display","initial");
+                        var seccion1=$("#seccion1").css("display","none");
+
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                }});
+        }
+
+        function _registrarConceptoLibre(){
+
+            var periodo=$("#periodo").val();
+            var codigoAlumno=$("#codigoAlumno").val();
+            var sedeSeleccionado=$("#sedeSeleccionado").val();
+            var conceptoTexto=$("#conceptoTexto").val();
+            var monto=$("#monto").val();
+
+            if(sedeSeleccionado =='0'|| conceptoTexto=='' || monto=='')
+            {
+                alert('Es necesario que complete los campos');
+            }else{
+                 $.ajax({
+                    url:'@Url.Action("registrarConcepto", "ConceptosLibres")',
+                    data:{idPersona:codigoAlumno,concepto:conceptoTexto,monto:monto,periodo:periodo,sede:sedeSeleccionado},
+                    type : 'POST',
+                    dataType : 'json',
+                    success : function(json) {
+                        console.log(json);
+                        modalTransaccionesDetalle.hide();
+                        _limpiarModal();
+                        _actualizarTablaConceptos();
+
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                }});
+                
+
+            }
+
+        }
+
+        function eliminarConceptoLibre(idConceptosLibres){
+            $.ajax({
+                    url:'@Url.Action("eliminarRegistro", "ConceptosLibres")',
+                    data:{idConceptoLibre:idConceptosLibres},
+                    type : 'DELETE',
+                    dataType : 'json',
+                    success : function(json) {
+                        if(json='1')
+                        {
+                            Swal.fire({
+                            title: "Se ha eliminado exitosamente!",
+                            icon: "success"
+
+                            }).then((result)=>{
+                                _actualizarTablaConceptos();
+
+                            });
+                        }else{
+                            alert("Ha ocurrido un error");
+                        }
+
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                }});
+        }
+
+        function _cancelar(){
+            modalTransaccionesDetalle.hide();
+            _limpiarModal();
+        }
+
+
+    </script>
+
+}

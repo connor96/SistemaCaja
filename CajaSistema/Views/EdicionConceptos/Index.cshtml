@@ -1,0 +1,136 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="row container">
+
+    <div class="row" style="padding-top:2em;padding-bottom:2em">
+        <div class="col-8">
+            <h4>Editar Transacciones</h4>
+        </div>
+
+        <div class="col-4">
+            <button class="btn btn-primary" onClick="window.location.reload();">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-door" viewBox="0 0 16 16">
+                    <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4z" />
+                </svg> &nbsp; Recargar
+            </button>
+        </div>
+
+    </div>
+
+
+    <div class="row" style="padding-top:0.2em;padding-bottom:2em" id="primerComponente">
+        <div class="col-10">
+            <input type="text" class="form-control" style="width:100%" id="textBusqueda" placeholder="Busqueda de alumno por DNI, codigo, o Apellidos y Nombres" />
+        </div>
+
+        <div class="col-2">
+            <a class="btn btn-outline-secondary" onclick="buscarAlumno()">Buscar Alumno</a>
+        </div>
+
+
+        <div class="col-12" style="padding-top:2em;">
+            <div class="listaAlumnosDescuento" id="listaAlumnosDescuento">
+            </div>
+        </div>
+
+    </div>
+
+    <div id="segundoComponente" style="display:none">
+
+
+    </div>
+
+
+
+</div>
+
+
+@section Scripts {
+
+    <script>
+        function buscarAlumno(){
+            var busqueda=document.getElementById('textBusqueda').value;
+
+            console.log(busqueda);
+
+            if(busqueda!=''){
+                var data = { texto:busqueda};
+                var url = '@Url.Action("BusquedaAlumno", "EdicionConceptos")';
+                $('#listaAlumnosDescuento').load(url, data, function (responseTxt, statusTxt, xhr) {
+                if (statusTxt == "success") {
+
+                    //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+                }
+                });
+            }else{
+                alert('Debe de ingresar un valor en el campo de busqueda');
+            }
+
+          
+
+        }
+
+        function verTransacciones(idPersona)
+        {
+            var data = { idPersona:idPersona};
+            var url = '@Url.Action("BusquedaTransacciones", "EdicionConceptos")';
+            $('#segundoComponente').load(url, data, function (responseTxt, statusTxt, xhr) {
+                if (statusTxt == "success") {
+                    $("#segundoComponente").css("display","initial");
+                    $("#primerComponente").css("display","none");
+                    //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+                }
+            });
+        }
+
+        function _editarTransaccion(idTransaccion){
+            var data = { idTransaccion:idTransaccion};
+            var url = '@Url.Action("EdicionTransacciones", "EdicionConceptos")';
+            $('#listaDetalleTransacciones').load(url, data, function (responseTxt, statusTxt, xhr) {
+            if (statusTxt == "success") {
+                $("#listaDetalleTransacciones").css("display","initial");
+
+                //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+            }
+            });
+        }
+
+        function _eliminarDetalle(idTransaccion, idDetalle){
+
+            var idPersona=$('#codigoAlumno').val();
+
+            $.ajax({
+                    url:'@Url.Action("EliminarTransaccion", "EdicionConceptos")',
+                    data:{idTransaccion:idTransaccion,idDetalleTransaccion:idDetalle},
+                    type : 'DELETE',
+                    dataType : 'json',
+                    success : function(json) {
+                       alert(json.mensaje);
+
+                        var data = { idPersona:idPersona};
+                        var url = '@Url.Action("BusquedaTransacciones", "EdicionConceptos")';
+                        $('#segundoComponente').load(url, data, function (responseTxt, statusTxt, xhr) {
+                            if (statusTxt == "success") {
+                                $("#segundoComponente").css("display","initial");
+                                $("#primerComponente").css("display","none");
+                                //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+                                _editarTransaccion(idTransaccion);
+                            }
+                        });
+
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+            }});
+
+        }
+
+ 
+
+
+    </script>
+
+}

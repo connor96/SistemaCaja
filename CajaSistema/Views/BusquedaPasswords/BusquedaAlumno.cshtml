@@ -1,0 +1,42 @@
+﻿@model List<UsuarioPassword>;
+
+@{
+    ViewData["Title"] = "BusquedaAlumno";
+    int contador = 0;
+    Layout = null;
+}
+
+
+<table class="table table-hover" id="tablaAlumnosPassword">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Apellidos y Nombres</th>
+            <th scope="col">Codigo</th>
+            <th scope="col">Password</th>
+        </tr>
+    </thead>
+    <tbody id="cuerpo_tabla">
+
+        @if (Model.Count() < 1)
+        {
+            <h5>No se encontraron alumnos becados</h5>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <tr class="item-tr-@contador">
+                    <td scope="row">@contador</td>
+                    <td id="label-@contador">@item.fullname</td>
+                    <td id="label-@contador">@item.IdPersona</td>
+                    <td id="label-@contador">@item.Clave</td>
+                </tr>
+                contador++;
+            }
+        }
+
+
+    </tbody>
+</table>
+

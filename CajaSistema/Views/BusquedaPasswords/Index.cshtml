@@ -1,0 +1,63 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="row container">
+
+    <div class="row" style="padding-top:2em;padding-bottom:2em">
+        <div class="col-8">
+            <h4>Busqueda de Passwords</h4>
+        </div>
+
+    </div>
+
+
+    <div class="row" style="padding-top:0.2em;padding-bottom:2em">
+        <div class="col-10">
+            <input type="text" class="form-control" style="width:100%" id="textBusqueda" placeholder="Busqueda de alumno por DNI, codigo, o Apellidos y Nombres" />
+        </div>
+
+        <div class="col-2">
+            <a class="btn btn-outline-secondary" onclick="buscarAlumno()">Buscar Alumno</a>
+        </div>
+
+
+        <div class="col-12" style="padding-top:2em;">
+            <div class="listaAlumnosDescuento" id="listaAlumnosDescuento">
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+</div>
+
+
+@section Scripts{
+
+    <script>
+        function buscarAlumno(){
+            var busqueda=document.getElementById('textBusqueda').value;
+
+            var data = { texto:busqueda};
+            var url = '@Url.Action("BusquedaAlumno", "BusquedaPasswords")';
+            $('#listaAlumnosDescuento').load(url, data, function (responseTxt, statusTxt, xhr) {
+            if (statusTxt == "success") {
+
+                //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+            }
+            });
+
+        }
+
+
+    </script>
+
+}

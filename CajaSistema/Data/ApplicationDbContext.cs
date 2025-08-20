@@ -84,6 +84,24 @@ namespace CajaSistema.Data
         public DbSet<AlumnoBusqueda> alumnoBusquedas { get; set; }
         public DbSet<OtrosConceptosVarios>  otrosConceptosVarios { get; set; }
 
+        //Certificado
+        public DbSet<CertificadosLista> certificadosListas { get; set; }
+
+        public DbSet<ReporteNotas> reporteNotasListas { get; set; }
+
+        //Passwords
+
+        public DbSet<UsuarioPassword> usuarioPasswords { get; set; }
+
+        //Conceptos Libres
+        public DbSet<TablaConceptosLibres> tablaConceptosLibre { get; set; }
+
+        // Editar Transacciones
+        public DbSet<EditarTransacciones> editarTransaccionesLista { get; set; }
+
+        //Transacciones
+        public DbSet<IntranetTransacciones> intranetTransaccionesLista { get; set; }
+        public DbSet<IntranetTransaccionesDetalle>  IntranetTransaccionesDetalleLista { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -382,6 +400,79 @@ namespace CajaSistema.Data
             );
             builder.Entity<OtrosConceptosVarios>().ToTable(name: "tb_OtrosConceptosVarios", schema: "Intranet", t => t.ExcludeFromMigrations());
 
+            //Certificado Lista
+
+            //builder.Entity<CertificadosLista>(
+            //    act =>
+            //    {
+            //        act.HasKey(col => col.idCertificado);
+            //        act.Property(col => col.idTransaccion);
+            //        act.Property(col => col.idSede);
+            //        act.Property(col => col.idPersona);
+            //        act.Property(col => col.nombres);
+            //        act.Property(col => col.numeroContacto);
+            //        act.Property(col => col.correo);
+            //        act.Property(col => col.personaContacto);
+            //        act.Property(col => col.monto);
+            //        act.Property(col => col.estado);
+            //        act.Property(col => col.usuarioRegistro);
+            //        act.Property(col => col.fechaRegistro);
+            //        act.Property(col => col.periodo);
+            //        act.Property(col => col.certificados);
+            //    }
+            //);
+            //builder.Entity<CertificadosLista>().ToTable(name: "tb_Certificados", schema: "Intranet", t => t.ExcludeFromMigrations());
+
+            builder.Entity<CertificadosLista>().HasNoKey().ToTable(nameof(CertificadosLista), t => t.ExcludeFromMigrations());
+
+            builder.Entity<ReporteNotas>().HasNoKey().ToTable(nameof(ReporteNotas), t => t.ExcludeFromMigrations());
+
+            builder.Entity<UsuarioPassword>().HasNoKey().ToTable(nameof(UsuarioPassword), t => t.ExcludeFromMigrations());
+
+            builder.Entity<TablaConceptosLibres>().HasNoKey().ToTable(nameof(TablaConceptosLibres), t => t.ExcludeFromMigrations());
+            builder.Entity<EditarTransacciones>().HasNoKey().ToTable(nameof(EditarTransacciones), t => t.ExcludeFromMigrations());
+
+
+            //Intranet Transacciones
+
+            builder.Entity<IntranetTransacciones>(
+                act =>
+                {
+                    act.HasKey(col => col.IdTransacciones);
+                    act.Property(col => col.Idpersona);
+                    act.Property(col => col.Periodo);
+                    act.Property(col => col.Estado);
+                    act.Property(col => col.MontoTotal);
+                    act.Property(col => col.IdSede);
+                    act.Property(col => col.FechaRegistro);
+                    act.Property(col => col.UsuarioRegistro);
+                    act.Property(col => col.FechaActualizacion);
+                    act.Property(col => col.UsuarioActualizacion);
+                }
+            );
+
+            builder.Entity<IntranetTransacciones>().ToTable(name: "tb_Transacciones", schema: "Intranet", t => t.ExcludeFromMigrations());
+
+
+            builder.Entity<IntranetTransaccionesDetalle>(
+                act =>
+                {
+                    act.HasKey(col => col.IdTransaccionesDetalle);
+                    act.Property(col => col.IdTransacciones);
+                    act.Property(col => col.IdConceptoMatricula);
+                    act.Property(col => col.IdConceptoOtros);
+                    act.Property(col => col.IdDescuento);
+                    act.Property(col => col.IdMatricula);
+                    act.Property(col => col.Descripcion);
+                    act.Property(col => col.Monto);
+                    act.Property(col => col.FechaRegistro);
+                    act.Property(col => col.UsuarioRegistro);
+                    act.Property(col => col.FechaActualizacion);
+                    act.Property(col => col.UsuarioActualizacion);
+                    act.Property(col => col.idCiclo);
+                }
+            );
+            builder.Entity<IntranetTransaccionesDetalle>().ToTable(name: "tb_TransaccionesDetalle", schema: "Intranet", t => t.ExcludeFromMigrations());
 
 
         }
