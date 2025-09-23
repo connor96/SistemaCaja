@@ -20,13 +20,13 @@ namespace CajaSistema.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var periodos = _appdbContext.listaPeriodosPeriodos.OrderByDescending(x => x.idPeriodoMatricula).ToList();
 
+            var periodos = _appdbContext.listaPeriodosPeriodos.OrderByDescending(x => x.idPeriodoMatricula).ToList();
             var listaSedes = _appdbContext.institucionSedes.Where(x => x.Estado == 1).ToList();
             ViewBag.listaSedes = listaSedes;
-
             ViewBag.periodo = periodos;
             return View();
+
         }
 
         [HttpPost]
@@ -37,17 +37,10 @@ namespace CajaSistema.Controllers
             {
                 new SqlParameter("@periodo",periodo)
             };
-
-            
-
             var listaConceptosLibres = _appdbContext.tablaConceptosLibre.FromSqlRaw("[CajaWeb].[sp_listaConceptosPeriodo] @periodo", parametro).ToList();
-                                    
-
             ViewBag.Periodo = _appdbContext.listaPeriodosPeriodos.Where(x => x.periodoTexto == periodo).SingleOrDefault();
-
-
-
             return PartialView(listaConceptosLibres);
+
         }
 
 
@@ -62,14 +55,16 @@ namespace CajaSistema.Controllers
             var parametro = new SqlParameter("@cadenabuscar", cadena);
             var listaAlumnos = _appdbContext.becadosListaALumnosBusqueda.FromSqlRaw("CajaWeb.sp_busquedaAlumnosPendientes @cadenabuscar", parametro).ToList();
             return Json(listaAlumnos);
+
         }
 
         [HttpPost]
         public JsonResult CargarAlumno(string idPersona)
         {
-            var alumno=_appdbContext.personaPersona.Where(x=>x.IdPersona==idPersona).SingleOrDefault();
 
+            var alumno=_appdbContext.personaPersona.Where(x=>x.IdPersona==idPersona).SingleOrDefault();
             return Json(alumno);
+
         }
 
 
@@ -79,7 +74,6 @@ namespace CajaSistema.Controllers
         {
 
             idUsuarioActivo = HttpContext.Session.GetString("idPersona");
-
             var parameters = new[]
             {
                 new SqlParameter("@idPersona",idPersona),
@@ -89,7 +83,6 @@ namespace CajaSistema.Controllers
                 new SqlParameter("@sede",sede),
                 new SqlParameter("@usuarioRegistro",idUsuarioActivo)
             };
-
             try
             {
                 using (TransactionScope scope = new TransactionScope())
@@ -106,7 +99,6 @@ namespace CajaSistema.Controllers
             {
                 return Json(e.Message);
             }
-
 
         }
 

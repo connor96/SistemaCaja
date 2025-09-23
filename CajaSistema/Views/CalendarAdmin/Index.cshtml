@@ -1,0 +1,94 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    List<int> ultimosAnios = new List<int>();
+    ultimosAnios = ViewBag.ultimosAnios;
+
+    List<(int Codigo, string Mes)> meses = new List<(int Codigo, string Mes)>();
+    meses = ViewBag.listaMeses;
+
+}
+
+<div class="container row">
+    <div class="col-12">
+        <h1>Reporte de Actividades</h1>
+
+        <div class="col-12 row">
+
+            <div class="col-4"> 
+
+                <select class="form-select" aria-label="Default select example" id="anioSelected">
+                    <option selected disabled>Seleccione el Anio</option>
+                    @foreach (var item in ultimosAnios)
+                    {
+                        <option value="@item">@item</option>
+                    }
+
+                </select>
+
+            </div>
+            <div class="col-4"> 
+
+                <select class="form-select" aria-label="Default select example" id="mesSelected">
+                    <option selected disabled>Seleccione el Mes</option>
+                    @foreach (var item in meses)
+                    {
+                        <option value="@item.Codigo">@item.Mes</option>
+                    }
+
+                </select>
+
+            </div>
+            <div class="col-4"> 
+
+                <div class="form">
+                    <input type="button" class="btn btn-primary" value="Buscar" onclick="buscarReporte()"/>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-12 row mt-3">
+            <div id="reporte" class="reporte">
+
+            </div>
+            
+
+        </div>
+
+
+
+
+    </div>
+
+</div>
+
+@section Scripts{
+    <script>
+
+        function buscarReporte(){
+
+            var anio= $('#anioSelected').val();
+            var mes= $('#mesSelected').val();
+
+            var data = { mes:mes,anio:anio};
+            var url = '@Url.Action("generarReporte", "CalendarAdmin")';
+            $('#reporte').load(url, data, function (responseTxt, statusTxt, xhr) {
+                if (statusTxt == "success") {
+                    //jQuery('#tablaTransaccionesPendientes').animate('opacity') = '1';
+                }
+            });
+        }
+
+
+        function _verReporte(idPersona){
+
+            console.log(idPersona);
+        }
+
+    </script>
+
+}
+
+

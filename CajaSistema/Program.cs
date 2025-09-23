@@ -43,7 +43,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     //options.Password.RequiredUniqueChars = 1;
 
     // Lockout settings.
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(1);
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(10);
     options.Lockout.MaxFailedAccessAttempts = 5;
     //options.Lockout.AllowedForNewUsers = true;
 
@@ -57,7 +57,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     // Cookie settings
     options.Cookie.HttpOnly = true;
-    options.ExpireTimeSpan = TimeSpan.FromDays(1);
+    options.ExpireTimeSpan = TimeSpan.FromHours(10);
 
     options.LoginPath = "/Identity/Account/Login";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
@@ -72,7 +72,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(options =>
 {
     options.Cookie.Name = "Seguimiento.Session";
-    options.IdleTimeout = TimeSpan.FromDays(1);
+    options.IdleTimeout = TimeSpan.FromHours(10);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });

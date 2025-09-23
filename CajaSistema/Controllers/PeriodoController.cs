@@ -45,14 +45,6 @@ namespace CajaSistema.Controllers
             {
                 return Json(e.Message);
             }
-
         }
-
-
-        //public JsonResult agregarPeriodo()
-        //{
-
-        //}
-
     }
 }

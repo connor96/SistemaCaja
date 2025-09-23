@@ -95,7 +95,14 @@
 
                             <div class="mb-3">
                                 <label for="banco" class="form-label">Banco</label>
-                                <input type="text" class="form-control" id="banco" aria-describedby="emailHelp" value="@Model.CodigoBanco">
+                                @if (Model.CodigoBanco == "BANCO DE CRÉDITO (BCP)")
+                                {
+                                    <input type="text" class="form-control" id="banco" aria-describedby="emailHelp" value="@Model.CodigoBanco" style="background-color:#ffcd8c !important">
+                                }
+                                else
+                                {
+                                    <input type="text" class="form-control" id="banco" aria-describedby="emailHelp" value="@Model.CodigoBanco" style="background-color:#c2ff94 !important">
+                                }
                             </div>
 
                             <div class="mb-3">

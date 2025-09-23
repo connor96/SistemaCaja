@@ -103,6 +103,12 @@ namespace CajaSistema.Data
         public DbSet<IntranetTransacciones> intranetTransaccionesLista { get; set; }
         public DbSet<IntranetTransaccionesDetalle>  IntranetTransaccionesDetalleLista { get; set; }
 
+        //Registro Actividad
+        public DbSet<RegistroActividad> registroActividades { get; set; }
+
+        //Reporte Actividad
+        public DbSet<CalendarioReporte> calendarioReportes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -473,6 +479,26 @@ namespace CajaSistema.Data
                 }
             );
             builder.Entity<IntranetTransaccionesDetalle>().ToTable(name: "tb_TransaccionesDetalle", schema: "Intranet", t => t.ExcludeFromMigrations());
+
+            //Registro Actividad
+
+            builder.Entity<RegistroActividad>(
+                act =>
+                {
+                    act.HasKey(col => col.intIdRegistro);
+                    act.Property(col => col.strNombre);
+                    act.Property(col => col.strFechaRegistro);
+                    act.Property(col => col.strUsuarioRegistro);
+                    act.Property(col => col.strColor);
+                }
+            );
+            builder.Entity<RegistroActividad>().ToTable(name: "tb_RegistroActividades", schema: "CajaWeb", t => t.ExcludeFromMigrations());
+
+            //Reporte Calendario
+
+            builder.Entity<CalendarioReporte>().HasNoKey().ToTable(nameof(CalendarioReporte), t => t.ExcludeFromMigrations());
+
+
 
 
         }

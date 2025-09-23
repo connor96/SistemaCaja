@@ -1,0 +1,244 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+@section Styles{
+    <link rel="stylesheet" href="~/lib/evo-calendar/css/evo-calendar.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/evo-calendar/css/evo-calendar.orange-coral.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/evo-calendar/css/evo-calendar.midnight-blue.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/evo-calendar/css/evo-calendar.royal-navy.css" asp-append-version="true" />
+}
+
+<div class="container row">
+
+    <div class="col-12 row mb-3">
+
+        <div class="col-6">
+            <h4>Registro de actividades</h4>
+        </div>
+
+        <div class="col-6">
+            <input type="button" class="btn btn-outline-primary" value="Agregar Actividad" onclick="addElement()" style="width:100%" />
+
+        </div>
+
+        
+    </div>
+
+    <div class="col-12">
+        <div id="calendar"></div>
+
+    </div>
+    
+    
+
+    
+
+</div>
+
+
+
+@section Scripts {
+
+    <script src="~/lib/evo-calendar/js/evo-calendar.min.js" asp-append-version="true"></script>
+    <script src="~/lib/evo-calendar/js/evo-calendar.js" asp-append-version="true"></script>
+
+
+    <script>
+        // initialize your calendar, once the page's DOM is ready
+        $(document).ready(function() {
+            $('#calendar').evoCalendar({
+                'theme':'Royal Navy',
+                'format': 'dd MM, yyyy',
+                'language':'es',
+                'todayHighlight':true
+            });
+            reloadCalendar();
+        })
+
+        function reloadCalendar(){
+
+            var active_events = $('#calendar').evoCalendar('getActiveEvents');
+
+            $.ajax({
+                url:'@Url.Action("listarActividades", "Calendar")',
+                data:{usuario:'usr'},
+                type : 'POST',
+                dataType : 'json',
+                success : function(result) {
+
+                    // Recorremos cada objeto y ajustamos la fecha
+                    result.forEach(function(evento) {
+                        let fecha = new Date(evento.date); // convertir a objeto Date
+                        fecha.setDate(fecha.getDate() + 1); // restar 1 día
+
+                        // Convertir nuevamente a string en el formato que evoCalendar espera (ej: "25 August, 2025")
+                        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                        evento.date = fecha.toLocaleDateString('en-US', options);
+                    });
+
+                    $('#calendar').evoCalendar('addCalendarEvent', result);
+
+                },
+                error : function(xhr, status) {
+                alert('Disculpe, existió un problema');
+            }});
+
+
+        }
+
+
+        function addElement(){
+              var active_date = $('#calendar').evoCalendar('getActiveDate');
+
+              Swal.fire({
+              title: "Registre una actividad: ",
+              text: active_date,
+              input: "text",
+              inputAttributes: {
+                autocapitalize: "off"
+              },
+              showCancelButton: true,
+              confirmButtonText: "Guardar",
+              denyButtonText:'Cancelar',
+              showLoaderOnConfirm: true,
+              preConfirm: async (login) => {
+
+                  try{
+                      if(login==''){
+                          return Swal.showValidationMessage(`Debe rellenar el campo`);
+                      }else{
+
+                          $.ajax({
+                                url:'@Url.Action("registrarActividad", "Calendar")',
+                                data:{name:login,fecha:active_date},
+                                type : 'POST',
+                                dataType : 'json',
+                                success : function(result) {
+
+                                    //console.log(result);
+
+                                    //reloadCalendar();
+
+                                     $('#calendar').evoCalendar('addCalendarEvent', {
+                                         id: "'" + result.id + "'",
+                                         name: 'Actividad',
+                                         description: login,
+                                         date: active_date,
+                                         type: 'event',
+                                         color:result.color
+                                    });
+
+
+                                },
+                                error : function(xhr, status) {
+                                alert('Disculpe, existió un problema');
+                           }});
+
+                      }
+
+                  }catch (error){
+                       Swal.showValidationMessage(`Request failed: ${error}`);
+                  }
+
+
+              },
+              allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+
+                console.log(result);
+              if (result.isConfirmed) {
+                Swal.fire({
+                  //title: `${result.value.login}'s avatar`,
+                  title:'Se ha registrado correctamente'
+                  
+                  //imageUrl: result.value.avatar_url
+                });
+              }
+            });
+
+        }
+
+
+        $('#calendar').on('selectEvent', function(event, activeEvent) {
+             console.log(activeEvent.id);
+             Swal.fire({
+              title: "¿Desea eliminar la actividad?",
+              text: "Al hacer clic en aceptar la actividad se eliminara",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#3085d6",
+              cancelButtonColor: "#d33",
+              confirmButtonText: "Si, eliminalo!"
+            }).then((result) => {
+            if (result.isConfirmed) {
+
+
+                $.ajax({
+                    url:'@Url.Action("eliminarActividades", "Calendar")',
+                    data:{id:activeEvent.id},
+                    type : 'POST',
+                    dataType : 'json',
+                    success : function(result) {
+
+                        $('#calendar').evoCalendar('removeCalendarEvent', activeEvent.id);
+
+                       
+
+                        Swal.fire({
+                            title: "Eliminado!",
+                            text: "La actividad ha sido eliminada.",
+                            icon: "success"
+                        });
+
+                        
+
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                }});
+ 
+              }
+            });
+
+             
+        });
+
+
+        $('#calendar').on('selectMonth', function(event, activeMonth, monthIndex) {
+
+            var year = document.querySelector(".calendar-sidebar .calendar-year p").textContent;
+            var month=monthIndex+1;
+
+            console.log(year);
+            console.log(month);
+
+            // Swal.fire({
+            //   title: "Desea descargar el reporte?",
+            //   text: "Descargar el reporte "+activeMonth+' '+year,
+            //   icon: "warning",
+            //   showCancelButton: true,
+            //   confirmButtonColor: "#3085d6",
+            //   cancelButtonColor: "#d33",
+            //   confirmButtonText: "Si, descargar"
+            // }).then((result) => {
+            //   if (result.isConfirmed) {
+                
+
+
+            //   }
+            // });
+
+
+
+           
+
+
+        });
+
+
+    </script>
+
+}
