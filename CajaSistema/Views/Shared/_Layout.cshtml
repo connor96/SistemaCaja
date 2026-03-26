@@ -50,6 +50,9 @@
                                 <li><a class="dropdown-item" asp-controller="PostergacionesCursos" asp-action="Index">Postergaciones</a></li>
                                 <li><a class="dropdown-item" asp-controller="OtrosConceptos" asp-action="Index">Otros Conceptos</a></li>
                                 <li><a class="dropdown-item" asp-controller="Certificados" asp-action="Index">Certificados / Constancias</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-controller="PeriodoGraduacion" asp-action="Index">Periodo Graduaciones</a></li>
+                                <li><a class="dropdown-item" asp-controller="Graduaciones" asp-action="Index">Registrar Graduacion</a></li>
                             </ul>
                         </li>
 
@@ -85,7 +88,8 @@
                                 <li><a class="dropdown-item" asp-controller="Pendientes" asp-action="Index">Pagos Pendientes</a></li>
                                 <li><a class="dropdown-item" asp-controller="Anulaciones" asp-action="Index">Anulaciones</a></li>
                                 <li><a class="dropdown-item" asp-controller="BusquedaPasswords" asp-action="Index">Passwords</a></li>
-
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-controller="Talleres" asp-action="Index">Talleres Verano</a></li>
                             </ul>
                         </li>
 
@@ -109,6 +113,7 @@
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @await RenderSectionAsync("Scripts", required: false)

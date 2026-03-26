@@ -57,10 +57,10 @@ namespace CajaSistema.Controllers
             double2.cadena2 = "POSTERGACION DE EXAMENES";
             listaDoble.Add(double2);
 
-            AuxDobleString double3 = new AuxDobleString();
-            double3.cadena1 = "5";
-            double3.cadena2 = "GRADUACIONES";
-            listaDoble.Add(double3);
+            //AuxDobleString double3 = new AuxDobleString();
+            //double3.cadena1 = "5";
+            //double3.cadena2 = "GRADUACIONES";
+            //listaDoble.Add(double3);
 
             AuxDobleString double4 = new AuxDobleString();
             double4.cadena1 = "6";

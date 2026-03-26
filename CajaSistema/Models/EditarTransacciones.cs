@@ -1,4 +1,6 @@
-﻿namespace CajaSistema.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CajaSistema.Models
 {
     public class EditarTransacciones
     {
@@ -8,6 +10,7 @@
         public TimeOnly horaEnvio { get; set; }
         public string? periodo { get; set; }
         public bool eliminar { get; set; }
+        [Column(TypeName = "decimal(18, 2)")]
         public decimal monto { get; set; }
 
     }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using System.Data;
 
 namespace CajaSistema.Data
@@ -14,100 +15,107 @@ namespace CajaSistema.Data
         }
 
         //Becados
-        public DbSet<BecadosAlumnoBusqueda> becadosListaALumnosBusqueda { get; set; }
-        public DbSet<BecadosListaBecados> becadosListaAlumnos { get; set; }
-        public DbSet<BecadosAlumnoBecado> becadosAlumnoBecados { get; set; }
+        public DbSet<BecadosAlumnoBusqueda> becadosListaALumnosBusqueda { get; set; } = default!;
+        public DbSet<BecadosListaBecados> becadosListaAlumnos { get; set; } = default!;
+        public DbSet<BecadosAlumnoBecado> becadosAlumnoBecados { get; set; } = default!;
 
         //Descuento
-        public DbSet<DescuentoListaDescuentos> descuentoListaDescuentos { get; set; }
-        public DbSet<DescuentoDescuento> descuentoDescuento { get; set; }
-        public DbSet<DescuentoLista>  descuentoListas { get; set; }
+        public DbSet<DescuentoListaDescuentos> descuentoListaDescuentos { get; set; } = default!;
+        public DbSet<DescuentoDescuento> descuentoDescuento { get; set; } = default!;
+        public DbSet<DescuentoLista> descuentoListas { get; set; } = default!;
 
 
         //public DbSet<UserIdentity> _identityUserDBSet { get; set; }
 
         //Persona
-        public DbSet<PersonaPersona> personaPersona { get; set; }
+        public DbSet<PersonaPersona> personaPersona { get; set; } = default!;
 
         //Cajero
-        public DbSet<CajeroCajeroActivo> cajeroCajeroActivos { get; set; }
+        public DbSet<CajeroCajeroActivo> cajeroCajeroActivos { get; set; } = default!;
 
         //Sede
-        public DbSet<InstitucionSede> institucionSedes { get; set; }
+        public DbSet<InstitucionSede> institucionSedes { get; set; } = default!;
 
         //Periodo Matricula
         //public DbSet<PeriodoIntranet> periodoIntranets { get; set; }
-        public DbSet<CajeroAsignacionCajero> cajeroAsignacionCajeros { get; set; }
+        public DbSet<CajeroAsignacionCajero> cajeroAsignacionCajeros { get; set; } = default!;
 
         //Auxiliar
 
-        public DbSet<AuxiliarString> auxiliarStrings { get; set; }
-        public DbSet<AuxDobleString> auxDobleStrings { get; set; }  
+        public DbSet<AuxiliarString> auxiliarStrings { get; set; } = default!;
+        public DbSet<AuxDobleString> auxDobleStrings { get; set; } = default!;
 
         //Bancos
-        public DbSet<BancoBancos> bancoBancos { get; set; }
-        public DbSet<BancoCanalesPago> bancoCanalesPagos { get; set; } 
-        public DbSet<BancoFormasPago> bancoFormasPagos { get; set; }
+        public DbSet<BancoBancos> bancoBancos { get; set; } = default!;
+        public DbSet<BancoCanalesPago> bancoCanalesPagos { get; set; } = default!;
+        public DbSet<BancoFormasPago> bancoFormasPagos { get; set; } = default!;
 
         //Caja Transacciones
-        public DbSet<CajaTransaccionCabecera> cajaTransaccionCabecera { get; set; }
-        public DbSet<CajaTransaccionListaPendientes> cajaTransaccionListaPendientes { get; set; }
-        public DbSet<CajaTransaccionListaTodos> cajaTransaccionListaTodos { get; set; }
-        public DbSet<CajaTransaccionDetalleCabecera> cajaTransaccionDetalleCabeceras { get; set; }
-        public DbSet<CajaTransaccionDetalleCuerpo> cajaTransaccionDetalleCuerpos { get; set; }
-        public DbSet<CajaTransaccionPagados> cajaTransaccionPagados { get; set; }
+        public DbSet<CajaTransaccionCabecera> cajaTransaccionCabecera { get; set; } = default!;
+        public DbSet<CajaTransaccionListaPendientes> cajaTransaccionListaPendientes { get; set; } = default!;
+        public DbSet<CajaTransaccionListaTodos> cajaTransaccionListaTodos { get; set; } = default!;
+        public DbSet<CajaTransaccionDetalleCabecera> cajaTransaccionDetalleCabeceras { get; set; } = default!;
+        public DbSet<CajaTransaccionDetalleCuerpo> cajaTransaccionDetalleCuerpos { get; set; } = default!;
+        public DbSet<CajaTransaccionPagados> cajaTransaccionPagados { get; set; } = default!;
 
         //Periodo Matricula
-        public DbSet<ListaPeriodo> listaPeriodosPeriodos { get; set; }
+        public DbSet<ListaPeriodo> listaPeriodosPeriodos { get; set; } = default!;
 
         //Redireccion
-        public DbSet<RedireccionCajeros> redireccionCajeros { get; set; }
+        public DbSet<RedireccionCajeros> redireccionCajeros { get; set; } = default!;
 
-        public DbSet<resumenCajerosPagos> resumenCajerosPagosCaja { get; set; }
+        public DbSet<resumenCajerosPagos> resumenCajerosPagosCaja { get; set; } = default!;
 
-        public DbSet<ListaPendientesAlumno> listaPendientesAlumnos { get; set; }
+        public DbSet<ListaPendientesAlumno> listaPendientesAlumnos { get; set; } = default!;
 
-        public DbSet<ListaEliminarAumno> listaEliminarAumnos { get; set; }
+        public DbSet<ListaEliminarAumno> listaEliminarAumnos { get; set; } = default!;
 
         //Reporte Caja
-        public DbSet<CajaReporteProcesado> cajaReporteProcesados { get; set; }
+        public DbSet<CajaReporteProcesado> cajaReporteProcesados { get; set; } = default!;
 
         //Examen de Ubicacion
-        public DbSet<UbicacionListaExamen> ubicacionListaExamenes { get; set; }
+        public DbSet<UbicacionListaExamen> ubicacionListaExamenes { get; set; } = default!;
 
-        public DbSet<UbicacionAlumnoBusqueda>  ubicacionAlumnoBusquedas { get; set; }
-        public DbSet<UbicacionDetalleModal> ubicacionDetalleModal {  get; set; }
+        public DbSet<UbicacionAlumnoBusqueda> ubicacionAlumnoBusquedas { get; set; } = default!;
+        public DbSet<UbicacionDetalleModal> ubicacionDetalleModal { get; set; } = default!;
 
         //Tarifario Otros
-        public DbSet<TarifarioOtrosLista> tarifarioOtrosListas { get; set; }
-        public DbSet<PostergacionesCursosLista> postergacionesCursosListas { get; set; }
-        public DbSet<AlumnoBusqueda> alumnoBusquedas { get; set; }
-        public DbSet<OtrosConceptosVarios>  otrosConceptosVarios { get; set; }
+        public DbSet<TarifarioOtrosLista> tarifarioOtrosListas { get; set; } = default!;
+        public DbSet<PostergacionesCursosLista> postergacionesCursosListas { get; set; } = default!;
+        public DbSet<AlumnoBusqueda> alumnoBusquedas { get; set; } = default!;
+        public DbSet<OtrosConceptosVarios> otrosConceptosVarios { get; set; } = default!;
 
         //Certificado
-        public DbSet<CertificadosLista> certificadosListas { get; set; }
+        public DbSet<CertificadosLista> certificadosListas { get; set; } = default!;
 
-        public DbSet<ReporteNotas> reporteNotasListas { get; set; }
+        public DbSet<ReporteNotas> reporteNotasListas { get; set; } = default!;
 
         //Passwords
 
-        public DbSet<UsuarioPassword> usuarioPasswords { get; set; }
+        public DbSet<UsuarioPassword> usuarioPasswords { get; set; } = default!;
 
         //Conceptos Libres
-        public DbSet<TablaConceptosLibres> tablaConceptosLibre { get; set; }
+        public DbSet<TablaConceptosLibres> tablaConceptosLibre { get; set; } = default!;
 
         // Editar Transacciones
-        public DbSet<EditarTransacciones> editarTransaccionesLista { get; set; }
+        public DbSet<EditarTransacciones> editarTransaccionesLista { get; set; } = default!;
 
         //Transacciones
-        public DbSet<IntranetTransacciones> intranetTransaccionesLista { get; set; }
-        public DbSet<IntranetTransaccionesDetalle>  IntranetTransaccionesDetalleLista { get; set; }
+        public DbSet<IntranetTransacciones> intranetTransaccionesLista { get; set; } = default!;
+        public DbSet<IntranetTransaccionesDetalle> IntranetTransaccionesDetalleLista { get; set; } = default!;
 
         //Registro Actividad
-        public DbSet<RegistroActividad> registroActividades { get; set; }
+        public DbSet<RegistroActividad> registroActividades { get; set; } = default!;
 
         //Reporte Actividad
-        public DbSet<CalendarioReporte> calendarioReportes { get; set; }
+        public DbSet<CalendarioReporte> calendarioReportes { get; set; } = default!;
+
+        //Periodo Graduacion
+        public DbSet<PeriodoGraduacion> listaPeriodoGraduacions { get; set; } = default!;
+
+        //programacion
+        public DbSet<ProgramacionNivel> programacionNivels { get; set; } = default!;
+        public DbSet<ProgramacionCursos> ProgramacionCursos { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -121,6 +129,7 @@ namespace CajaSistema.Data
             builder.Entity<IdentityUserLogin<string>>(e => { e.ToTable(name: "NetCoreUserLogins", schema: "CajaWeb"); });
             builder.Entity<IdentityUserToken<string>>(e => { e.ToTable(name: "NetCoreUserTokens", schema: "CajaWeb"); });
             builder.Entity<IdentityUserRole<string>>(e => { e.ToTable(name: "NetCoreUserRoles", schema: "CajaWeb"); });
+            
 
             //Becados
             builder.Entity<BecadosAlumnoBecado>(act =>
@@ -208,18 +217,7 @@ namespace CajaSistema.Data
             );
             builder.Entity<InstitucionSede>().ToTable(name: "Sede", schema: "Instituciones", t => t.ExcludeFromMigrations());
 
-            //Periodo matricula
-            //builder.Entity<PeriodoIntranet>(
-            //    act =>
-            //    {
-            //        act.HasKey(col => col.idPeriodoMatricula);
-            //        act.Property(col => col.periodoDescripcion);
-            //        act.Property(col => col.periodoTexto);
-            //        act.Property(col => col.estado);
-            //    }
-            //    );
-            //builder.Entity<PeriodoIntranet>().ToTable(name: "tb_PeriodoMatricula", schema: "Intranet", t => t.ExcludeFromMigrations());
-
+          
             builder.Entity<CajeroAsignacionCajero>(
                 act =>
                 {
@@ -408,27 +406,6 @@ namespace CajaSistema.Data
 
             //Certificado Lista
 
-            //builder.Entity<CertificadosLista>(
-            //    act =>
-            //    {
-            //        act.HasKey(col => col.idCertificado);
-            //        act.Property(col => col.idTransaccion);
-            //        act.Property(col => col.idSede);
-            //        act.Property(col => col.idPersona);
-            //        act.Property(col => col.nombres);
-            //        act.Property(col => col.numeroContacto);
-            //        act.Property(col => col.correo);
-            //        act.Property(col => col.personaContacto);
-            //        act.Property(col => col.monto);
-            //        act.Property(col => col.estado);
-            //        act.Property(col => col.usuarioRegistro);
-            //        act.Property(col => col.fechaRegistro);
-            //        act.Property(col => col.periodo);
-            //        act.Property(col => col.certificados);
-            //    }
-            //);
-            //builder.Entity<CertificadosLista>().ToTable(name: "tb_Certificados", schema: "Intranet", t => t.ExcludeFromMigrations());
-
             builder.Entity<CertificadosLista>().HasNoKey().ToTable(nameof(CertificadosLista), t => t.ExcludeFromMigrations());
 
             builder.Entity<ReporteNotas>().HasNoKey().ToTable(nameof(ReporteNotas), t => t.ExcludeFromMigrations());
@@ -497,6 +474,48 @@ namespace CajaSistema.Data
             //Reporte Calendario
 
             builder.Entity<CalendarioReporte>().HasNoKey().ToTable(nameof(CalendarioReporte), t => t.ExcludeFromMigrations());
+
+            //Registro Actividad
+
+            builder.Entity<PeriodoGraduacion>(
+                act =>
+                {
+                    act.HasKey(col => col.idPeriodoGraduacion);
+                    //act.Property(col => col.periodoTexto);
+                    act.Property(col => col.periodoDescripcion);
+                    act.Property(col => col.estado);
+                    act.Property(col => col.fechaRegistro);
+                    act.Property(col => col.usuarioRegistro);
+                }
+            );
+            builder.Entity<PeriodoGraduacion>().ToTable(name: "tb_PeriodoGraduacion", schema: "CajaWeb", t => t.ExcludeFromMigrations());
+
+            //Programacion Nivel
+            builder.Entity<ProgramacionNivel>(
+                act =>
+                {
+                    act.HasKey(col => col.CodNivelCurso);
+                    act.Property(col => col.IdMallaCurricular);
+                    act.Property(col => col.DesNivelCurso);
+                    act.Property(col => col.Orden);
+                    act.Property(col => col.Estado);
+                    act.Property(col => col.EsCurso);
+                }
+            );
+            builder.Entity<ProgramacionNivel>().ToTable(name: "NivelCurso", schema: "Programacion", t => t.ExcludeFromMigrations());
+
+            //Programacion Curso
+            builder.Entity<ProgramacionCursos>(
+                act =>
+                {
+                    act.HasKey(col => col.CodCurso);
+                    act.Property(col => col.CodNivelCurso);
+                    act.Property(col => col.DesCurso);
+                    act.Property(col => col.Orden);
+                    act.Property(col => col.Estado);
+                }
+            );
+            builder.Entity<ProgramacionCursos>().ToTable(name: "Curso", schema: "Programacion", t => t.ExcludeFromMigrations());
 
 
 

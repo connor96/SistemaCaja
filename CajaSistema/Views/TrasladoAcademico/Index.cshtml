@@ -1,0 +1,61 @@
+﻿@model List<ListaPeriodo> 
+@{
+
+    ViewData["Title"] = "Traslado Academico";
+    int contador = 1;
+}
+
+<div class="container row">
+
+    <h4>Busqueda de cursos</h4>
+
+    <div class="col-12 row">
+
+        <div class="col-3">
+            <select class="form-select mb-3" aria-label="Default select example" id="periodo">
+                <option selected>Seleccione una opcion</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+            </select>
+        </div>
+        <div class="col-3">
+            <select class="form-select mb-3" aria-label="Default select example" id="sede">
+                <option selected>Seleccione una opcion</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+            </select>
+        </div>
+        <div class="col-3">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Curso a buscar" aria-label="Recipient's username" aria-describedby="button-addon2" id="curso">
+                <button class="btn btn-outline-secondary" type="button" id="button-addon2">Buscar</button>
+            </div>
+        </div>
+
+        
+
+    </div>
+
+    <div class="col-12">
+        <div id="tablaProgramacion">
+
+        </div>
+
+
+    </div>
+
+
+
+</div>
+
+@section Scripts{
+
+    <script>
+
+
+
+    </script>
+
+}

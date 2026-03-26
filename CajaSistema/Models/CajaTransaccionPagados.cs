@@ -1,4 +1,6 @@
-﻿namespace CajaSistema.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CajaSistema.Models
 {
     public class CajaTransaccionPagados
     {
@@ -6,6 +8,7 @@
         public int IdTransaccionesPagadas { get; set; }
         public DateOnly FechaTransaccion { get; set; }
         public TimeOnly HoraTransaccion { get; set; }
+        [Column(TypeName = "decimal(18, 2)")]
         public decimal Monto { get; set; }
         public string? NombreCompleto { get; set; }
         public string? DNI { get; set; }

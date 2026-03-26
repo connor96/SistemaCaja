@@ -14,6 +14,6 @@
         public int idTransaccion { get; set; }
         public string? usuarioRegistro { get; set; }
         public DateTime fechaRegistro { get; set; }
-
+        public int idPeriodoAux { get; set; }
     }
 }

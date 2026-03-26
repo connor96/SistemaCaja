@@ -1,4 +1,6 @@
-﻿namespace CajaSistema.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CajaSistema.Models
 {
     public class CajaReporteProcesado
     {
@@ -11,8 +13,11 @@
         public string? nombreCompleto { get; set; }
         public string? usuario { get; set; }
         public string? curso { get; set; }
+        [Column(TypeName = "decimal(18, 2)")]
         public decimal importe { get; set; }
+        [Column(TypeName = "decimal(18, 2)")]
         public decimal descuento { get; set; }
+        [Column(TypeName = "decimal(18, 2)")]
         public decimal pagoMinimo { get; set; }
         public string? banco { get; set; }
         public string? cuenta { get; set; }

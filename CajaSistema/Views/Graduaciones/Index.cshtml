@@ -1,0 +1,294 @@
+﻿
+@{
+    ViewData["Title"] = "Graduaciones";
+ 
+    PeriodoGraduacion periodoGraduacions = new PeriodoGraduacion();
+    periodoGraduacions = ViewBag.PeriodoGraduacion;
+
+    List<InstitucionSede> sedes = new List<InstitucionSede>();
+    sedes = ViewBag.ListaSedes;
+
+    List<TarifarioOtrosLista> listaConceptos = new List<TarifarioOtrosLista>();
+    listaConceptos = ViewBag.conceptosLista;
+
+}
+
+@section Styles {
+    <style>
+
+        .fullscreen-spinner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none; /* oculto por defecto */
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+        }
+
+    </style>
+}
+
+
+<!-- Spinner pantalla completa -->
+<div class="fullscreen-spinner" id="spinner">
+    <div class="spinner-border text-light" role="status">
+        <span class="visually-hidden">Cargando...</span>
+    </div>
+</div>
+
+
+<div class="row container">
+    <!-- Button trigger modal -->
+    <div class="row" style="padding-top:2em;padding-bottom:2em">
+        <div class="col-12">
+            <h4>Lista de Alumnos de otros Conceptos</h4>
+        </div>
+
+
+        <div class="col-3 mt-3">
+            <div class="col-12">
+                <p>
+                    <input type="text" id="idPeriodoGraduacion" value="@periodoGraduacions.idPeriodoGraduacion" style="display:none" />
+                    Periodo de Graduacion Activo: @periodoGraduacions.periodoDescripcion
+                </p>
+
+            </div>
+
+            <div class="col-12 mt-3">
+                <select class="form-select" aria-label="Default select example" id="sedes">
+                    <option selected disabled>Seleccione Sede</option>
+                    @foreach (var item in sedes)
+                    {
+                        <option value="@item.IdSede">@item.Sede</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-12 mt-3">
+                <input type="button" class="btn btn-success" style="width:100%" id="_botonListaotrosConceptos" value="Listar" onclick="_actualizarTablaConceptos()" />
+            </div>
+
+        </div>
+
+        <div class="col-9 mt-3">
+            <div class="tablaConceptos" id="tablaConceptos">
+            </div>
+        </div>
+
+
+
+    </div>
+
+</div>
+
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Registro nuevo periodo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="container modal-body">
+
+                <div class="col-12 mt-3">
+                    <select class="form-select" aria-label="Default select example" id="listaConceptos">
+                        <option selected disabled>Seleccione Concepto</option>
+                        @foreach (var item in listaConceptos)
+                        {
+                            <option value="@item.idTarifario">@item.descripcion</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-12 mt-3">
+                    <input type="text" class="form-control" style="width:100%" id="textoAlumno" placeholder="Busqueda de alumno por DNI, codigo, o Apellidos y Nombres" />
+                </div>
+                <br />
+                <div class="col-2 mt-2">
+                    <a class="btn btn-outline-secondary" onclick="buscarAlumno()">Buscar</a>
+                </div>
+
+
+                <br />
+
+                <div class="row">
+
+                    <table class="table table-hover" id="tabla_alumnos" style="opacity:0">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">IdAlumno</th>
+                                <th scope="col">Nombres</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Asignar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+
+        const containerGraduados = document.getElementById("exampleModal");
+        const modalGraduado = new bootstrap.Modal(containerGraduados);
+        
+
+        function agregarGraduacion(){
+            modalGraduado.show();
+        }
+
+
+
+        function _actualizarTablaConceptos(){
+             var idPeriodoGraduacion=$('#idPeriodoGraduacion').val();
+
+            var comboSede=$('#sedes').val();
+
+            if(comboSede==null){
+                alert('Seleccione una Sede');
+            }else{
+                spinner.style.display = 'flex';
+
+                var data = { periodoGraduacion:idPeriodoGraduacion,sede:comboSede};
+                var url = '@Url.Action("_ListaGraduaciones", "Graduaciones")';
+                $('#tablaConceptos').load(url, data, function (responseTxt, statusTxt, xhr) {
+                    if (statusTxt == "success") {
+                        spinner.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        function buscarAlumno(){
+
+            var textoIngresado =document.getElementById("textoAlumno");
+
+            var comboPeriodo='2601';
+
+            var comboSede=document.getElementById("sedes");
+
+            var concepto=$('#listaConceptos').val();
+
+            var table=document.getElementById("tabla_alumnos");
+
+            if(concepto ==null){
+                alert('Debe seleccionar un concepto');
+            }else if(textoIngresado.value==''){
+                alert('Debe ingresar un codigo');
+            }else{
+
+                table.querySelector("tbody").innerHTML="";
+                $.ajax({
+                    url:'@Url.Action("BusquedaAlumnos", "Graduaciones")',
+                    data:{cadena:textoIngresado.value,idSede:comboSede.value,periodo:comboPeriodo.value,concepto:concepto},
+                    type : 'POST',
+                    dataType : 'json',
+                    success : function(json) {
+                        //console.log(json);
+                        var count=0;
+                        json.forEach((element) => {
+                            count++;
+                            if(element.diferenciador=='NO')
+                            {
+                                    $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td> NO </td> <td><a class="btn btn-outline-secondary" onclick="_registrarGraduacion(`'+element.idPersona+'`)">Agregar</a>  </td></tr>');
+                            }else{
+                                    $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td> '+element.diferenciador+' </td> <td><a class="btn btn-outline-secondary" onclick="_registrarGraduacion(`'+element.idPersona+'`)">Agregar</a>  </td></tr>');
+                            }
+                        });
+
+                        table.style.opacity='1';
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                 }});
+            }
+        }
+
+        function _registrarGraduacion(idPersona){
+            //console.log(idPersona);
+
+             var concepto=$('#listaConceptos').val();
+             var comboSede=document.getElementById("sedes").value;
+
+            $.ajax({
+                url: '@Url.Action("RegistrarGraduado", "Graduaciones")',
+                type: "POST",
+                data:{concepto:concepto,sede:comboSede,idPersona:idPersona},
+                success: function (response) {
+
+                    if (response.success) {
+
+                        Swal.fire({
+                        title: "Exito!",
+                        icon: "success",
+                        text:response.message,
+                        }).then((result)=>{
+                            // Recargar partial
+                            modalGraduado.hide();
+                        });
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert("Error al registrar");
+                }
+            });
+
+
+        }
+
+         function eliminarGraduacion(idConcepto)
+        {
+
+            $.ajax({
+                url:'@Url.Action("eliminarConcepto", "Graduaciones")',
+                data:{idConcepto:idConcepto},
+                type : 'POST',
+                dataType : 'json',
+                success : function(json) {
+                    //console.log(json);
+
+                    if(json='1')
+                    {
+                        Swal.fire({
+                        title: "Se ha eliminado exitosamente!",
+                        icon: "success"
+
+                        }).then((result)=>{
+                            _actualizarTablaConceptos();
+
+                        });
+                    }else{
+                        alert("Ha ocurrido un error");
+                    }
+
+                },
+                error : function(xhr, status) {
+                alert('Disculpe, existió un problema');
+              }});
+
+        }
+    </script>
+}
+

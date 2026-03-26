@@ -1,4 +1,6 @@
-﻿namespace CajaSistema.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CajaSistema.Models
 {
     public class CertificadosLista
     {
@@ -10,6 +12,7 @@
         public string? numeroContacto { get; set; }
         public string? correo { get; set; }
         public string? personaContacto { get; set; }
+        [Column(TypeName = "decimal(18, 2)")]
         public decimal monto { get; set; }
         public int estado { get; set; }
         public string? usuarioRegistro { get; set; }

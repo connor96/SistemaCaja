@@ -1,5 +1,4 @@
-﻿using AspNetCoreGeneratedDocument;
-using CajaSistema.Data;
+﻿using CajaSistema.Data;
 using CajaSistema.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -1,4 +1,6 @@
-﻿namespace CajaSistema.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CajaSistema.Models
 {
     public class IntranetTransacciones
     {
@@ -6,6 +8,7 @@
         public string? Idpersona { get; set; }
         public string? Periodo { get; set; }
         public bool? Estado { get; set; }
+        [Column(TypeName = "decimal(18, 2)")]
         public decimal? MontoTotal { get; set; }
         public int? IdSede { get; set; }
         public DateTime? FechaRegistro { get; set; }

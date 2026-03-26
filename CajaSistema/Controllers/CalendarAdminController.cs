@@ -1,5 +1,4 @@
-﻿using AspNetCoreGeneratedDocument;
-using CajaSistema.Data;
+﻿using CajaSistema.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;

@@ -1,4 +1,6 @@
-﻿namespace CajaSistema.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CajaSistema.Models
 {
     public class UbicacionDetalleModal
     {
@@ -13,6 +15,7 @@
         public string? FormaPago { get; set; }
         public string? NumOperacionBanco { get; set; }
         public string? Cuenta { get; set; }
+        [Column(TypeName = "decimal(18, 2)")]
         public decimal Monto { get; set; }
         public int IdSede { get; set; }
         public string? DetalleSede { get; set; }

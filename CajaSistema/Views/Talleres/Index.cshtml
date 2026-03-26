@@ -1,0 +1,269 @@
+﻿@{
+    ViewData["Title"] = "Talleres";
+    List<TarifarioOtrosLista> conceptosLista = ViewBag.conceptosLista;
+}
+
+@section Styles {
+    <style>
+
+        .fullscreen-spinner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none; /* oculto por defecto */
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+        }
+
+    </style>
+}
+
+
+<!-- Spinner pantalla completa -->
+<div class="fullscreen-spinner" id="spinner">
+    <div class="spinner-border text-light" role="status">
+        <span class="visually-hidden">Cargando...</span>
+    </div>
+</div>
+
+<div class="row container">
+    <!-- Button trigger modal -->
+    <div class="row" style="padding-top:2em;padding-bottom:2em">
+        <div class="col-8">
+            <h4>Lista de Talleres</h4>
+        </div>
+
+        <div class="col-4 d-flex justify-content-end">
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" onclick="agregarTalleres()">
+                Agregar Taller
+            </button>
+
+           @*  <button type="button" class="btn btn-primary" onclick="_abrirModal()">
+                Agregar Taller
+            </button>
+ *@
+        </div>
+    </div>
+    <!-- Lista Talleres -->
+    <div id="tablaListaTaller" class="tablaListaTaller">
+    </div>
+
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                
+                <div class="col-12 mt-3">
+                    <select class="form-select" aria-label="Default select example" id="listaConceptos">
+                        <option selected disabled>Seleccione Concepto</option>
+                        @foreach (var item in conceptosLista)
+                        {
+                            <option value="@item.idTarifario">@item.descripcion</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-12 mt-3">
+                    <input type="text" class="form-control" style="width:100%" id="textoAlumno" placeholder="Busqueda de alumno por DNI, codigo, o Apellidos y Nombres" />
+                </div>
+                <br />
+                <div class="col-6 mt-2">
+                    <a class="btn btn-outline-secondary" style="width:100%" onclick="buscarAlumno()">Buscar</a>
+                </div>
+
+
+                <br />
+
+                <div class="row">
+
+                    <table class="table table-hover" id="tabla_alumnos" style="opacity:0">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">IdAlumno</th>
+                                <th scope="col">Nombres</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Asignar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script>
+
+
+        $(document).ready(function () {
+            cargarLista();
+        });
+
+
+        const containerGraduados = document.getElementById("staticBackdrop");
+        const modalGraduado = new bootstrap.Modal(containerGraduados);
+
+
+        function agregarTalleres(){
+            modalGraduado.show();
+        }
+
+         function cerrarModal(){
+            modalGraduado.hide();
+        }
+
+
+        function buscarAlumno(){
+
+            var textoIngresado =document.getElementById("textoAlumno");
+
+            var comboPeriodo='2601';
+
+            //var comboSede=document.getElementById("sedes");
+            var comboSede=1;
+
+            var concepto=$('#listaConceptos').val();
+
+            var table=document.getElementById("tabla_alumnos");
+
+            if(concepto ==null){
+                alert('Debe seleccionar un concepto');
+            }else if(textoIngresado.value==''){
+                alert('Debe ingresar un codigo');
+            }else{
+
+                table.querySelector("tbody").innerHTML="";
+                $.ajax({
+                    url:'@Url.Action("BusquedaAlumnos", "Talleres")',
+                    data:{cadena:textoIngresado.value,idSede:comboSede.value,periodo:comboPeriodo.value,concepto:concepto},
+                    type : 'POST',
+                    dataType : 'json',
+                    success : function(json) {
+                        //console.log(json);
+                        var count=0;
+                        json.forEach((element) => {
+                            count++;
+                            if(element.diferenciador=='NO')
+                            {
+                                    $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td> NO </td> <td><a class="btn btn-outline-secondary" onclick="_registrarTaller(`'+element.idPersona+'`)">Agregar</a>  </td></tr>');
+                            }else{
+                                    $(table).find('tbody').append('<tr> <td>' + count + '</td> <td> ' + element.idPersona + ' </td> <td> ' + element.fullname + ' </td> <td> '+element.diferenciador+' </td> <td><a class="btn btn-outline-secondary" onclick="_registrarTaller(`'+element.idPersona+'`)">Agregar</a>  </td></tr>');
+                            }
+                        });
+
+                        table.style.opacity='1';
+                    },
+                    error : function(xhr, status) {
+                    alert('Disculpe, existió un problema');
+                 }});
+            }
+        }
+
+        function _registrarTaller(idPersona){
+
+             var concepto=$('#listaConceptos').val();
+
+            $.ajax({
+                url: '@Url.Action("RegistrarTaller", "Talleres")',
+                type: "POST",
+                data:{concepto:concepto,sede:1,idPersona:idPersona},
+                success: function (response) {
+
+                    if (response.success) {
+
+                        Swal.fire({
+                        title: "Exito!",
+                        icon: "success",
+                        text:response.message,
+                        }).then((result)=>{
+                            // Recargar partial
+                            modalGraduado.hide();
+                            cargarLista();
+                        });
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert("Error al registrar");
+                }
+            });
+
+
+        }
+
+
+        function cargarLista() {
+            var spinner=document.getElementById('spinner');
+            spinner.style.display = 'flex';
+           
+            var url = '@Url.Action("TablaConceptos", "Talleres")';
+                $('#tablaListaTaller').load(url, function (responseTxt, statusTxt, xhr) {
+                    if (statusTxt == "success") {
+                        spinner.style.display = 'none';
+                    }
+                });
+
+
+        }
+
+        function eliminarConcepto(idConcepto)
+        {
+
+            $.ajax({
+                url:'@Url.Action("eliminarConcepto", "Talleres")',
+                data:{idConcepto:idConcepto},
+                type : 'POST',
+                dataType : 'json',
+                success : function(json) {
+                    //console.log(json);
+
+                    if(json='1')
+                    {
+                        Swal.fire({
+                        title: "Se ha eliminado exitosamente!",
+                        icon: "success"
+
+                        }).then((result)=>{
+                            cargarLista();
+
+                        });
+                    }else{
+                        alert("Ha ocurrido un error");
+                    }
+
+                },
+                error : function(xhr, status) {
+                alert('Disculpe, existió un problema');
+              }});
+
+        }
+
+
+    </script>
+        
+}
